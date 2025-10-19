@@ -1,9 +1,10 @@
 plugins {
-    kotlin("jvm") version "1.9.25"
-    kotlin("plugin.spring") version "1.9.25"
+    kotlin("jvm") version "2.2.20"
+    kotlin("plugin.spring") version "2.2.20"
     id("org.springframework.boot") version "3.5.6"
     id("io.spring.dependency-management") version "1.1.7"
     id("com.diffplug.spotless") version "8.0.0"
+    id("io.kotest") version "6.0.3"
 }
 
 group = "pl.taurus"
@@ -19,6 +20,8 @@ java {
 repositories {
     mavenCentral()
 }
+
+val kotestVersion = "6.0.3"
 
 extra["springModulithVersion"] = "1.4.3"
 
@@ -38,6 +41,9 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("org.springframework.modulith:spring-modulith-starter-test")
+    testImplementation("io.kotest:kotest-framework-engine:$kotestVersion")
+    testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
+    testImplementation("io.kotest:kotest-extensions-spring:$kotestVersion")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
@@ -63,5 +69,9 @@ spotless {
 }
 
 tasks.withType<Test> {
+    useJUnitPlatform()
+}
+
+tasks.withType<Test>().configureEach {
     useJUnitPlatform()
 }
