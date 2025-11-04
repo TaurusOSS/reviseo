@@ -1,5 +1,6 @@
 package pl.taurus.reviseo.persona.application.domain.service
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.transaction.annotation.Transactional
 import pl.taurus.reviseo.persona.application.domain.model.Checklist
 import pl.taurus.reviseo.persona.application.domain.model.CustomInstructions
@@ -13,6 +14,8 @@ import pl.taurus.reviseo.persona.application.port.outgoing.FindPersonaPort
 import pl.taurus.reviseo.persona.application.port.outgoing.GeneratePersonaIdentifierPort
 import pl.taurus.reviseo.persona.application.port.outgoing.InsertPersonaPort
 
+private val logger = KotlinLogging.logger {}
+
 open class CreatePersonaService(
     private val findPersonaPort: FindPersonaPort,
     private val generatePersonaIdentifierPort: GeneratePersonaIdentifierPort,
@@ -20,6 +23,8 @@ open class CreatePersonaService(
 ) : CreatePersonaUseCase {
     @Transactional
     override fun createPersona(command: CreatePersonaUseCase.CreatePersonaCommand): PersonaIdentifier {
+        logger.info { "Creating persona with name: ${command.name}" }
+
         if (findPersonaPort.byName(command.name) != null) {
             throw PersonaNameNotUniqueException(command.name)
         }
@@ -36,6 +41,7 @@ open class CreatePersonaService(
 
         insertPersonaPort.insert(persona)
 
+        logger.info { "Persona created with id: ${persona.identifier.value}" }
         return persona.identifier
     }
 }

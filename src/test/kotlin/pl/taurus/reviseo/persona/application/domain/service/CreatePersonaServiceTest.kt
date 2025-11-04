@@ -12,9 +12,8 @@ import pl.taurus.reviseo.persona.application.domain.model.Persona
 import pl.taurus.reviseo.persona.application.domain.model.PersonaDescription
 import pl.taurus.reviseo.persona.application.domain.model.PersonaIdentifier
 import pl.taurus.reviseo.persona.application.domain.model.PersonaName
-import pl.taurus.reviseo.persona.application.domain.model.createPersona
+import pl.taurus.reviseo.persona.application.domain.model.persona
 import pl.taurus.reviseo.persona.application.port.incoming.CreatePersonaUseCase
-import pl.taurus.reviseo.persona.application.port.incoming.PersonaConfiguration
 import java.util.UUID
 
 class CreatePersonaServiceTest :
@@ -119,7 +118,7 @@ class CreatePersonaServiceTest :
             Given("Existing persona with the same name") {
                 personaTestAdapter.addIdToGenerate(expectedIdentifier)
 
-                val existing = createPersona()
+                val existing = persona {}
                 personaTestAdapter.insert(existing)
 
                 val command =

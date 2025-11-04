@@ -31,6 +31,7 @@ dependencies {
     implementation(libs.kotlin.reflect)
     implementation(libs.spring.modulith.starter.core)
     implementation(libs.spring.modulith.starter.jdbc)
+    implementation(libs.kotlin.logging.jvm)
     runtimeOnly(libs.h2)
     runtimeOnly(libs.spring.modulith.actuator)
     runtimeOnly(libs.spring.modulith.observability)

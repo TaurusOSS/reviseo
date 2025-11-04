@@ -7,6 +7,7 @@ kotest-plugin = "6.0.3"
 kotest = "6.0.3"
 spring-modulith = "1.4.3"
 ktlint = "1.4.1"
+kotlin-logging = "7.0.13"
 
 [libraries]
 spring-boot-starter-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator" }
@@ -28,6 +29,7 @@ kotest-framework-engine = { module = "io.kotest:kotest-framework-engine", versio
 kotest-runner-junit5 = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
 kotest-extensions-spring = { module = "io.kotest:kotest-extensions-spring", version.ref = "kotest" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
+kotlin-logging-jvm = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "kotlin-logging" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
