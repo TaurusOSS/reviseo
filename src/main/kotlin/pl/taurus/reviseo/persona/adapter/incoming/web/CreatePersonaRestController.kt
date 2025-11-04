@@ -9,7 +9,7 @@ import pl.taurus.reviseo.persona.application.port.incoming.CreatePersonaUseCase
 import java.util.UUID
 
 @RestController
-class PersonaRestController(
+class CreatePersonaRestController(
     private val createPersonaUseCase: CreatePersonaUseCase,
 ) {
     @PostMapping("/api/personas")

@@ -2,6 +2,7 @@ package pl.taurus.reviseo.persona.adapter.outgoing.test
 
 import pl.taurus.reviseo.persona.application.domain.model.Persona
 import pl.taurus.reviseo.persona.application.domain.model.PersonaIdentifier
+import pl.taurus.reviseo.persona.application.port.outgoing.FindAllPersonasPort
 import pl.taurus.reviseo.persona.application.port.outgoing.FindPersonaPort
 import pl.taurus.reviseo.persona.application.port.outgoing.GeneratePersonaIdentifierPort
 import pl.taurus.reviseo.persona.application.port.outgoing.InsertPersonaPort
@@ -9,6 +10,7 @@ import java.util.UUID
 
 class PersonaTestAdapter :
     FindPersonaPort,
+    FindAllPersonasPort,
     InsertPersonaPort,
     GeneratePersonaIdentifierPort {
     private val personas: MutableList<Persona> = mutableListOf()
@@ -33,4 +35,6 @@ class PersonaTestAdapter :
     fun clearIds() {
         idsToGenerate.clear()
     }
+
+    override fun findAll(): List<Persona> = personas.toList()
 }

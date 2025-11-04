@@ -1,18 +1,21 @@
-package pl.taurus.reviseo.persona.application.port.incoming
+package pl.taurus.reviseo.persona.application.domain.service
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import pl.taurus.reviseo.persona.application.domain.service.CreatePersonaService
+import pl.taurus.reviseo.persona.application.port.outgoing.FindAllPersonasPort
 import pl.taurus.reviseo.persona.application.port.outgoing.FindPersonaPort
 import pl.taurus.reviseo.persona.application.port.outgoing.GeneratePersonaIdentifierPort
 import pl.taurus.reviseo.persona.application.port.outgoing.InsertPersonaPort
 
 @Configuration
-class PersonaConfiguration {
+internal class PersonaConfiguration {
     @Bean
     fun createPersonaService(
         findPersonaPort: FindPersonaPort,
         generatePersonaIdentifierPort: GeneratePersonaIdentifierPort,
         insertPersonaPort: InsertPersonaPort,
     ): CreatePersonaService = CreatePersonaService(findPersonaPort, generatePersonaIdentifierPort, insertPersonaPort)
+
+    @Bean
+    fun getAllPersonasService(findAllPersonasPort: FindAllPersonasPort): GetAllPersonasService = GetAllPersonasService(findAllPersonasPort)
 }

@@ -15,10 +15,14 @@ import pl.taurus.reviseo.persona.adapter.outgoing.h2.PersonaRepository
 @SpringBootTest
 @ApplyExtension(SpringExtension::class)
 @AutoConfigureMockMvc
-internal class PersonaRestControllerModuleTest(
+internal class CreatePersonaRestControllerModuleTest(
     mockMvc: MockMvc,
     personaRepository: PersonaRepository,
 ) : BehaviorSpec({
+
+        afterContainer {
+            personaRepository.deleteAll()
+        }
 
         Context("Should create persona") {
             Given("Request with valid parameters") {

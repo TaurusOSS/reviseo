@@ -3,6 +3,7 @@ package pl.taurus.reviseo.persona.adapter.outgoing.h2
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate
 import org.springframework.stereotype.Component
 import pl.taurus.reviseo.persona.application.domain.model.Persona
+import pl.taurus.reviseo.persona.application.port.outgoing.FindAllPersonasPort
 import pl.taurus.reviseo.persona.application.port.outgoing.FindPersonaPort
 import pl.taurus.reviseo.persona.application.port.outgoing.InsertPersonaPort
 
@@ -11,6 +12,7 @@ internal class PersonaH2Adapter(
     private val repository: PersonaRepository,
     private val jdbcAggregateTemplate: JdbcAggregateTemplate,
 ) : FindPersonaPort,
+    FindAllPersonasPort,
     InsertPersonaPort {
     override fun byName(name: String): Persona? = repository.findByName(name)?.toDomain()
 
@@ -31,4 +33,9 @@ internal class PersonaH2Adapter(
             persona.checklist.value.toTypedArray(),
             persona.keyAspects.value.toTypedArray(),
         )
+
+    override fun findAll(): List<Persona> =
+        repository
+            .findAll()
+            .map { it.toDomain() }
 }
