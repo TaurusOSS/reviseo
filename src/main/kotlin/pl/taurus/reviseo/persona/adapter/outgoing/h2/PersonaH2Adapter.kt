@@ -8,6 +8,7 @@ import pl.taurus.reviseo.persona.application.port.outgoing.DeletePersonaPort
 import pl.taurus.reviseo.persona.application.port.outgoing.FindAllPersonasPort
 import pl.taurus.reviseo.persona.application.port.outgoing.FindPersonaPort
 import pl.taurus.reviseo.persona.application.port.outgoing.InsertPersonaPort
+import pl.taurus.reviseo.persona.application.port.outgoing.UpdatePersonaPort
 
 @Component
 internal class PersonaH2Adapter(
@@ -16,8 +17,16 @@ internal class PersonaH2Adapter(
 ) : FindPersonaPort,
     FindAllPersonasPort,
     InsertPersonaPort,
-    DeletePersonaPort {
+    DeletePersonaPort,
+    UpdatePersonaPort {
     override fun byName(name: String): Persona? = repository.findByName(name)?.toDomain()
+
+    override fun byIdentifier(identifier: PersonaIdentifier): Persona? =
+        repository
+            .findById(identifier.value)
+            .map {
+                it.toDomain()
+            }.orElse(null)
 
     override fun insert(persona: Persona) {
         val entity = toEntity(persona)
@@ -25,6 +34,19 @@ internal class PersonaH2Adapter(
         // jdbcAggregateTemplate is used here because id is self-generated in the application layer
         // so repository tries to do update instead of insert
         jdbcAggregateTemplate.insert(entity)
+    }
+
+    override fun findAll(): List<Persona> =
+        repository
+            .findAll()
+            .map { it.toDomain() }
+
+    override fun delete(identifier: PersonaIdentifier) {
+        repository.deleteById(identifier.value)
+    }
+
+    override fun update(persona: Persona) {
+        repository.save(toEntity(persona))
     }
 
     private fun toEntity(persona: Persona): PersonaEntity =
@@ -36,13 +58,4 @@ internal class PersonaH2Adapter(
             persona.checklist.value.toTypedArray(),
             persona.keyAspects.value.toTypedArray(),
         )
-
-    override fun findAll(): List<Persona> =
-        repository
-            .findAll()
-            .map { it.toDomain() }
-
-    override fun delete(identifier: PersonaIdentifier) {
-        repository.deleteById(identifier.value)
-    }
 }
