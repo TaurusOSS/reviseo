@@ -7,6 +7,7 @@ import pl.taurus.reviseo.persona.application.port.outgoing.FindAllPersonasPort
 import pl.taurus.reviseo.persona.application.port.outgoing.FindPersonaPort
 import pl.taurus.reviseo.persona.application.port.outgoing.GeneratePersonaIdentifierPort
 import pl.taurus.reviseo.persona.application.port.outgoing.InsertPersonaPort
+import pl.taurus.reviseo.persona.application.port.outgoing.UpdatePersonaPort
 
 @Configuration
 internal class PersonaConfiguration {
@@ -22,4 +23,10 @@ internal class PersonaConfiguration {
 
     @Bean
     fun deletePersonaService(deletePersonaPort: DeletePersonaPort): DeletePersonaService = DeletePersonaService(deletePersonaPort)
+
+    @Bean
+    fun updatePersonaService(
+        findPersonaPort: FindPersonaPort,
+        updatePersonaPort: UpdatePersonaPort,
+    ): UpdatePersonaService = UpdatePersonaService(findPersonaPort, updatePersonaPort)
 }

@@ -7,6 +7,7 @@ import pl.taurus.reviseo.persona.application.port.outgoing.FindAllPersonasPort
 import pl.taurus.reviseo.persona.application.port.outgoing.FindPersonaPort
 import pl.taurus.reviseo.persona.application.port.outgoing.GeneratePersonaIdentifierPort
 import pl.taurus.reviseo.persona.application.port.outgoing.InsertPersonaPort
+import pl.taurus.reviseo.persona.application.port.outgoing.UpdatePersonaPort
 import java.util.UUID
 
 class PersonaTestAdapter :
@@ -14,11 +15,14 @@ class PersonaTestAdapter :
     FindAllPersonasPort,
     InsertPersonaPort,
     GeneratePersonaIdentifierPort,
-    DeletePersonaPort {
+    DeletePersonaPort,
+    UpdatePersonaPort {
     private val personas: MutableList<Persona> = mutableListOf()
     private val idsToGenerate = ArrayDeque<UUID>()
 
     override fun byName(name: String): Persona? = personas.firstOrNull { it.name.value == name }
+
+    override fun byIdentifier(identifier: PersonaIdentifier): Persona? = personas.firstOrNull { it.identifier == identifier }
 
     override fun insert(persona: Persona) {
         personas.add(persona)
@@ -42,5 +46,10 @@ class PersonaTestAdapter :
 
     override fun delete(identifier: PersonaIdentifier) {
         personas.removeIf { it.identifier == identifier }
+    }
+
+    override fun update(persona: Persona) {
+        personas.removeIf { it.identifier == persona.identifier }
+        personas.add(persona)
     }
 }
