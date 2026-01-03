@@ -1,13 +1,14 @@
 [versions]
-kotlin = "2.2.20"
-spring-boot = "3.5.6"
+kotlin = "2.3.0"
+spring-boot = "4.0.1"
 spring-dependency-management = "1.1.7"
-spotless = "8.0.0"
-kotest-plugin = "6.0.3"
-kotest = "6.0.3"
-spring-modulith = "1.4.3"
+spotless = "8.1.0"
+kotest-plugin = "6.0.7"
+kotest = "6.0.7"
+spring-modulith = "2.0.1"
 ktlint = "1.4.1"
-kotlin-logging = "7.0.13"
+kotlin-logging = "7.0.14"
+versions = "0.53.0"
 
 [libraries]
 spring-boot-starter-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator" }
@@ -15,7 +16,6 @@ spring-boot-starter-data-jdbc = { module = "org.springframework.boot:spring-boot
 spring-boot-starter-jdbc = { module = "org.springframework.boot:spring-boot-starter-jdbc" }
 spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web" }
 jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin" }
-flyway-core = { module = "org.flywaydb:flyway-core" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
 spring-modulith-starter-core = { module = "org.springframework.modulith:spring-modulith-starter-core" }
 spring-modulith-starter-jdbc = { module = "org.springframework.modulith:spring-modulith-starter-jdbc" }
@@ -23,6 +23,8 @@ h2 = { module = "com.h2database:h2" }
 spring-modulith-actuator = { module = "org.springframework.modulith:spring-modulith-actuator" }
 spring-modulith-observability = { module = "org.springframework.modulith:spring-modulith-observability" }
 spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test" }
+spring-boot-starter-webmvc-test = { module = "org.springframework.boot:spring-boot-starter-webmvc-test" }
+spring-boot-starter-flyway = { module = "org.springframework.boot:spring-boot-starter-flyway" }
 kotlin-test-junit5 = { module = "org.jetbrains.kotlin:kotlin-test-junit5" }
 spring-modulith-starter-test = { module = "org.springframework.modulith:spring-modulith-starter-test" }
 kotest-framework-engine = { module = "io.kotest:kotest-framework-engine", version.ref = "kotest" }
@@ -38,3 +40,4 @@ spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
 spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "spring-dependency-management" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 kotest = { id = "io.kotest", version.ref = "kotest-plugin" }
+versions = { id = "com.github.ben-manes.versions", version.ref = "versions" }
