@@ -208,13 +208,13 @@ class CreatePersonaServiceTest :
                 }
             }
 
-            Given("Description longer than 500 characters") {
+            Given("Description longer than 1000 characters") {
                 personaTestAdapter.addIdToGenerate(expectedIdentifier)
 
                 val command =
                     CreatePersonaUseCase.CreatePersonaCommand(
                         name = "Prompt engineer",
-                        description = "a".repeat(501),
+                        description = "a".repeat(1001),
                         customInstructions = "instr",
                         checklist = listOf("one"),
                         keyAspects = listOf("a"),
@@ -225,7 +225,7 @@ class CreatePersonaServiceTest :
                         shouldThrow<IllegalArgumentException> {
                             createPersonaService.createPersona(command)
                         }
-                    exception.message shouldBe "Persona description cannot be longer than 500 characters"
+                    exception.message shouldBe "Persona description cannot be longer than 1000 characters"
                 }
             }
         }
@@ -252,14 +252,14 @@ class CreatePersonaServiceTest :
                 }
             }
 
-            Given("Custom instructions longer than 500 characters") {
+            Given("Custom instructions longer than 1000 characters") {
                 personaTestAdapter.addIdToGenerate(expectedIdentifier)
 
                 val command =
                     CreatePersonaUseCase.CreatePersonaCommand(
                         name = "Prompt engineer",
                         description = "desc",
-                        customInstructions = "a".repeat(501),
+                        customInstructions = "a".repeat(1001),
                         checklist = listOf("one"),
                         keyAspects = listOf("a"),
                     )
@@ -269,7 +269,7 @@ class CreatePersonaServiceTest :
                         shouldThrow<IllegalArgumentException> {
                             createPersonaService.createPersona(command)
                         }
-                    exception.message shouldBe "Custom instructions cannot be longer than 500 characters"
+                    exception.message shouldBe "Custom instructions cannot be longer than 1000 characters"
                 }
             }
         }
@@ -360,10 +360,10 @@ class CreatePersonaServiceTest :
                 }
             }
 
-            Given("Checklist contains an item longer than 100 characters") {
+            Given("Checklist contains an item longer than 500 characters") {
                 personaTestAdapter.addIdToGenerate(expectedIdentifier)
 
-                val longItem = "a".repeat(101)
+                val longItem = "a".repeat(501)
                 val command =
                     CreatePersonaUseCase.CreatePersonaCommand(
                         name = "Prompt engineer",
@@ -378,7 +378,7 @@ class CreatePersonaServiceTest :
                         shouldThrow<IllegalArgumentException> {
                             createPersonaService.createPersona(command)
                         }
-                    exception.message shouldBe "Checklist cannot contain items longer than 100 characters"
+                    exception.message shouldBe "Checklist cannot contain items longer than 500 characters"
                 }
             }
         }
