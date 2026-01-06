@@ -6,6 +6,6 @@ value class PersonaDescription(
 ) {
     init {
         require(value.isNotBlank()) { "Persona description cannot be blank" }
-        require(value.length <= 500) { "Persona description cannot be longer than 500 characters" }
+        require(value.length <= 1000) { "Persona description cannot be longer than 1000 characters" }
     }
 }

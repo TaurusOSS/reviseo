@@ -9,6 +9,6 @@ value class Checklist(
         require(value.size <= 20) { "Checklist cannot have more than 20 items" }
         require(value.all { it.isNotBlank() }) { "Checklist cannot contain blank items" }
         require(value.distinct().size == value.size) { "Checklist cannot contain duplicate items" }
-        require(value.none { it.length > 100 }) { "Checklist cannot contain items longer than 100 characters" }
+        require(value.none { it.length > 500 }) { "Checklist cannot contain items longer than 500 characters" }
     }
 }
