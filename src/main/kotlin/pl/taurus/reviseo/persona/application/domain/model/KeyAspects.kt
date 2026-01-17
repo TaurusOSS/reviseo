@@ -18,6 +18,6 @@ value class KeyAspects(
             "Key aspects cannot contain duplicate items"
         }
         require(value.none { it.length > 100 }) { "Key aspects cannot contain items longer than 100 characters" }
-        require(value.none { it.contains("[^A-Za-z]".toRegex()) }) { "Key aspects cannot contain special characters" }
+        require(value.none { it.contains(Regex("[^A-Za-z ]")) }) { "Key aspects cannot contain special characters" }
     }
 }

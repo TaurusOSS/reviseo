@@ -491,7 +491,7 @@ class CreatePersonaServiceTest :
                 }
             }
 
-            withData("as,pect", "a.spect", "a spect", "a#spect", "a%spect", "a&spect", "a*spect", "a(spect", "a)spect") { invalidAspect ->
+            withData("as,pect", "a.spect", "a#spect", "a%spect", "a&spect", "a*spect", "a(spect", "a)spect") { invalidAspect ->
                 Given("Key aspects contains an item with special characters: '$invalidAspect'") {
                     personaTestAdapter.addIdToGenerate(expectedIdentifier)
 
