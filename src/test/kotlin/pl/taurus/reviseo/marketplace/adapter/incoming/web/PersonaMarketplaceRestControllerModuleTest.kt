@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import pl.taurus.reviseo.marketplace.adapter.outgoing.h2.MarketplacePersonaRepository
+import pl.taurus.reviseo.persona.adapter.outgoing.h2.PersonaRepository
 
 @SpringBootTest
 @ApplyExtension(SpringExtension::class)
@@ -18,9 +19,13 @@ import pl.taurus.reviseo.marketplace.adapter.outgoing.h2.MarketplacePersonaRepos
 internal class PersonaMarketplaceRestControllerModuleTest(
     mockMvc: MockMvc,
     marketplacePersonaRepository: MarketplacePersonaRepository,
+    personaRepository: PersonaRepository,
 ) : BehaviorSpec({
 
-        afterContainer { marketplacePersonaRepository.deleteAll() }
+        afterContainer {
+            marketplacePersonaRepository.deleteAll()
+            personaRepository.deleteAll()
+        }
 
         Context("Should reload marketplace") {
             When("Request is sent") {
@@ -81,6 +86,42 @@ internal class PersonaMarketplaceRestControllerModuleTest(
                                     "$.personas[?(@.name == 'Clean Code Expert')].keyAspects.length()",
                                 ) { value(cleanCodeExpert.keyAspects.size) }
                                 jsonPath("$.personas[?(@.name == 'Clean Code Expert')].keyAspects[*]") {
+                                    value(containsInAnyOrder(*cleanCodeExpert.keyAspects))
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        Context("Should install marketplace persona") {
+            Given("Reloaded marketplace") {
+                mockMvc.post("/api/marketplace/personas/reload")
+                val cleanCodeExpert =
+                    marketplacePersonaRepository
+                        .findAll()
+                        .find { it.name == "Clean Code Expert" }!!
+
+                When("Installation request is sent") {
+                    val resultActions = mockMvc.post("/api/marketplace/personas/${cleanCodeExpert.identifier}/install")
+
+                    Then("Persona is installed") {
+                        resultActions.andExpect { status { isNoContent() } }
+
+                        mockMvc.get("/api/personas").andExpect {
+                            status { isOk() }
+                            content {
+                                jsonPath("$.personas.length()") { value(1) }
+                                jsonPath("$.personas[0].name") { value(cleanCodeExpert.name) }
+                                jsonPath("$.personas[0].description") { value(cleanCodeExpert.description) }
+                                jsonPath("$.personas[0].customInstructions") { value(cleanCodeExpert.customInstructions) }
+                                jsonPath("$.personas[0].checklist.length()") { value(cleanCodeExpert.checklist.size) }
+                                jsonPath("$.personas[0].checklist[*]") {
+                                    value(containsInAnyOrder(*cleanCodeExpert.checklist))
+                                }
+                                jsonPath("$.personas[0].keyAspects.length()") { value(cleanCodeExpert.keyAspects.size) }
+                                jsonPath("$.personas[0].keyAspects[*]") {
                                     value(containsInAnyOrder(*cleanCodeExpert.keyAspects))
                                 }
                             }

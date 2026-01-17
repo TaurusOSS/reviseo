@@ -4,8 +4,10 @@ import org.springframework.data.jdbc.core.JdbcAggregateTemplate
 import org.springframework.stereotype.Component
 import pl.taurus.reviseo.marketplace.application.domain.model.MarketplacePersona
 import pl.taurus.reviseo.marketplace.application.port.outgoing.FindAllMarketplacePersonasPort
+import pl.taurus.reviseo.marketplace.application.port.outgoing.FindMarketplacePersonaPort
 import pl.taurus.reviseo.marketplace.application.port.outgoing.InsertMarketplacePersonaPort
 import pl.taurus.reviseo.marketplace.application.port.outgoing.RemoveMarketplacePersonaPort
+import java.util.UUID
 
 @Component
 internal class MarketplacePersonaH2Adapter(
@@ -13,7 +15,8 @@ internal class MarketplacePersonaH2Adapter(
     private val jdbcAggregateTemplate: JdbcAggregateTemplate,
 ) : RemoveMarketplacePersonaPort,
     InsertMarketplacePersonaPort,
-    FindAllMarketplacePersonasPort {
+    FindAllMarketplacePersonasPort,
+    FindMarketplacePersonaPort {
     override fun removeAll() {
         repository.deleteAll()
     }
@@ -25,6 +28,9 @@ internal class MarketplacePersonaH2Adapter(
     }
 
     override fun findAll(): List<MarketplacePersona> = repository.findAll().map { fromEntity(it) }
+
+    override fun findByIdentifier(identifier: UUID): MarketplacePersona? =
+        repository.findById(identifier).map { fromEntity(it) }.orElse(null)
 
     private fun toEntity(persona: MarketplacePersona): MarketplacePersonaEntity =
         MarketplacePersonaEntity(
