@@ -34,9 +34,21 @@ internal class PersonaMarketplaceRestControllerModuleTest(
                 Then("Marketplace is reloaded") {
                     resultActions.andExpect { status { isNoContent() } }
 
-                    marketplacePersonaRepository.count() shouldBe 3
+                    marketplacePersonaRepository.count() shouldBe 11
                     marketplacePersonaRepository.findAll().map { it.name } shouldBe
-                        listOf("Software Architect", "Clean Code Expert", "Security Expert")
+                        listOf(
+                            "Prompt Engineer",
+                            "Hexagonal Architecture Expert",
+                            "Modular Monolith Expert",
+                            "Software Architect",
+                            "Concurrency Expert",
+                            "Clean Code Expert",
+                            "Database Interaction Expert",
+                            "Azure Pipelines Architect",
+                            "Spring Batch Expert",
+                            "Security Expert",
+                            "Testing Expert",
+                        )
                 }
             }
         }
@@ -53,13 +65,21 @@ internal class PersonaMarketplaceRestControllerModuleTest(
                         resultActions.andExpect {
                             status { isOk() }
                             content {
-                                jsonPath("$.personas.length()") { value(3) }
+                                jsonPath("$.personas.length()") { value(11) }
                                 jsonPath("$.personas[*].name") {
                                     value(
                                         containsInAnyOrder(
+                                            "Prompt Engineer",
+                                            "Hexagonal Architecture Expert",
+                                            "Modular Monolith Expert",
                                             "Software Architect",
+                                            "Concurrency Expert",
                                             "Clean Code Expert",
+                                            "Database Interaction Expert",
+                                            "Azure Pipelines Architect",
+                                            "Spring Batch Expert",
                                             "Security Expert",
+                                            "Testing Expert",
                                         ),
                                     )
                                 }
