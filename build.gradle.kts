@@ -15,7 +15,7 @@ java {
 }
 
 application {
-    mainClass.set("pl.taurus.reviseo.ReviseoApplication")
+    mainClass.set("pl.taurus.reviseo.ReviseoApplicationKt")
 }
 
 repositories {
@@ -24,6 +24,7 @@ repositories {
 
 dependencies {
     implementation(project("backend"))
+    implementation(project("frontend"))
 }
 
 dependencyManagement {

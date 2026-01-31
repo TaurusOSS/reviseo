@@ -16,7 +16,7 @@
     "Do logging, metrics, and monitoring allow understanding job behavior without inspecting the code?"
   ],
   "keyAspects": [
-    "batch-processing",
+    "batch",
     "reliability",
     "scalability"
   ]

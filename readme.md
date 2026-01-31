@@ -2,6 +2,10 @@
 
 ## Local development
 
+### Running the app
+
+Execute `./run-dev.sh` to start the app (frontend and backend) in development mode.
+
 ### Testing
 
 This project uses the Kotest framework for tests.

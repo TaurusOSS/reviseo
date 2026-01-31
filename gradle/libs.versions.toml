@@ -10,6 +10,7 @@ ktlint = "1.4.1"
 kotlin-logging = "7.0.14"
 versions = "0.53.0"
 jackson-module-kotlin = "3.0.3"
+gradle-node = "7.1.0"
 
 [libraries]
 spring-boot-starter-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator" }
@@ -42,3 +43,4 @@ spring-dependency-management = { id = "io.spring.dependency-management", version
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 kotest = { id = "io.kotest", version.ref = "kotest-plugin" }
 versions = { id = "com.github.ben-manes.versions", version.ref = "versions" }
+gradle-node = { id = "com.github.node-gradle.node", version.ref = "gradle-node" }
