@@ -20,7 +20,7 @@
   ],
   "keyAspects": [
     "security",
-    "threat-modeling",
-    "trust-boundaries"
+    "threat modeling",
+    "trust boundaries"
   ]
 }

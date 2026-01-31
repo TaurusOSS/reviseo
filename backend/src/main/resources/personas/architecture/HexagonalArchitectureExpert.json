@@ -16,7 +16,7 @@
     "Is the dependency direction consistently pointing inward, and is this rule visible and enforceable across the codebase?"
   ],
   "keyAspects": [
-    "hexagonal-architecture",
+    "hexagonal",
     "domain",
     "boundaries"
   ]
