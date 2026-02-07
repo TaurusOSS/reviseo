@@ -44,6 +44,7 @@ dependencies {
     testImplementation(libs.kotest.framework.engine)
     testImplementation(libs.kotest.runner.junit5)
     testImplementation(libs.kotest.extensions.spring)
+    testImplementation(libs.mockk)
     testRuntimeOnly(libs.junit.platform.launcher)
 }
 
