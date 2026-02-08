@@ -6,6 +6,7 @@ import io.kotest.extensions.spring.SpringExtension
 import io.kotest.matchers.shouldBe
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.delete
 import pl.taurus.reviseo.persona.adapter.outgoing.h2.PersonaRepository
@@ -13,6 +14,7 @@ import pl.taurus.reviseo.persona.application.domain.model.persona
 import pl.taurus.reviseo.persona.application.port.outgoing.InsertPersonaPort
 
 @SpringBootTest
+@ActiveProfiles("test")
 @ApplyExtension(SpringExtension::class)
 @AutoConfigureMockMvc
 internal class DeletePersonaRestControllerModuleTest(

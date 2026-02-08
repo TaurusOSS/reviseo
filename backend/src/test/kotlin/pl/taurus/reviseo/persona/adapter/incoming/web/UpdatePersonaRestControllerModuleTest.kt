@@ -7,6 +7,7 @@ import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -15,6 +16,7 @@ import pl.taurus.reviseo.persona.application.domain.model.persona
 import pl.taurus.reviseo.persona.application.port.outgoing.InsertPersonaPort
 
 @SpringBootTest
+@ActiveProfiles("test")
 @ApplyExtension(SpringExtension::class)
 @AutoConfigureMockMvc
 internal class UpdatePersonaRestControllerModuleTest(
