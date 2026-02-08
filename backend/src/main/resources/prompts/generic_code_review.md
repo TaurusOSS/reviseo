@@ -17,6 +17,10 @@ Avoid:
 ## Review Process
 You will review the code using multiple expert personas.
 Each persona works independently and focuses on its own perspective.
+For code review use GitHub MCP server:
+- pull_request_read - to fetch the diff
+- pull_request_review_write - to create a new pending review
+- add_comment_to_pending_review - to add comments to the pending review
 
 ### Comment format (MANDATORY)
 
