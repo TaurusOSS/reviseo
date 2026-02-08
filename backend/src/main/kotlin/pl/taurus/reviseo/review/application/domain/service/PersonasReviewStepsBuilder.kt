@@ -2,21 +2,15 @@ package pl.taurus.reviseo.review.application.domain.service
 
 import pl.taurus.reviseo.persona.application.domain.model.Persona
 
-class CodeReviewPromptBuilder {
-    private val generalInstructions = mutableListOf<String>()
+class PersonasReviewStepsBuilder {
     private val steps = mutableListOf<String>()
 
-    fun addGeneralInstruction(instruction: String): CodeReviewPromptBuilder {
-        generalInstructions.add(instruction)
-        return this
-    }
-
-    fun addPersonas(personas: List<Persona>): CodeReviewPromptBuilder {
+    fun addPersonas(personas: List<Persona>): PersonasReviewStepsBuilder {
         personas.forEach { addPersona(it) }
         return this
     }
 
-    fun addPersona(persona: Persona): CodeReviewPromptBuilder {
+    fun addPersona(persona: Persona): PersonasReviewStepsBuilder {
         val personaInstructions = StringBuilder()
         personaInstructions.append(persona.customInstructions.value)
         personaInstructions.append("\n")
@@ -29,15 +23,11 @@ class CodeReviewPromptBuilder {
     fun addStep(
         title: String,
         instructions: String,
-    ): CodeReviewPromptBuilder {
+    ): PersonasReviewStepsBuilder {
         val newStepNumber = steps.size + 1
         steps.add("Step $newStepNumber: $title\n$instructions\n")
         return this
     }
 
-    fun build(): String {
-        val joinedGeneralInstructions = generalInstructions.joinToString("\n")
-        val joinedSteps = steps.joinToString("\n")
-        return (joinedGeneralInstructions + "\n\n" + joinedSteps).trim()
-    }
+    fun build(): String = steps.joinToString("\n").removeSuffix("\n")
 }
