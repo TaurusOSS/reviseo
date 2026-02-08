@@ -21,7 +21,7 @@ echo "🔧 Starting backend..."
 ./gradlew :backend:bootRun &
 BACKEND_PID=$!
 
-sleep 5
+sleep 1
 
 echo "📱 Starting frontend..."
 ./gradlew :frontend:npmDev &
