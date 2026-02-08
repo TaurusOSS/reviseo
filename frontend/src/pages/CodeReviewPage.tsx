@@ -12,21 +12,35 @@ import {
   CircularProgress,
   Alert,
   Snackbar,
-  IconButton,
   Tooltip,
 } from '@mui/material';
+import { alpha, styled } from '@mui/material/styles';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import CheckIcon from '@mui/icons-material/Check';
 import { personaApi } from '../api/personaApi';
 import { reviewApi } from '../api/reviewApi';
 import type { Persona } from '../types/persona';
 
+const PersonaCard = styled(Card, {
+  shouldForwardProp: (prop) => prop !== 'isSelected',
+})<{ isSelected?: boolean }>(({ theme, isSelected }) => ({
+  height: '100%',
+  border: isSelected ? `2px solid ${theme.palette.primary.main}` : `1px solid ${theme.palette.divider}`,
+  backgroundColor: isSelected ? alpha(theme.palette.primary.main, 0.08) : theme.palette.background.paper,
+  transition: theme.transitions.create(['all'], {
+    duration: theme.transitions.duration.shortest,
+  }),
+  '&:hover': {
+    borderColor: theme.palette.primary.main,
+  },
+}));
+
 const CodeReviewPage: React.FC = () => {
   const [personas, setPersonas] = useState<Persona[]>([]);
   const [selectedPersonas, setSelectedPersonas] = useState<string[]>([]);
   const [pullRequestUrl, setPullRequestUrl] = useState('');
   const [generatedPrompt, setGeneratedPrompt] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [isGeneratingPrompt, setIsGeneratingPrompt] = useState(false);
   const [fetchingPersonas, setFetchingPersonas] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [copySuccess, setCopySuccess] = useState(false);
@@ -67,7 +81,7 @@ const CodeReviewPage: React.FC = () => {
     }
 
     try {
-      setLoading(true);
+      setIsGeneratingPrompt(true);
       setError(null);
       const prompt = await reviewApi.generatePrompt({
         pullRequestUrl,
@@ -78,7 +92,7 @@ const CodeReviewPage: React.FC = () => {
       setError('Failed to generate prompt. Please check the URL and try again.');
       console.error(err);
     } finally {
-      setLoading(false);
+      setIsGeneratingPrompt(false);
     }
   };
 
@@ -119,7 +133,7 @@ const CodeReviewPage: React.FC = () => {
             value={pullRequestUrl}
             onChange={(e) => setPullRequestUrl(e.target.value)}
             variant="outlined"
-            disabled={loading}
+            disabled={isGeneratingPrompt}
           />
         </Box>
 
@@ -134,16 +148,8 @@ const CodeReviewPage: React.FC = () => {
             {personas.map((persona) => {
               const isSelected = selectedPersonas.includes(persona.identifier);
               return (
-                <Grid item xs={12} sm={6} md={4} key={persona.identifier}>
-                  <Card
-                    sx={{
-                      height: '100%',
-                      border: isSelected ? '2px solid' : '1px solid',
-                      borderColor: isSelected ? 'primary.main' : 'divider',
-                      bgcolor: isSelected ? 'rgba(0, 229, 255, 0.08)' : 'background.paper',
-                      transition: 'all 0.2s',
-                    }}
-                  >
+                <Grid size={{ xs: 12, sm: 6, md: 4 }} key={persona.identifier}>
+                  <PersonaCard isSelected={isSelected}>
                     <CardActionArea
                       onClick={() => handleTogglePersona(persona.identifier)}
                       sx={{ height: '100%', p: 1 }}
@@ -160,7 +166,7 @@ const CodeReviewPage: React.FC = () => {
                         </Typography>
                       </CardContent>
                     </CardActionArea>
-                  </Card>
+                  </PersonaCard>
                 </Grid>
               );
             })}
@@ -172,10 +178,10 @@ const CodeReviewPage: React.FC = () => {
           fullWidth
           size="large"
           onClick={handleGeneratePrompt}
-          disabled={loading || !pullRequestUrl || selectedPersonas.length === 0}
+          disabled={isGeneratingPrompt || !pullRequestUrl || selectedPersonas.length === 0}
           sx={{ py: 1.5 }}
         >
-          {loading ? <CircularProgress size={24} color="inherit" /> : 'Generate Code Review Prompt'}
+          {isGeneratingPrompt ? <CircularProgress size={24} color="inherit" /> : 'Generate Code Review Prompt'}
         </Button>
       </Paper>
 
@@ -205,7 +211,7 @@ const CodeReviewPage: React.FC = () => {
             component="pre"
             sx={{
               p: 2,
-              bgcolor: 'rgba(0,0,0,0.2)',
+              bgcolor: (theme) => alpha(theme.palette.common.black, 0.2),
               borderRadius: 1,
               whiteSpace: 'pre-wrap',
               wordBreak: 'break-word',
