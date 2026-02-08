@@ -5,6 +5,7 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.extensions.spring.SpringExtension
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.json.JsonCompareMode
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
@@ -15,6 +16,7 @@ import pl.taurus.reviseo.testsupport.file.readFile
 import java.util.UUID
 
 @SpringBootTest
+@ActiveProfiles("test")
 @ApplyExtension(SpringExtension::class)
 @AutoConfigureMockMvc
 internal class GetPersonasRestControllerModuleTest(
