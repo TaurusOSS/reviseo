@@ -6,6 +6,6 @@ value class CustomInstructions(
 ) {
     init {
         require(value.isNotBlank()) { "Custom instructions cannot be blank" }
-        require(value.length <= 1000) { "Custom instructions cannot be longer than 1000 characters" }
+        require(value.length <= 4000) { "Custom instructions cannot be longer than 4000 characters" }
     }
 }
