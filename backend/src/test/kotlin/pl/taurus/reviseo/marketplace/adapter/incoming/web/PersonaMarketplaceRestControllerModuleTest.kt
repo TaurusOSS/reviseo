@@ -36,19 +36,23 @@ internal class PersonaMarketplaceRestControllerModuleTest(
                 Then("Marketplace is reloaded") {
                     resultActions.andExpect { status { isNoContent() } }
 
-                    marketplacePersonaRepository.count() shouldBe 11
-                    marketplacePersonaRepository.findAll().map { it.name } shouldBe
+                    marketplacePersonaRepository.count() shouldBe 15
+                    marketplacePersonaRepository.findAll().map { it.name }.sorted() shouldBe
                         listOf(
-                            "Prompt Engineer",
+                            "Azure Pipelines Architect",
+                            "Backward Compatibility Expert",
+                            "Clean Code Expert",
+                            "Concurrency Expert",
+                            "Database Interaction Expert",
                             "Hexagonal Architecture Expert",
                             "Modular Monolith Expert",
-                            "Software Architect",
-                            "Concurrency Expert",
-                            "Clean Code Expert",
-                            "Database Interaction Expert",
-                            "Azure Pipelines Architect",
-                            "Spring Batch Expert",
+                            "Observability Expert",
+                            "Prompt Engineer",
+                            "Reliability Engineer",
                             "Security Expert",
+                            "Skeptical Architect",
+                            "Software Architect",
+                            "Spring Batch Expert",
                             "Testing Expert",
                         )
                 }
@@ -67,7 +71,7 @@ internal class PersonaMarketplaceRestControllerModuleTest(
                         resultActions.andExpect {
                             status { isOk() }
                             content {
-                                jsonPath("$.personas.length()") { value(11) }
+                                jsonPath("$.personas.length()") { value(15) }
                                 jsonPath("$.personas[*].name") {
                                     value(
                                         containsInAnyOrder(
@@ -82,6 +86,10 @@ internal class PersonaMarketplaceRestControllerModuleTest(
                                             "Spring Batch Expert",
                                             "Security Expert",
                                             "Testing Expert",
+                                            "Skeptical Architect",
+                                            "Reliability Engineer",
+                                            "Observability Expert",
+                                            "Backward Compatibility Expert",
                                         ),
                                     )
                                 }
