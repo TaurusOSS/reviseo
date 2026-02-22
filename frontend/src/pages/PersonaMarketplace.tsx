@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Dialog, DialogTitle, DialogContent, Typography, Box, Grid, CircularProgress, Alert, Button, IconButton, Snackbar } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, Typography, Box, Grid, CircularProgress, Alert, Button, IconButton, Snackbar, FormControlLabel, Switch } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import FilterListIcon from '@mui/icons-material/FilterList';
 import { personaApi } from '../api/personaApi';
 import type { MarketplacePersona } from '../types/persona';
 import PersonaCard from '../components/PersonaCard';
@@ -18,6 +19,9 @@ const PersonaMarketplace: React.FC<PersonaMarketplaceProps> = ({ open, onClose }
   const [error, setError] = useState<string | null>(null);
   const [selectedPersona, setSelectedPersona] = useState<MarketplacePersona | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [hideInstalled, setHideInstalled] = useState(false);
+
+  const filteredPersonas = hideInstalled ? personas.filter(p => !p.isInstalled) : personas;
 
   const fetchMarketplace = async () => {
     try {
@@ -56,6 +60,7 @@ const PersonaMarketplace: React.FC<PersonaMarketplaceProps> = ({ open, onClose }
     try {
       await personaApi.installPersona(id);
       setSuccessMessage('Persona installed successfully!');
+      fetchMarketplace();
     } catch (err) {
       setError('Failed to install persona');
       console.error(err);
@@ -65,11 +70,30 @@ const PersonaMarketplace: React.FC<PersonaMarketplaceProps> = ({ open, onClose }
   return (
     <Dialog open={open} onClose={onClose} fullScreen>
       <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 3, bgcolor: 'background.paper' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
           <Typography variant="h4" sx={{ color: 'primary.main', fontWeight: 'bold' }}>Marketplace</Typography>
-          <Button startIcon={<RefreshIcon />} onClick={handleReload} disabled={loading} variant="outlined" size="small">
-            Reload
-          </Button>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Button startIcon={<RefreshIcon />} onClick={handleReload} disabled={loading} variant="outlined" size="small">
+              Reload
+            </Button>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={hideInstalled}
+                  onChange={(e) => setHideInstalled(e.target.checked)}
+                  color="primary"
+                  size="small"
+                />
+              }
+              label={
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  <FilterListIcon fontSize="small" />
+                  <Typography variant="body2">Hide installed</Typography>
+                </Box>
+              }
+              sx={{ ml: 1 }}
+            />
+          </Box>
         </Box>
         <IconButton onClick={onClose} size="large">
           <CloseIcon />
@@ -84,20 +108,20 @@ const PersonaMarketplace: React.FC<PersonaMarketplaceProps> = ({ open, onClose }
           </Box>
         ) : (
           <Grid container spacing={3}>
-            {personas.map((persona) => (
+            {filteredPersonas.map((persona) => (
               <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={persona.identifier}>
                 <PersonaCard
                   persona={persona}
                   isMarketplace
                   onInstall={handleInstall}
-                  onClick={(p) => setSelectedPersona(p)}
+                  onClick={(p) => setSelectedPersona(p as MarketplacePersona)}
                 />
               </Grid>
             ))}
-            {personas.length === 0 && !error && (
+            {filteredPersonas.length === 0 && !error && (
               <Grid size={{ xs: 12 }}>
                 <Typography color="text.secondary" textAlign="center" sx={{ mt: 8 }}>
-                  Marketplace is empty. Try reloading.
+                  {hideInstalled ? 'No new personas available.' : 'Marketplace is empty. Try reloading.'}
                 </Typography>
               </Grid>
             )}

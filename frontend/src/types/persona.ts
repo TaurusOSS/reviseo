@@ -23,4 +23,6 @@ export interface UpdatePersonaRequest {
   keyAspects: string[];
 }
 
-export type MarketplacePersona = Persona;
+export interface MarketplacePersona extends Persona {
+  isInstalled: boolean;
+}

@@ -5,9 +5,9 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RestController
-import pl.taurus.reviseo.marketplace.application.domain.model.MarketplacePersona
 import pl.taurus.reviseo.marketplace.application.port.incoming.GetPersonasUseCase
 import pl.taurus.reviseo.marketplace.application.port.incoming.InstallPersonaUseCase
+import pl.taurus.reviseo.marketplace.application.port.incoming.MarketplacePersonaView
 import pl.taurus.reviseo.marketplace.application.port.incoming.ReloadMarketplaceUseCase
 import java.util.UUID
 
@@ -35,6 +35,6 @@ class PersonaMarketplaceRestController(
     }
 
     data class GetPersonasResponse(
-        val personas: List<MarketplacePersona>,
+        val personas: List<MarketplacePersonaView>,
     )
 }

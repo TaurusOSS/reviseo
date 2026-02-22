@@ -17,4 +17,6 @@ class GetAllPersonasService(
         logger.debug { "Found ${allPersonas.size} personas" }
         return allPersonas.sortedBy { it.name.value }
     }
+
+    override fun getAllPersonaNames(): List<String> = findAllPersonasPort.findAll().map { it.name.value }
 }

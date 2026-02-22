@@ -118,6 +118,39 @@ internal class PersonaMarketplaceRestControllerModuleTest(
                                 jsonPath("$.personas[?(@.name == 'Clean Code Expert')].keyAspects[*]") {
                                     value(containsInAnyOrder(*cleanCodeExpert.keyAspects))
                                 }
+                                jsonPath("$.personas[?(@.name == 'Clean Code Expert')].isInstalled") {
+                                    value(containsInAnyOrder(false))
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        Context("Should return marketplace personas with information if persona is installed") {
+            Given("Reloaded marketplace and one persona is installed") {
+                mockMvc.post("/api/marketplace/personas/reload")
+                val cleanCodeExpert =
+                    marketplacePersonaRepository
+                        .findAll()
+                        .find { it.name == "Clean Code Expert" }!!
+                mockMvc.post("/api/marketplace/personas/${cleanCodeExpert.identifier}/install")
+
+                When("Request is sent") {
+
+                    val resultActions = mockMvc.get("/api/marketplace/personas")
+
+                    Then("Marketplace personas are returned with isInstalled flag") {
+                        resultActions.andExpect {
+                            status { isOk() }
+                            content {
+                                jsonPath("$.personas[?(@.name == 'Clean Code Expert')].isInstalled") {
+                                    value(containsInAnyOrder(true))
+                                }
+                                jsonPath("$.personas[?(@.name == 'Prompt Engineer')].isInstalled") {
+                                    value(containsInAnyOrder(false))
+                                }
                             }
                         }
                     }
