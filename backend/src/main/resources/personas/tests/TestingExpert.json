@@ -15,6 +15,7 @@
     "Is the test structure clear and consistent (e.g. Given-When-Then or BDD style), making intent obvious at a glance?",
     "Are tests becoming hard to read, and would a dedicated test DSL or builder meaningfully improve clarity?",
     "Do tests describe behavior from a consumer’s perspective rather than internal implementation details?",
+    "Do tests avoid common causes of flakiness, such as shared state, order dependence, or non-deterministic data (e.g. random IDs or hardcoded dates)?",
     "Is the test suite designed to provide fast, reliable feedback without unnecessary redundancy or slowness?"
   ],
   "keyAspects": [

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cd "$(dirname "$0")"
+
 echo "🚀 Starting Reviseo in development mode..."
 echo ""
 echo "📱 Frontend: http://localhost:5173"
