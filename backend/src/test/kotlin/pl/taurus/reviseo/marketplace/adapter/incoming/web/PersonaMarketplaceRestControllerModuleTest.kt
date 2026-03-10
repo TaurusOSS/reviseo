@@ -36,7 +36,7 @@ internal class PersonaMarketplaceRestControllerModuleTest(
                 Then("Marketplace is reloaded") {
                     resultActions.andExpect { status { isNoContent() } }
 
-                    marketplacePersonaRepository.count() shouldBe 15
+                    marketplacePersonaRepository.count() shouldBe 16
                     marketplacePersonaRepository.findAll().map { it.name }.sorted() shouldBe
                         listOf(
                             "Azure Pipelines Architect",
@@ -47,6 +47,7 @@ internal class PersonaMarketplaceRestControllerModuleTest(
                             "Hexagonal Architecture Expert",
                             "Modular Monolith Expert",
                             "Observability Expert",
+                            "Performance Test Expert",
                             "Prompt Engineer",
                             "Reliability Engineer",
                             "Security Expert",
@@ -71,7 +72,7 @@ internal class PersonaMarketplaceRestControllerModuleTest(
                         resultActions.andExpect {
                             status { isOk() }
                             content {
-                                jsonPath("$.personas.length()") { value(15) }
+                                jsonPath("$.personas.length()") { value(16) }
                                 jsonPath("$.personas[*].name") {
                                     value(
                                         containsInAnyOrder(
@@ -90,6 +91,7 @@ internal class PersonaMarketplaceRestControllerModuleTest(
                                             "Reliability Engineer",
                                             "Observability Expert",
                                             "Backward Compatibility Expert",
+                                            "Performance Test Expert",
                                         ),
                                     )
                                 }
