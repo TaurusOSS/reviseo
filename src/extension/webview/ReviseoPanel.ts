@@ -2,8 +2,12 @@ import * as vscode from 'vscode';
 import * as crypto from 'crypto';
 import { VsCodeStoragePersonaStore } from '../VsCodeStoragePersonaStore';
 import { buildPrompt } from '../../core/promptBuilder';
+import { buildGenerationPrompt } from '../../core/generationPromptBuilder';
 import type { WebviewMessage } from '../../core/types';
 import { getWebviewHtml } from './htmlTemplate';
+import type { WebviewTab } from './WebviewTab';
+import { PersonasTab } from './tabs/personasTab';
+import { ReviewTab } from './tabs/reviewTab';
 
 export class ReviseoPanel {
     public static currentPanel: ReviseoPanel | undefined;
@@ -74,6 +78,11 @@ export class ReviseoPanel {
                 this._panel.webview.postMessage({ type: 'promptGenerated', text });
                 break;
             }
+            case 'buildGenerationPrompt': {
+                const prompt = buildGenerationPrompt(message.name);
+                this._panel.webview.postMessage({ type: 'generationPromptBuilt', prompt });
+                break;
+            }
             case 'copyToClipboard': {
                 vscode.env.clipboard.writeText(message.text);
                 break;
@@ -84,7 +93,8 @@ export class ReviseoPanel {
     private _getHtml(): string {
         const nonce = crypto.randomBytes(16).toString('hex');
         const cspSource = this._panel.webview.cspSource;
-        return getWebviewHtml(nonce, cspSource);
+        const tabs: WebviewTab[] = [new PersonasTab(), new ReviewTab()];
+        return getWebviewHtml(nonce, cspSource, tabs);
     }
 
     public dispose(): void {

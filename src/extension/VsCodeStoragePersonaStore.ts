@@ -9,7 +9,8 @@ export class VsCodeStoragePersonaStore implements PersonaStore {
     constructor(private readonly context: vscode.ExtensionContext) {}
 
     getAll(): Persona[] {
-        return this.context.globalState.get<Persona[]>(STORAGE_KEY, []);
+        return this.context.globalState.get<Persona[]>(STORAGE_KEY, [])
+            .sort((a, b) => a.name.localeCompare(b.name));
     }
 
     save(persona: Persona): void {
