@@ -43,6 +43,10 @@ export class PersonasTab implements WebviewTab {
           <label for="wizard-name">Persona Name *</label>
           <input type="text" id="wizard-name" placeholder="e.g. Security Auditor">
         </div>
+        <div class="field">
+          <label for="wizard-description">Short Description (optional)</label>
+          <textarea id="wizard-description" rows="3" placeholder="e.g. Focuses on OWASP top 10, secrets exposure, and auth flows."></textarea>
+        </div>
         <div class="form-actions">
           <button class="btn btn-secondary" id="wizard-cancel">Cancel</button>
           <button class="btn btn-primary" id="wizard-step1-next">Next</button>
@@ -241,6 +245,7 @@ export class PersonasTab implements WebviewTab {
       wizardPersonaName = '';
       wizardParsedPersona = null;
       document.getElementById('wizard-name').value = '';
+      document.getElementById('wizard-description').value = '';
       document.getElementById('wizard-response').value = '';
       document.getElementById('wizard-preview').innerHTML = '';
       document.getElementById('persona-form').classList.add('hidden');
@@ -261,7 +266,8 @@ export class PersonasTab implements WebviewTab {
       const name = document.getElementById('wizard-name').value.trim();
       if (!name) { alert('Please enter a persona name.'); return; }
       wizardPersonaName = name;
-      vscode.postMessage({ type: 'buildGenerationPrompt', name });
+      const description = document.getElementById('wizard-description').value.trim();
+      vscode.postMessage({ type: 'buildGenerationPrompt', name, ...(description && { description }) });
     });
 
     document.getElementById('wizard-copy-prompt').addEventListener('click', () => {

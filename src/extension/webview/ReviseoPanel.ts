@@ -79,7 +79,7 @@ export class ReviseoPanel {
                 break;
             }
             case 'buildGenerationPrompt': {
-                const prompt = buildGenerationPrompt(message.name);
+                const prompt = buildGenerationPrompt(message.name, message.description);
                 this._panel.webview.postMessage({ type: 'generationPromptBuilt', prompt });
                 break;
             }

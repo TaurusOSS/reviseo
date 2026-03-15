@@ -79,6 +79,20 @@ Reviseo itself has no external dependencies — it only generates the prompt tex
 
 ---
 
+## Install from source
+
+1. Clone the repository: `git clone https://github.com/TaurusOSS/reviseo`
+2. Install [vsce](https://github.com/microsoft/vscode-vsce) if you don't have it: `npm install -g @vscode/vsce`
+3. Install dependencies: `npm install`
+4. Package the extension: `vsce package`
+5. Install the generated `.vsix` file in VSCode:
+   - Open the Extensions view (`Ctrl+Shift+X` / `Cmd+Shift+X`)
+   - Click **Views and More Actions...** (the `...` menu)
+   - Select **Install from VSIX...**
+   - Pick the `.vsix` file produced in step 4
+
+---
+
 ## Release Notes
 
 ### 0.0.1
