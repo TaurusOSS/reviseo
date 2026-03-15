@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import * as crypto from 'crypto';
 import { VsCodeStoragePersonaStore } from '../VsCodeStoragePersonaStore';
 import { buildPrompt } from '../../core/promptBuilder';
+import { buildGenerationPrompt } from '../../core/generationPromptBuilder';
 import type { WebviewMessage } from '../../core/types';
 import { getWebviewHtml } from './htmlTemplate';
 import type { WebviewTab } from './WebviewTab';
@@ -75,6 +76,11 @@ export class ReviseoPanel {
                 const selected = this._store.getAll().filter(p => message.personaIds.includes(p.id));
                 const text = buildPrompt(message.prUrl, selected);
                 this._panel.webview.postMessage({ type: 'promptGenerated', text });
+                break;
+            }
+            case 'buildGenerationPrompt': {
+                const prompt = buildGenerationPrompt(message.name);
+                this._panel.webview.postMessage({ type: 'generationPromptBuilt', prompt });
                 break;
             }
             case 'copyToClipboard': {

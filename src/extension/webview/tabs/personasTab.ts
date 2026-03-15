@@ -94,6 +94,9 @@ export class PersonasTab implements WebviewTab {
 
     script(): string {
         return /* js */`
+    // ── Personas updated event ─────────────────────────────────────
+    document.addEventListener('personas-updated', renderPersonaList);
+
     // ── Rendering ──────────────────────────────────────────────────
     function renderPersonaList() {
       const list = document.getElementById('persona-list');
@@ -223,83 +226,10 @@ export class PersonasTab implements WebviewTab {
     let wizardPersonaName = '';
     let wizardParsedPersona = null;
 
-    function buildGenerationPrompt(name) {
-      return \`You are an expert in software architecture, engineering culture, and AI-driven code review design.
-
-Your task is to generate a structured JSON persona definition for a code review agent.
-
-The user will provide:
-- Persona name
-- Short persona description (1–3 sentences, possibly informal)
-
-You must generate the remaining fields and return a valid JSON object with the exact structure described below.
-
-The goal of this persona is to be used as a specialized reviewer in an AI-based code review system.
-
---------------------------------------------------
-OUTPUT FORMAT (STRICT JSON, NO MARKDOWN, NO COMMENTS)
---------------------------------------------------
-
-{
-  "name": "",
-  "customInstructions": "",
-  "checklist": [
-    "",
-    "",
-    "... 5 to 10 items total ..."
-  ]
-}
-
---------------------------------------------------
-FIELD REQUIREMENTS
---------------------------------------------------
-
-name:
-- Use the exact persona name provided by the user.
-- Do not modify unless minor grammar correction is required.
-
-customInstructions:
-- Highly specific to this persona.
-- Should define tone, priorities, depth of analysis, and what to ignore.
-- Must NOT include generic formatting instructions.
-- Must NOT define how comments should be structured.
-- Must focus only on persona-specific behavior and review philosophy.
-- Should describe:
-  - What this persona deeply cares about
-  - What it deliberately ignores
-  - How it evaluates trade-offs
-  - What kind of risks it prioritizes
-- Max 1000 chars length.
-
-checklist:
-- 5 to 10 concrete review questions.
-- Each item must reflect the persona's domain.
-- Questions must be actionable and practical.
-- Avoid generic checks like "Is the code readable?" unless persona-specific.
-- The checklist should feel like a real expert's mental model.
-
---------------------------------------------------
-QUALITY CONSTRAINTS
---------------------------------------------------
-
-- The persona must feel realistic and senior-level.
-- Avoid shallow or generic advice.
-- Avoid repeating the user's description verbatim.
-- Expand it into a deep professional perspective.
-- Make the persona opinionated but professional.
-- The checklist and instructions must clearly align with the role.
-- Ensure coherence between instructions and checklist.
-
-Return only valid JSON.
-Do not wrap it in markdown.
-Do not add explanations.
-
---------------------------------------------------
-USER INPUT
---------------------------------------------------
-
-Persona name: \${name}\`;
-    }
+    document.addEventListener('generation-prompt-built', (e) => {
+      document.getElementById('wizard-prompt').value = e.detail.prompt;
+      showWizardStep(2);
+    });
 
     function showWizardStep(step) {
       [1, 2, 3, 4].forEach(n => {
@@ -331,8 +261,7 @@ Persona name: \${name}\`;
       const name = document.getElementById('wizard-name').value.trim();
       if (!name) { alert('Please enter a persona name.'); return; }
       wizardPersonaName = name;
-      document.getElementById('wizard-prompt').value = buildGenerationPrompt(name);
-      showWizardStep(2);
+      vscode.postMessage({ type: 'buildGenerationPrompt', name });
     });
 
     document.getElementById('wizard-copy-prompt').addEventListener('click', () => {

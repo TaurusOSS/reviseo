@@ -40,6 +40,10 @@ export class ReviewTab implements WebviewTab {
 
     script(): string {
         return /* js */`
+    // ── Personas updated / prompt generated events ─────────────────
+    document.addEventListener('personas-updated', renderChecklist);
+    document.addEventListener('prompt-generated', (e) => showPrompt(e.detail.text));
+
     // ── Rendering ──────────────────────────────────────────────────
     function renderChecklist() {
       const list = document.getElementById('persona-checklist');
@@ -49,8 +53,7 @@ export class ReviewTab implements WebviewTab {
         header.classList.add('hidden');
         return;
       }
-      const sorted = [...allPersonas].sort((a, b) => a.name.localeCompare(b.name));
-      list.innerHTML = sorted.map(p => \`
+      list.innerHTML = allPersonas.map(p => \`
         <label class="persona-check-item">
           <input type="checkbox" name="persona" value="\${esc(p.id)}">
           <span>\${esc(p.name)}</span>

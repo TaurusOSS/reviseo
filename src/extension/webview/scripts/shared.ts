@@ -31,11 +31,13 @@ export function getSharedScript(): string {
         case 'personasLoaded':
         case 'personasSaved':
           allPersonas = data.personas;
-          renderPersonaList();
-          renderChecklist();
+          document.dispatchEvent(new CustomEvent('personas-updated'));
           break;
         case 'promptGenerated':
-          showPrompt(data.text);
+          document.dispatchEvent(new CustomEvent('prompt-generated', { detail: { text: data.text } }));
+          break;
+        case 'generationPromptBuilt':
+          document.dispatchEvent(new CustomEvent('generation-prompt-built', { detail: { prompt: data.prompt } }));
           break;
         case 'error':
           alert('Error: ' + data.message);
