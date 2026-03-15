@@ -10,7 +10,7 @@ export type WebviewMessage =
     | { type: 'savePersona'; persona: Persona }
     | { type: 'deletePersona'; id: string }
     | { type: 'generatePrompt'; prUrl: string; personaIds: string[] }
-    | { type: 'buildGenerationPrompt'; name: string }
+    | { type: 'buildGenerationPrompt'; name: string; description?: string }
     | { type: 'copyToClipboard'; text: string };
 
 export type ExtensionMessage =

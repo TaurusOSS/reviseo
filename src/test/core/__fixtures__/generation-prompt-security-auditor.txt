@@ -4,7 +4,6 @@ Your task is to generate a structured JSON persona definition for a code review 
 
 The user will provide:
 - Persona name
-- Short persona description (1–3 sentences, possibly informal)
 
 You must generate the remaining fields and return a valid JSON object with the exact structure described below.
 

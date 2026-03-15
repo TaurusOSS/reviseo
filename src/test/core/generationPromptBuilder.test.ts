@@ -18,4 +18,9 @@ suite('generationPromptBuilder', () => {
         const result = buildGenerationPrompt('Performance Reviewer');
         assert.ok(result.endsWith('Persona name: Performance Reviewer'));
     });
+
+    test('appends description when provided', () => {
+        const result = buildGenerationPrompt('Security Auditor', 'Focuses on OWASP top 10.');
+        assert.strictEqual(result, fixture('generation-prompt-with-description.txt'));
+    });
 });
