@@ -4,8 +4,7 @@ export function buildGenerationPrompt(name: string, description?: string): strin
 Your task is to generate a structured JSON persona definition for a code review agent.
 
 The user will provide:
-- Persona name
-- Short persona description (1–3 sentences, possibly informal)
+- Persona name${description ? '\n- Short persona description (1–3 sentences, possibly informal)' : ''}
 
 You must generate the remaining fields and return a valid JSON object with the exact structure described below.
 
