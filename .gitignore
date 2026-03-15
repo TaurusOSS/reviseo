@@ -38,3 +38,9 @@ out/
 
 ### Kotlin ###
 .kotlin
+
+### Frontend ###
+node_modules/
+.vscode-test/
+.claude
+*.vsix

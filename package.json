@@ -1,0 +1,86 @@
+{
+  "name": "reviseo",
+  "displayName": "Reviseo",
+  "description": "AI Persona based code review",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.110.0"
+  },
+  "categories": [
+    "Other",
+    "AI"
+  ],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "reviseo",
+          "title": "Reviseo",
+          "icon": "resources/reviseo-icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "reviseo": [
+        {
+          "id": "reviseo.sidebar",
+          "name": "Reviseo"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "reviseo.sidebar",
+        "contents": "Welcome to Reviseo!\n\nGenerate structured AI code review prompts using personas.\n\n[Open Reviseo](command:reviseo.openPanel)"
+      }
+    ],
+    "commands": [
+      {
+        "command": "reviseo.openPanel",
+        "title": "Reviseo: Open Review Panel",
+        "icon": "$(eye)"
+      },
+      {
+        "command": "reviseo.managePersonas",
+        "title": "Reviseo: Manage Personas"
+      },
+      {
+        "command": "reviseo.generatePrompt",
+        "title": "Reviseo: Generate Review Prompt"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        { "command": "reviseo.openPanel" },
+        { "command": "reviseo.managePersonas" },
+        { "command": "reviseo.generatePrompt" }
+      ],
+      "editor/title": [
+        {
+          "command": "reviseo.openPanel",
+          "group": "navigation"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.110.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "22.x",
+    "typescript-eslint": "^8.56.1",
+    "eslint": "^9.39.3",
+    "typescript": "^5.9.3",
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.5.2"
+  }
+}

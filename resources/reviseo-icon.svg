@@ -1,0 +1,13 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    
+    <!-- diff arrows -->
+    <path d="M7 7H17"/>
+    <path d="M7 12H13"/>
+    <path d="M7 17H11"/>
+    
+    <!-- review check -->
+    <path d="M14 15L16 17L20 13"/>
+    
+  </g>
+</svg>
