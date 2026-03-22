@@ -213,5 +213,20 @@ export function getStyles(nonce: string): string {
 
     .divider { margin: 20px 0; border: none; border-top: 1px solid var(--vscode-panel-border); }
     .hidden { display: none !important; }
+
+    .settings-toggle { margin-bottom: 8px; }
+    .additional-settings {
+      padding: 10px 12px;
+      background: var(--vscode-sideBar-background);
+      border: 1px solid var(--vscode-panel-border);
+      border-radius: 3px;
+      margin-bottom: 16px;
+    }
+    .settings-tip {
+      font-size: 0.82em;
+      opacity: 0.75;
+      margin-top: 6px;
+      padding-left: 26px;
+    }
   </style>`;
 }

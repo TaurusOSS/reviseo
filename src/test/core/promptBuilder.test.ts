@@ -44,4 +44,9 @@ suite('promptBuilder', () => {
         const result = buildPrompt('https://github.com/org/repo/pull/1', [persona]);
         assert.strictEqual(result, fixture('empty-checklist-persona.txt'));
     });
+
+    test('multi-agent: appends orchestration block after base prompt', () => {
+        const result = buildPrompt('https://github.com/org/repo/pull/1', [securityPersona, performancePersona], { multiAgent: true });
+        assert.strictEqual(result, fixture('multi-agent-two-personas.txt'));
+    });
 });

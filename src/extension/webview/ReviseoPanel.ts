@@ -74,7 +74,7 @@ export class ReviseoPanel {
             }
             case 'generatePrompt': {
                 const selected = this._store.getAll().filter(p => message.personaIds.includes(p.id));
-                const text = buildPrompt(message.prUrl, selected);
+                const text = buildPrompt(message.prUrl, selected, message.additionalSettings);
                 this._panel.webview.postMessage({ type: 'promptGenerated', text });
                 break;
             }

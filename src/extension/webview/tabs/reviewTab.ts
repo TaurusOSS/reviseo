@@ -25,6 +25,17 @@ export class ReviewTab implements WebviewTab {
       <!-- rendered by JS -->
     </div>
 
+    <div class="settings-toggle">
+      <button type="button" class="btn btn-secondary btn-sm" id="btn-toggle-settings">Show additional settings</button>
+    </div>
+    <div class="additional-settings hidden" id="additional-settings">
+      <label class="persona-check-item">
+        <input type="checkbox" id="chk-multi-agent">
+        <span>Run each persona as subagent</span>
+      </label>
+      <p class="settings-tip">Best results, but takes longer and uses more tokens.</p>
+    </div>
+
     <button class="btn btn-primary" id="btn-generate">Generate Prompt</button>
 
     <div class="prompt-output hidden" id="prompt-output">
@@ -78,6 +89,14 @@ export class ReviewTab implements WebviewTab {
       });
     }
 
+    // ── Additional settings toggle ─────────────────────────────────
+    document.getElementById('btn-toggle-settings').addEventListener('click', () => {
+      const panel = document.getElementById('additional-settings');
+      const btn = document.getElementById('btn-toggle-settings');
+      const isHidden = panel.classList.toggle('hidden');
+      btn.textContent = isHidden ? 'Show additional settings' : 'Hide additional settings';
+    });
+
     // ── Generate prompt ────────────────────────────────────────────
     document.getElementById('btn-generate').addEventListener('click', () => {
       const prUrl = document.getElementById('pr-url').value.trim();
@@ -91,7 +110,8 @@ export class ReviewTab implements WebviewTab {
         alert('Please select at least one persona.');
         return;
       }
-      vscode.postMessage({ type: 'generatePrompt', prUrl, personaIds: checked });
+      const additionalSettings = { multiAgent: document.getElementById('chk-multi-agent').checked };
+      vscode.postMessage({ type: 'generatePrompt', prUrl, personaIds: checked, additionalSettings });
     });
 
     function showPrompt(text) {

@@ -5,11 +5,15 @@ export interface Persona {
     checklist: string[];
 }
 
+export interface AdditionalSettings {
+    multiAgent: boolean;
+}
+
 export type WebviewMessage =
     | { type: 'getPersonas' }
     | { type: 'savePersona'; persona: Persona }
     | { type: 'deletePersona'; id: string }
-    | { type: 'generatePrompt'; prUrl: string; personaIds: string[] }
+    | { type: 'generatePrompt'; prUrl: string; personaIds: string[]; additionalSettings: AdditionalSettings }
     | { type: 'buildGenerationPrompt'; name: string; description?: string }
     | { type: 'copyToClipboard'; text: string };
 
