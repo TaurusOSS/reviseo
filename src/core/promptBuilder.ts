@@ -1,4 +1,4 @@
-import type { AdditionalSettings, Persona } from './types';
+import type { PromptOptions, Persona } from './types';
 
 const TEMPLATE = `You are an experienced software engineer and code reviewer.
 Your task is to perform a **pending code review** for the Pull Request provided below. Do NOT submit or approve the review — generate review comments only.
@@ -70,6 +70,10 @@ const MULTI_AGENT_EXTENSION = `---
 
 ## Multi-Agent Orchestration Mode
 
+**Note: The Final Step in the instructions above is superseded by the orchestration steps below. Do not execute it.**
+
+Your role is that of an orchestrator: you coordinate subagents, aggregate their JSON output, and submit the result. You do not perform code review yourself.
+
 You are running in multi-agent mode. Each persona step above must be executed as an independent subagent.
 
 ### Orchestration instructions
@@ -97,12 +101,13 @@ You are running in multi-agent mode. Each persona step above must be executed as
 
 4. After all subagents have returned:
    - Parse each subagent's JSON array.
-   - Identify comments that address the same underlying issue or strongly overlap in intent.
-   - Merge overlapping comments into one:
+   - Merge two comments if they reference the same file AND the same line AND their titles address the same root concern.
+   - When merging:
      - Combine the most insightful reasoning from each.
      - Set "persona" to a combined label, e.g. "Security Auditor + Performance Reviewer".
      - Use the most specific file/line reference.
-   - Remove redundant or low-value comments after merging.
+   - A comment is redundant only if its entire body is already covered by the merged comment.
+   - When in doubt, keep both comments rather than dropping one.
 
 5. Create a pending review and submit all comments via GitHub MCP:
    - pull_request_review_write
@@ -114,7 +119,9 @@ You are running in multi-agent mode. Each persona step above must be executed as
 
    If any tool call fails, report the error and stop — do not submit a partial review.`;
 
-export function buildPrompt(prUrl: string, personas: Persona[], settings: AdditionalSettings = { multiAgent: false }): string {
+const DEFAULT_PROMPT_OPTIONS: PromptOptions = { multiAgent: false };
+
+export function buildPrompt(prUrl: string, personas: Persona[], settings: PromptOptions = DEFAULT_PROMPT_OPTIONS): string {
     if (personas.length === 0) {
         return '';
     }
@@ -123,13 +130,10 @@ export function buildPrompt(prUrl: string, personas: Persona[], settings: Additi
         .map((persona, index) => buildPersonaStep(persona, index + 1))
         .join('\n\n');
 
-    let prompt = TEMPLATE
+    const basePrompt = TEMPLATE
         .replace('{{pullRequestUrl}}', prUrl)
         .replace('{{personasSteps}}', personasSteps);
 
-    if (settings.multiAgent) {
-        prompt += '\n\n' + MULTI_AGENT_EXTENSION;
-    }
-
-    return prompt;
+    const multiAgentBlock = settings.multiAgent ? `\n\n${MULTI_AGENT_EXTENSION}` : '';
+    return `${basePrompt}${multiAgentBlock}`;
 }

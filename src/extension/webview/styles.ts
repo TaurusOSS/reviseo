@@ -214,13 +214,20 @@ export function getStyles(nonce: string): string {
     .divider { margin: 20px 0; border: none; border-top: 1px solid var(--vscode-panel-border); }
     .hidden { display: none !important; }
 
-    .settings-toggle { margin-bottom: 8px; }
+    details.settings-toggle { margin-bottom: 16px; }
+    details.settings-toggle > summary {
+      list-style: none;
+      display: inline-block;
+      font-weight: normal;
+      cursor: pointer;
+    }
+    details.settings-toggle > summary::-webkit-details-marker { display: none; }
     .additional-settings {
       padding: 10px 12px;
       background: var(--vscode-sideBar-background);
       border: 1px solid var(--vscode-panel-border);
       border-radius: 3px;
-      margin-bottom: 16px;
+      margin-top: 8px;
     }
     .settings-tip {
       font-size: 0.82em;

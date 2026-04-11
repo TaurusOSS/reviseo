@@ -68,6 +68,10 @@ After all personas have generated their comments:
 
 ## Multi-Agent Orchestration Mode
 
+**Note: The Final Step in the instructions above is superseded by the orchestration steps below. Do not execute it.**
+
+Your role is that of an orchestrator: you coordinate subagents, aggregate their JSON output, and submit the result. You do not perform code review yourself.
+
 You are running in multi-agent mode. Each persona step above must be executed as an independent subagent.
 
 ### Orchestration instructions
@@ -95,12 +99,13 @@ You are running in multi-agent mode. Each persona step above must be executed as
 
 4. After all subagents have returned:
    - Parse each subagent's JSON array.
-   - Identify comments that address the same underlying issue or strongly overlap in intent.
-   - Merge overlapping comments into one:
+   - Merge two comments if they reference the same file AND the same line AND their titles address the same root concern.
+   - When merging:
      - Combine the most insightful reasoning from each.
      - Set "persona" to a combined label, e.g. "Security Auditor + Performance Reviewer".
      - Use the most specific file/line reference.
-   - Remove redundant or low-value comments after merging.
+   - A comment is redundant only if its entire body is already covered by the merged comment.
+   - When in doubt, keep both comments rather than dropping one.
 
 5. Create a pending review and submit all comments via GitHub MCP:
    - pull_request_review_write
