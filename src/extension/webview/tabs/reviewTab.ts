@@ -25,6 +25,17 @@ export class ReviewTab implements WebviewTab {
       <!-- rendered by JS -->
     </div>
 
+    <details class="settings-toggle">
+      <summary class="btn btn-secondary btn-sm">Additional settings</summary>
+      <div class="additional-settings">
+        <label class="persona-check-item">
+          <input type="checkbox" id="chk-multi-agent">
+          <span>Run each persona as subagent</span>
+        </label>
+        <p class="settings-tip">Best results, but takes longer and uses more tokens.</p>
+      </div>
+    </details>
+
     <button class="btn btn-primary" id="btn-generate">Generate Prompt</button>
 
     <div class="prompt-output hidden" id="prompt-output">
@@ -91,7 +102,9 @@ export class ReviewTab implements WebviewTab {
         alert('Please select at least one persona.');
         return;
       }
-      vscode.postMessage({ type: 'generatePrompt', prUrl, personaIds: checked });
+      const multiAgentChecked = document.getElementById('chk-multi-agent').checked;
+      const promptOptions = { multiAgent: multiAgentChecked };
+      vscode.postMessage({ type: 'generatePrompt', prUrl, personaIds: checked, promptOptions });
     });
 
     function showPrompt(text) {
