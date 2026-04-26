@@ -77,7 +77,7 @@
     "@types/vscode": "^1.116.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "25.x",
-    "typescript-eslint": "^8.56.1",
+    "typescript-eslint": "^8.59.0",
     "eslint": "^9.39.3",
     "typescript": "^5.9.3",
     "@vscode/test-cli": "^0.0.12",
