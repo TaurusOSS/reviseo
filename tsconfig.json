@@ -6,7 +6,9 @@
 		"lib": [
 			"ES2022"
 		],
+		"types": ["node", "jest", "mocha"],
 		"sourceMap": true,
+		"skipLibCheck": true,
 		"rootDir": "src",
 		"strict": true,   /* enable all strict type-checking options */
 		/* Additional Checks */
