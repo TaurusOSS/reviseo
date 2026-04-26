@@ -79,7 +79,7 @@
     "@types/node": "25.x",
     "typescript-eslint": "^8.56.1",
     "eslint": "^9.39.3",
-    "typescript": "^5.9.3",
+    "typescript": "^6.0.3",
     "@vscode/test-cli": "^0.0.12",
     "@vscode/test-electron": "^2.5.2"
   }
