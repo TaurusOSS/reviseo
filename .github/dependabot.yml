@@ -4,3 +4,10 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    cooldown:
+      default-days: 5
+    groups:
+      security-fixes:
+        applies-to: security-updates
+      versions-updates:
+        applies-to: version-updates
