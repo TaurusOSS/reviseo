@@ -26,7 +26,8 @@
       "reviseo": [
         {
           "id": "reviseo.sidebar",
-          "name": "Reviseo"
+          "name": "Reviseo",
+          "icon": "$(eye)"
         }
       ]
     },

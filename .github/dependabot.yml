@@ -9,5 +9,9 @@ updates:
     groups:
       security-fixes:
         applies-to: security-updates
+        patterns:
+          - "*"
       versions-updates:
         applies-to: version-updates
+        patterns:
+          - "*"
