@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as crypto from 'crypto';
 import { VsCodeStoragePersonaStore } from '../VsCodeStoragePersonaStore';
-import { buildPrompt } from '../../core/promptBuilder';
+import { promptBuilder, Modes } from '../../core/promptBuilder';
 import { buildGenerationPrompt } from '../../core/generationPromptBuilder';
 import type { WebviewMessage } from './types';
 import { getWebviewHtml } from './htmlTemplate';
@@ -74,7 +74,8 @@ export class ReviseoPanel {
             }
             case 'generatePrompt': {
                 const selected = this._store.getAll().filter(p => message.personaIds.includes(p.id));
-                const text = buildPrompt(message.prUrl, selected, message.promptOptions);
+                const mode = message.promptOptions.multiAgent ? Modes.MULTI_AGENT : Modes.SINGLE_AGENT;
+                const text = promptBuilder.url(message.prUrl).personas(selected).mode(mode).getText();
                 this._panel.webview.postMessage({ type: 'promptGenerated', text });
                 break;
             }

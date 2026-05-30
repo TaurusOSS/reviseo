@@ -1,7 +1,7 @@
 import * as assert from 'assert';
 import * as fs from 'fs';
 import * as path from 'path';
-import { buildPrompt } from '../../core/promptBuilder';
+import { promptBuilder, Modes } from '../../core/promptBuilder';
 import type { Persona } from '../../core/types';
 
 const securityPersona: Persona = {
@@ -26,27 +26,46 @@ function fixture(name: string): string {
 
 suite('promptBuilder', () => {
     test('returns empty string when no personas provided', () => {
-        assert.strictEqual(buildPrompt('https://github.com/org/repo/pull/1', []), '');
+        assert.strictEqual(
+            promptBuilder.url('https://github.com/org/repo/pull/1').personas([]).build().getText(),
+            ''
+        );
     });
 
     test('single persona generates expected prompt', () => {
-        const result = buildPrompt('https://github.com/org/repo/pull/1', [securityPersona]);
+        const result = promptBuilder
+            .url('https://github.com/org/repo/pull/1')
+            .personas([securityPersona])
+            .mode(Modes.SINGLE_AGENT)
+            .getText();
         assert.strictEqual(result, fixture('single-security-persona.txt'));
     });
 
     test('two personas are numbered correctly', () => {
-        const result = buildPrompt('https://github.com/org/repo/pull/1', [securityPersona, performancePersona]);
+        const result = promptBuilder
+            .url('https://github.com/org/repo/pull/1')
+            .personas([securityPersona, performancePersona])
+            .mode(Modes.SINGLE_AGENT)
+            .getText();
         assert.strictEqual(result, fixture('two-personas.txt'));
     });
 
     test('persona with empty checklist renders placeholder', () => {
         const persona: Persona = { id: 'p-3', name: 'Reviewer', customInstructions: '', checklist: [] };
-        const result = buildPrompt('https://github.com/org/repo/pull/1', [persona]);
+        const result = promptBuilder
+            .url('https://github.com/org/repo/pull/1')
+            .personas([persona])
+            .mode(Modes.SINGLE_AGENT)
+            .getText();
         assert.strictEqual(result, fixture('empty-checklist-persona.txt'));
     });
 
     test('multi-agent: appends orchestration block after base prompt', () => {
-        const result = buildPrompt('https://github.com/org/repo/pull/1', [securityPersona, performancePersona], { multiAgent: true });
+        const result = promptBuilder
+            .url('https://github.com/org/repo/pull/1')
+            .personas([securityPersona, performancePersona])
+            .mode(Modes.MULTI_AGENT)
+            .getText();
         assert.strictEqual(result, fixture('multi-agent-two-personas.txt'));
     });
 });
