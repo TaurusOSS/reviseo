@@ -18,6 +18,20 @@ const performancePersona: Persona = {
     checklist: ['N+1 query patterns', 'Memory leaks'],
 };
 
+const srgPersona: Persona = {
+    id: 'story-requirements-guardian',
+    name: 'Story Requirements Guardian',
+    customInstructions: 'Act as a QA engineer verifying that this pull request fully and faithfully implements the acceptance criteria defined in the linked Jira story. Your review is not about code quality, architecture, or style — it is exclusively about requirements coverage. For every acceptance criterion in the story, determine whether the PR satisfies it, partially satisfies it, or leaves it unaddressed. Flag any changes in the PR that go beyond the story\'s defined scope. Be specific: reference the criterion text and point to the relevant code or its absence.',
+    checklist: [
+        'Does the PR implement every acceptance criterion listed in the Jira story, with no criterion left unaddressed?',
+        'Are edge cases implied by the acceptance criteria handled, or do any criteria remain partially implemented?',
+        'Does the PR stay within the scope defined by the story, or does it introduce changes unrelated to the acceptance criteria?',
+        'Are there any out-of-scope changes that should be extracted into a separate story or PR?',
+        'Do the tests cover the acceptance criteria directly, verifying the described behaviour rather than only internal implementation details?',
+    ],
+    additionalInputs: [{ id: 'jira-url', name: 'Jira Ticket URL' }],
+};
+
 // Fixtures live in src/test/core/__fixtures__/ — resolved from the compiled out/ dir
 function fixture(name: string): string {
     const fixturePath = path.join(__dirname, '..', '..', '..', 'src', 'test', 'core', '__fixtures__', name);
@@ -68,4 +82,15 @@ suite('promptBuilder', () => {
             .getText();
         assert.strictEqual(result, fixture('multi-agent-two-personas.txt'));
     });
+
+    test('SRG persona with Jira URL in personaContext produces exact full prompt', () => {
+        const result = promptBuilder
+            .url('https://github.com/org/repo/pull/1')
+            .personas([srgPersona])
+            .context({ 'story-requirements-guardian': { 'jira-url': 'https://org.atlassian.net/browse/PROJ-42' } })
+            .mode(Modes.SINGLE_AGENT)
+            .getText();
+        assert.strictEqual(result, fixture('srg-persona-with-jira-url.txt'));
+    });
+
 });

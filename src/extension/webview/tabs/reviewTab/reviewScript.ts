@@ -35,6 +35,47 @@ export function getReviewScript(): string {
       }
       document.querySelectorAll('input[name="persona"]').forEach(cb => {
         cb.addEventListener('change', syncMaster);
+        cb.addEventListener('change', syncAdditionalInputs);
+      });
+    }
+
+    function syncAdditionalInputs() {
+      const container = document.getElementById('additional-inputs-container');
+      const checkedPersonaIds = Array.from(document.querySelectorAll('input[name="persona"]:checked'))
+        .map(el => el.value);
+      const selectedPersonas = allPersonas.filter(p => checkedPersonaIds.includes(p.id));
+
+      const existingInputIds = new Set(
+        Array.from(container.querySelectorAll('[data-persona-id]'))
+          .map(el => el.getAttribute('data-persona-id') + ':' + el.querySelector('input').getAttribute('data-input-id'))
+      );
+      const neededInputIds = new Set(
+        selectedPersonas.flatMap(p => (p.additionalInputs ?? []).map(inp => p.id + ':' + inp.id))
+      );
+
+      // Remove fields no longer needed, preserving values of fields that stay
+      Array.from(container.querySelectorAll('[data-persona-id]')).forEach(el => {
+        const key = el.getAttribute('data-persona-id') + ':' + el.querySelector('input').getAttribute('data-input-id');
+        if (!neededInputIds.has(key)) {
+          container.removeChild(el);
+        }
+      });
+
+      // Add new fields
+      selectedPersonas.forEach(p => {
+        (p.additionalInputs ?? []).forEach(inp => {
+          const key = p.id + ':' + inp.id;
+          if (!existingInputIds.has(key)) {
+            const div = document.createElement('div');
+            div.className = 'field';
+            div.setAttribute('data-persona-id', p.id);
+            div.innerHTML = \`
+              <label>\${esc(inp.name)} * <span class="settings-tip">(required by \${esc(p.name)})</span></label>
+              <input type="text" data-input-id="\${esc(inp.id)}" placeholder="\${esc(inp.name)}">
+            \`;
+            container.appendChild(div);
+          }
+        });
       });
     }
 
@@ -51,9 +92,35 @@ export function getReviewScript(): string {
         alert('Please select at least one persona.');
         return;
       }
+      const container = document.getElementById('additional-inputs-container');
+      const inputFields = Array.from(container.querySelectorAll('[data-persona-id]'));
+      for (const field of inputFields) {
+        const input = field.querySelector('input');
+        if (!input.value.trim()) {
+          const inputId = input.getAttribute('data-input-id');
+          const personaId = field.getAttribute('data-persona-id');
+          const persona = allPersonas.find(p => p.id === personaId);
+          const additionalInput = persona?.additionalInputs?.find(i => i.id === inputId);
+          alert(\`\${additionalInput?.name ?? inputId} is required for \${persona?.name ?? personaId}.\`);
+          return;
+        }
+      }
       const multiAgentChecked = document.getElementById('chk-multi-agent').checked;
       const promptOptions = { multiAgent: multiAgentChecked };
-      vscode.postMessage({ type: 'generatePrompt', prUrl, personaIds: checked, promptOptions });
+      const personaContext = {};
+      inputFields.forEach(field => {
+        const personaId = field.getAttribute('data-persona-id');
+        const input = field.querySelector('input');
+        const inputId = input.getAttribute('data-input-id');
+        const value = input.value.trim();
+        if (value) {
+          if (!personaContext[personaId]) {
+            personaContext[personaId] = {};
+          }
+          personaContext[personaId][inputId] = value;
+        }
+      });
+      vscode.postMessage({ type: 'generatePrompt', prUrl, personaIds: checked, promptOptions, personaContext });
     });
 
     function showPrompt(text) {
