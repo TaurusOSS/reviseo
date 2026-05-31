@@ -17,7 +17,7 @@ export class PersonaStepComponent extends StepComponent {
 
         const contextLines = (this._persona.additionalInputs ?? [])
             .filter(input => !!this._inputValues?.[input.id])
-            .map(input => `\n${input.name}: ${this._inputValues![input.id]}`)
+            .map(input => `\n**${input.name}:** ${this._inputValues![input.id]}`)
             .join('');
 
         return `### Step ${this._stepNumber}: ${this._persona.name}

@@ -37,14 +37,12 @@ Keep comments concise but meaningful.
 Prefer fewer, high-quality comments over many shallow ones.
 
 ### Step 1: Story Requirements Guardian
-Act as a QA engineer verifying that this pull request fully and faithfully implements the acceptance criteria defined in the linked Jira story. Your review is not about code quality, architecture, or style — it is exclusively about requirements coverage. For every acceptance criterion in the story, determine whether the PR satisfies it, partially satisfies it, or leaves it unaddressed. Flag any changes in the PR that go beyond the story's defined scope. Be specific: reference the criterion text and point to the relevant code or its absence. Use available tools to get ticket description.
-Jira Ticket URL: https://org.atlassian.net/browse/PROJ-42
+Act as a QA engineer verifying that this pull request fully and faithfully implements the acceptance criteria defined in the linked Jira story. Your review is not about code quality, architecture, or style — it is exclusively about requirements coverage. Fetch the Jira story at the URL provided in the Context section below to read the acceptance criteria before beginning your review. For each acceptance criterion that is not fully satisfied, output a line in this format: [PARTIAL | MISSING] — <criterion text> — <explanation with code reference or absence note>. Do not report on acceptance criteria that are fully satisfied.
+**Jira Ticket URL:** https://org.atlassian.net/browse/PROJ-42
 
 Checklist:
 - Does the PR implement every acceptance criterion listed in the Jira story, with no criterion left unaddressed?
 - Are edge cases implied by the acceptance criteria handled, or do any criteria remain partially implemented?
-- Does the PR stay within the scope defined by the story, or does it introduce changes unrelated to the acceptance criteria?
-- Are there any out-of-scope changes that should be extracted into a separate story or PR?
 - Do the tests cover the acceptance criteria directly, verifying the described behaviour rather than only internal implementation details?
 
 Final Step: Final consolidation and comment submission

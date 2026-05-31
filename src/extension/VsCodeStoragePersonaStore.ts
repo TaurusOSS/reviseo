@@ -36,7 +36,8 @@ export class VsCodeStoragePersonaStore implements PersonaStore {
             return;
         }
         const newSeeds = SEED_PERSONAS.filter(s => !existing.some(e => e.id === s.id));
-        console.log(`Seeding ${newSeeds.length} new personas...`);
-        this.context.globalState.update(STORAGE_KEY, [...newSeeds, ...existing]);
+        if (newSeeds.length > 0) {
+            this.context.globalState.update(STORAGE_KEY, [...newSeeds, ...existing]);
+        }
     }
 }
