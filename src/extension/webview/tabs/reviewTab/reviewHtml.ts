@@ -19,6 +19,8 @@ export function getReviewHtml(): string {
       <!-- rendered by JS -->
     </div>
 
+    <div id="additional-inputs-container"></div>
+
     <details class="settings-toggle">
       <summary class="btn btn-secondary btn-sm">Additional settings</summary>
       <div class="additional-settings">

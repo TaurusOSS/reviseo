@@ -35,11 +35,8 @@ export class VsCodeStoragePersonaStore implements PersonaStore {
             this.context.globalState.update(STORAGE_KEY, SEED_PERSONAS);
             return;
         }
-        const legacySeedIds = new Set(existing.filter(p => p.id.startsWith('seed-')).map(p => p.id));
-        if (legacySeedIds.size > 0) {
-            const userPersonas = existing.filter(p => !legacySeedIds.has(p.id));
-            const newSeeds = SEED_PERSONAS.filter(s => !existing.some(e => e.id === s.id));
-            this.context.globalState.update(STORAGE_KEY, [...newSeeds, ...userPersonas]);
-        }
+        const newSeeds = SEED_PERSONAS.filter(s => !existing.some(e => e.id === s.id));
+        console.log(`Seeding ${newSeeds.length} new personas...`);
+        this.context.globalState.update(STORAGE_KEY, [...newSeeds, ...existing]);
     }
 }
