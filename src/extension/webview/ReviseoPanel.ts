@@ -75,7 +75,7 @@ export class ReviseoPanel {
             case 'generatePrompt': {
                 const selected = this._store.getAll().filter(p => message.personaIds.includes(p.id));
                 const mode = message.promptOptions.multiAgent ? Modes.MULTI_AGENT : Modes.SINGLE_AGENT;
-                const text = promptBuilder.url(message.prUrl).personas(selected).mode(mode).getText();
+                const text = promptBuilder.url(message.prUrl).personas(selected).context(message.personaContext ?? {}).mode(mode).getText();
                 this._panel.webview.postMessage({ type: 'promptGenerated', text });
                 break;
             }

@@ -324,4 +324,15 @@ export const SEED_PERSONAS: Persona[] = [
             'Is the test long enough and stable enough to detect issues like resource leaks, GC pressure, or connection exhaustion?',
         ],
     },
+    {
+        id: 'story-requirements-guardian',
+        name: 'Story Requirements Guardian',
+        customInstructions: 'Act as a QA engineer verifying that this pull request fully and faithfully implements the acceptance criteria defined in the linked Jira story. Your review is not about code quality, architecture, or style — it is exclusively about requirements coverage. Fetch the Jira story at the URL provided in the Context section below to read the acceptance criteria before beginning your review. For each acceptance criterion that is not fully satisfied, output a line in this format: [PARTIAL | MISSING] — <criterion text> — <explanation with code reference or absence note>. Do not report on acceptance criteria that are fully satisfied.',
+        checklist: [
+            'Does the PR implement every acceptance criterion listed in the Jira story, with no criterion left unaddressed?',
+            'Are edge cases implied by the acceptance criteria handled, or do any criteria remain partially implemented?',
+            'Do the tests cover the acceptance criteria directly, verifying the described behaviour rather than only internal implementation details?',
+        ],
+        additionalInputs: [{ id: 'jira-url', name: 'Jira Ticket URL' }],
+    },
 ];

@@ -4,7 +4,7 @@ export type WebviewMessage =
     | { type: 'getPersonas' }
     | { type: 'savePersona'; persona: Persona }
     | { type: 'deletePersona'; id: string }
-    | { type: 'generatePrompt'; prUrl: string; personaIds: string[]; promptOptions: PromptOptions }
+    | { type: 'generatePrompt'; prUrl: string; personaIds: string[]; promptOptions: PromptOptions; personaContext?: Record<string, Record<string, string>> }
     | { type: 'buildGenerationPrompt'; name: string; description?: string }
     | { type: 'copyToClipboard'; text: string };
 

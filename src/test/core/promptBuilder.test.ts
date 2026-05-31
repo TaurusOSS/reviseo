@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { promptBuilder, Modes } from '../../core/promptBuilder';
 import type { Persona } from '../../core/types';
+import { SEED_PERSONAS } from '../../core/seedPersonas';
 
 const securityPersona: Persona = {
     id: 'p-1',
@@ -17,6 +18,8 @@ const performancePersona: Persona = {
     customInstructions: 'Identify bottlenecks and scalability concerns.',
     checklist: ['N+1 query patterns', 'Memory leaks'],
 };
+
+const srgPersona = SEED_PERSONAS.find(p => p.id === 'story-requirements-guardian')!;
 
 // Fixtures live in src/test/core/__fixtures__/ — resolved from the compiled out/ dir
 function fixture(name: string): string {
@@ -68,4 +71,15 @@ suite('promptBuilder', () => {
             .getText();
         assert.strictEqual(result, fixture('multi-agent-two-personas.txt'));
     });
+
+    test('SRG persona with Jira URL in personaContext produces exact full prompt', () => {
+        const result = promptBuilder
+            .url('https://github.com/org/repo/pull/1')
+            .personas([srgPersona])
+            .context({ 'story-requirements-guardian': { 'jira-url': 'https://org.atlassian.net/browse/PROJ-42' } })
+            .mode(Modes.SINGLE_AGENT)
+            .getText();
+        assert.strictEqual(result, fixture('srg-persona-with-jira-url.txt'));
+    });
+
 });
