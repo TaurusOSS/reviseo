@@ -21,6 +21,9 @@ OUTPUT FORMAT (STRICT JSON, NO MARKDOWN, NO COMMENTS)
     "",
     "",
     "... 5 to 10 items total ..."
+  ],
+  "additionalInputs": [
+    { "id": "jira-url", "name": "Jira Ticket URL" }
   ]
 }
 
@@ -51,6 +54,15 @@ checklist:
 - Questions must be actionable and practical.
 - Avoid generic checks like "Is the code readable?" unless persona-specific.
 - The checklist should feel like a real expert's mental model.
+
+additionalInputs (OPTIONAL — omit entirely unless clearly warranted):
+- An array of { "id": string, "name": string } objects.
+- Only include when the persona inherently requires an external reference to do its job
+  (e.g. a linked ticket URL, a spec document URL, a service name).
+- "id" must be a lowercase-kebab-case machine key (e.g. "jira-url", "spec-doc-url").
+- "name" is the human-readable label shown to the reviewer (e.g. "Jira Ticket URL").
+- Most personas do NOT need additional inputs — omit the field entirely when in doubt.
+- Never add inputs for things already provided by the system (e.g. PR URL is always available).
 
 --------------------------------------------------
 QUALITY CONSTRAINTS

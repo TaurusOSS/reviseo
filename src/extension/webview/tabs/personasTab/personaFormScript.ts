@@ -1,5 +1,57 @@
 export function getPersonaFormScript(): string {
     return /* js */`
+    // ── Additional inputs editor ───────────────────────────────────
+    function populateAdditionalInputsEditor(items) {
+      document.getElementById('additional-inputs-editor').innerHTML = '';
+      (items || []).forEach(item => addAdditionalInputRow(item.id, item.name));
+    }
+
+    function addAdditionalInputRow(id, name) {
+      const editor = document.getElementById('additional-inputs-editor');
+      const row = document.createElement('div');
+      row.className = 'additional-input-row';
+      const nameInput = document.createElement('input');
+      nameInput.type = 'text';
+      nameInput.className = 'additional-input-name';
+      nameInput.value = name || '';
+      nameInput.placeholder = 'Label (e.g. Jira Ticket URL)';
+      const idInput = document.createElement('input');
+      idInput.type = 'text';
+      idInput.className = 'additional-input-id';
+      idInput.value = id || '';
+      idInput.placeholder = 'ID (e.g. jira-url)';
+      nameInput.addEventListener('blur', () => {
+        if (!idInput.value) {
+          idInput.value = nameInput.value.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+        }
+      });
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.className = 'btn-remove-item';
+      removeBtn.setAttribute('aria-label', 'Remove input');
+      removeBtn.textContent = '✕';
+      removeBtn.addEventListener('click', () => row.remove());
+      row.appendChild(nameInput);
+      row.appendChild(idInput);
+      row.appendChild(removeBtn);
+      editor.appendChild(row);
+    }
+
+    function readAdditionalInputs() {
+      return Array.from(document.querySelectorAll('.additional-input-row'))
+        .map(row => ({
+          id: row.querySelector('.additional-input-id').value.trim(),
+          name: row.querySelector('.additional-input-name').value.trim(),
+        }))
+        .filter(item => item.id && item.name);
+    }
+
+    document.getElementById('btn-add-input').addEventListener('click', () => {
+      addAdditionalInputRow('', '');
+      const rows = document.querySelectorAll('.additional-input-row');
+      rows[rows.length - 1].querySelector('.additional-input-name').focus();
+    });
+
     // ── Checklist editor ───────────────────────────────────────────
     function populateChecklistEditor(items) {
       document.getElementById('checklist-editor').innerHTML = '';
@@ -62,6 +114,7 @@ export function getPersonaFormScript(): string {
         name,
         customInstructions: document.getElementById('f-instructions').value.trim(),
         checklist: readChecklistItems(),
+        additionalInputs: readAdditionalInputs(),
       };
       vscode.postMessage({ type: 'savePersona', persona });
       document.getElementById('persona-form').classList.add('hidden');
@@ -73,6 +126,7 @@ export function getPersonaFormScript(): string {
       document.getElementById('f-name').value = '';
       document.getElementById('f-instructions').value = '';
       document.getElementById('checklist-editor').innerHTML = '';
+      document.getElementById('additional-inputs-editor').innerHTML = '';
     }
     `.trim();
 }
