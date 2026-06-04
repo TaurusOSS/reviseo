@@ -67,6 +67,12 @@ export function getWizardScript(): string {
       const checklistHtml = parsed.checklist
         .filter(item => typeof item === 'string' && item.trim())
         .map(item => \`<li>\${esc(item)}</li>\`).join('');
+      const additionalInputsHtml = Array.isArray(parsed.additionalInputs) && parsed.additionalInputs.length > 0
+        ? \`<div class="persona-preview-field">
+            <label>Additional Inputs</label>
+            <ul class="persona-preview-checklist">\${parsed.additionalInputs.map(i => \`<li>\${esc(i.name)} (<code>\${esc(i.id)}</code>)</li>\`).join('')}</ul>
+          </div>\`
+        : '';
       document.getElementById('wizard-preview').innerHTML = \`
         <div class="persona-preview-field">
           <label>Name</label>
@@ -80,6 +86,7 @@ export function getWizardScript(): string {
           <label>Checklist</label>
           <ul class="persona-preview-checklist">\${checklistHtml}</ul>
         </div>
+        \${additionalInputsHtml}
       \`;
       showWizardStep(4);
     });
@@ -93,6 +100,9 @@ export function getWizardScript(): string {
         checklist: Array.isArray(wizardParsedPersona.checklist)
           ? wizardParsedPersona.checklist.filter(item => typeof item === 'string' && item.trim())
           : [],
+        ...(Array.isArray(wizardParsedPersona.additionalInputs) && wizardParsedPersona.additionalInputs.length > 0
+          ? { additionalInputs: wizardParsedPersona.additionalInputs.filter(i => i.id && i.name) }
+          : {}),
       };
       vscode.postMessage({ type: 'savePersona', persona });
       closeWizard();

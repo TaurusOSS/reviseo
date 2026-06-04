@@ -17,6 +17,11 @@ export function getPersonasHtml(): string {
         <div id="checklist-editor"></div>
         <button type="button" class="btn btn-secondary btn-sm" id="btn-add-item">+ Add item</button>
       </div>
+      <div class="field">
+        <label>Additional Inputs <span class="field-hint">(optional — fields collected at review time, e.g. a Jira URL)</span></label>
+        <div id="additional-inputs-editor"></div>
+        <button type="button" class="btn btn-secondary btn-sm" id="btn-add-input">+ Add input</button>
+      </div>
       <div class="form-actions">
         <button class="btn btn-secondary" id="btn-cancel-form">Cancel</button>
         <button class="btn btn-primary" id="btn-save-persona">Save</button>

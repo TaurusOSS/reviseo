@@ -45,6 +45,7 @@ export function getPersonaListScript(): string {
       document.getElementById('f-name').value = p.name;
       document.getElementById('f-instructions').value = p.customInstructions;
       populateChecklistEditor(p.checklist);
+      populateAdditionalInputsEditor(p.additionalInputs);
       document.getElementById('persona-form').classList.remove('hidden');
       document.getElementById('persona-form').scrollIntoView({ behavior: 'smooth' });
     }
