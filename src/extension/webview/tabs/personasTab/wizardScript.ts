@@ -100,9 +100,11 @@ export function getWizardScript(): string {
         checklist: Array.isArray(wizardParsedPersona.checklist)
           ? wizardParsedPersona.checklist.filter(item => typeof item === 'string' && item.trim())
           : [],
-        ...(Array.isArray(wizardParsedPersona.additionalInputs) && wizardParsedPersona.additionalInputs.length > 0
-          ? { additionalInputs: wizardParsedPersona.additionalInputs.filter(i => i.id && i.name) }
-          : {}),
+        additionalInputs: Array.isArray(wizardParsedPersona.additionalInputs)
+          ? wizardParsedPersona.additionalInputs
+              .filter(i => i.id && i.name)
+              .map(i => ({ ...i, id: i.id.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') }))
+          : [],
       };
       vscode.postMessage({ type: 'savePersona', persona });
       closeWizard();

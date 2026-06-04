@@ -23,8 +23,7 @@ OUTPUT FORMAT (STRICT JSON, NO MARKDOWN, NO COMMENTS)
     "... 5 to 10 items total ..."
   ],
   "additionalInputs": [
-    { "id": "", "name": "" },
-    "... omit this field entirely if not needed ..."
+    { "id": "jira-url", "name": "Jira Ticket URL" }
   ]
 }
 
