@@ -1,6 +1,6 @@
 {
-  "name": "reviseo",
-  "displayName": "Reviseo",
+  "name": "reviseo-ai-code-review",
+  "displayName": "Reviseo - AI Code Review",
   "description": "Persona-based AI code review prompt generator",
   "version": "1.0.0",
   "publisher": "TaurusOSS",
@@ -27,7 +27,7 @@
     "pull request"
   ],
   "engines": {
-    "vscode": "^1.110.0"
+    "vscode": "^1.120.0"
   },
   "categories": [
     "AI",
@@ -41,7 +41,7 @@
         {
           "id": "reviseo",
           "title": "Reviseo",
-          "icon": "resources/reviseo-icon.svg"
+          "icon": "resources/reviseo-icon.png"
         }
       ]
     },
@@ -49,7 +49,7 @@
       "reviseo": [
         {
           "id": "reviseo.sidebar",
-          "name": "Reviseo",
+          "name": "Reviseo - AI Code Review",
           "icon": "$(eye)"
         }
       ]

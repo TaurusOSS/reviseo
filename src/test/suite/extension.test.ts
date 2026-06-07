@@ -10,7 +10,7 @@ const REVISEO_COMMANDS = [
 
 suite('Extension Test Suite', () => {
     suiteSetup(async () => {
-        const ext = vscode.extensions.all.find(e => e.packageJSON?.name === 'reviseo');
+        const ext = vscode.extensions.all.find(e => e.packageJSON?.name === 'reviseo-ai-code-review');
         if (ext && !ext.isActive) {
             await ext.activate();
         }
