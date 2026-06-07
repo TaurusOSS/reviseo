@@ -1,9 +1,6 @@
-import type { Persona } from './types';
+import type { Persona } from '../persona-management';
 import { Modes } from './types';
 import { Prompt, SystemPromptComponent, PersonaStepComponent, StepsComponent, SingleAgentPhaseComponent, MultiAgentPhaseComponent } from './review';
-
-export { Modes } from './types';
-export { Prompt } from './review';
 
 export class PromptBuilder {
     constructor(
@@ -43,5 +40,3 @@ export class PromptBuilder {
         return new Prompt([new SystemPromptComponent(this._url), phase]);
     }
 }
-
-export const promptBuilder = new PromptBuilder();

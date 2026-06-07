@@ -1,4 +1,5 @@
-import type { Persona, PromptOptions } from '../../core/types';
+import type { Persona } from '../../core/persona-management';
+import type { PromptOptions } from '../../core/review-generation';
 
 export type WebviewMessage =
     | { type: 'getPersonas' }

@@ -1,7 +1,8 @@
 import * as vscode from 'vscode';
-import type { Persona } from '../core/types';
-import type { PersonaStore } from '../core/personaStore';
-import { SEED_PERSONAS } from '../core/seedPersonas';
+import type { Persona, PersonaStore } from '../core/persona-management';
+import { PersonaManagementFacade } from '../core/persona-management';
+
+const seedPersonas = new PersonaManagementFacade().getSeedPersonas();
 
 const STORAGE_KEY = 'reviseo.personas';
 
@@ -32,10 +33,10 @@ export class VsCodeStoragePersonaStore implements PersonaStore {
         const existing = this.getAll();
         const isLegacyFormat = existing.length > 0 && !Array.isArray(existing[0].checklist);
         if (existing.length === 0 || isLegacyFormat) {
-            this.context.globalState.update(STORAGE_KEY, SEED_PERSONAS);
+            this.context.globalState.update(STORAGE_KEY, seedPersonas);
             return;
         }
-        const newSeeds = SEED_PERSONAS.filter(s => !existing.some(e => e.id === s.id));
+        const newSeeds = seedPersonas.filter(s => !existing.some(e => e.id === s.id));
         if (newSeeds.length > 0) {
             this.context.globalState.update(STORAGE_KEY, [...newSeeds, ...existing]);
         }
