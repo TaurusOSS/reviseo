@@ -2,6 +2,12 @@
 
 All notable changes to Reviseo are documented here.
 
+## [1.0.1] - 2026-06-07
+
+### Changed
+
+- Updated extension icon
+
 ## [1.0.0] - 2026-06-07
 
 ### Added
