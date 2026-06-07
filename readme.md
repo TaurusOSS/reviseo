@@ -1,100 +1,97 @@
 # Reviseo
 
-**Persona-based code review prompt generator for VSCode.**
+**Persona-based AI code review prompt generator for VS Code.**
 
-Define expert reviewer personas, select one or more, paste a PR URL, and get a structured prompt ready to run in Claude or any AI assistant with GitHub MCP access.
+Define expert reviewer personas, select one or more, enter a GitHub PR URL, and get a structured prompt ready to run in any AI assistant. Reviseo turns your code review process into a repeatable, high-quality workflow powered by the AI models you already use.
 
 ---
 
-## How it works
+## How It Works
 
-1. **Define personas** — Create reviewer personas like "Security Auditor" or "Performance Expert", each with custom instructions and a checklist.
-2. **Select personas** — Pick one or more personas for a given review.
-3. **Enter a PR URL** — Provide a GitHub pull request URL.
-4. **Generate** — Reviseo builds a multi-persona review prompt.
-5. **Paste into your AI assistant** — The prompt instructs the AI to use GitHub MCP tools to fetch the diff, add review comments, and consolidate findings.
+1. **Pick your personas** — choose from 20 built-in experts (Security, Architecture, Testing, and more) or create your own
+2. **Enter a PR URL** — paste a GitHub pull request link
+3. **Generate** — Reviseo assembles a complete, structured review prompt
+4. **Paste into your AI** — run the prompt in Claude, Copilot, or any assistant with GitHub MCP access
 
-The central value is the quality of the generated prompt — each persona reviews independently, then overlapping comments are merged into stronger, consolidated feedback.
+The AI fetches the diff, adds inline review comments, and consolidates overlapping findings from multiple personas into clean, actionable feedback.
+
+---
+
+## Screenshots
+
+### Personas Tab — manage and create reviewer personas
+
+![Personas Tab](resources/personas.png)
+
+### Review Tab — generate a code review prompt
+
+![Review Tab](resources/review.png)
 
 ---
 
 ## Features
 
-- **20 built-in expert personas** covering security, architecture, testing, performance, observability, concurrency, clean code, and more.
-- **Full persona CRUD** — create, edit, and delete your own custom personas with a name, instructions, and checklist items.
-- **Multi-persona composition** — select any combination of personas per review.
-- **Structured prompts** — generated prompts include consolidation logic to eliminate duplicate comments.
-- **GitHub MCP integration** — prompts are designed for AI assistants with the GitHub MCP server (`pull_request_read`, `pull_request_review_write`, `add_comment_to_pending_review`).
-- **Privacy-first** — all persona data is stored locally in VSCode global state; nothing is sent to any remote server.
-- **VSCode theme support** — UI adapts to your current light or dark theme.
+- **20 built-in reviewer personas** covering Security, Software Architecture, Hexagonal Architecture, Clean Code, Testing, Performance, Concurrency, Reliability, Observability, Database, CI/CD, Azure Pipelines, Spring Batch, and more
+- **Full persona CRUD** — create, edit, and delete personas
+- **AI-assisted persona wizard** — describe a persona and let an AI generate it; paste the JSON back to save it
+- **Single-agent mode** — one AI reviews the PR using all selected personas sequentially, then consolidates comments
+- **Multi-agent mode** — orchestrator AI spawns one subagent per persona for independent parallel review (higher quality, more tokens)
+- **GitHub MCP integration** — prompts use `pull_request_read`, `pull_request_review_write`, and `add_comment_to_pending_review`
+- **Additional inputs** — personas can request runtime context (e.g. a Jira ticket URL) that gets embedded in the prompt
+- **Privacy-first** — all persona data is stored locally in VS Code's global state; nothing is sent to any remote server
+- **Theme support** — adapts to VS Code light and dark themes
 
 ---
 
-## Built-in personas
+## Built-in Personas
 
-| Persona                       | Focus                                                     |
-|-------------------------------|-----------------------------------------------------------|
-| Security Expert               | Trust boundaries, injection, secrets, auth                |
-| Software Architect            | Package structure, coupling, resilience patterns          |
-| Hexagonal Architecture Expert | Domain isolation, ports/adapters, dependency direction    |
-| Modular Monolith Expert       | Vertical slices, module boundaries, data ownership        |
-| Skeptical Architect           | Over-engineering, reinvention, tech fit                   |
-| Solution Design Evaluator     | Design alternatives, simplicity vs. complexity            |
-| Clean Code Expert             | Readability, naming, duplication, KISS                    |
-| Testing Expert                | Test type selection, mocking, assertion strength          |
-| Performance Test Expert       | Workload realism, warmup, latency percentiles             |
-| Concurrency Expert            | Async correctness, thread safety, context propagation     |
-| Reliability Engineer          | Timeouts, retries, circuit breakers, graceful degradation |
-| Backward Compatibility Expert | Breaking changes, API evolution, deprecation              |
-| Database Interaction Expert   | Transactions, N+1 queries, connection pooling             |
-| Observability Expert          | Logging placement, metrics, correlation IDs               |
-| Azure Pipelines Architect     | Stage dependencies, approvals, rollback strategy          |
-| Spring Batch Expert           | Job semantics, restartability, error handling             |
-| Prompt Engineer               | Clarity of intent, role definition, I/O format            |
-| ...and more                   |                                                           |
-
----
-
-## Commands
-
-| Command                           | Description                        |
-|-----------------------------------|------------------------------------|
-| `Reviseo: Open Panel`             | Open the main Reviseo panel        |
-| `Reviseo: Manage Personas`        | Open the panel on the Personas tab |
-| `Reviseo: Generate Review Prompt` | Open the panel on the Generate tab |
-
-Access via the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`).
+| Area | Personas |
+|------|----------|
+| Security | Security Expert |
+| Architecture | Software Architect, Hexagonal Architecture Expert, Modular Monolith Expert, Skeptical Architect, Solution Design Evaluator |
+| Code quality | Clean Code Expert |
+| Testing | Testing Expert, E2E Test Expert, Performance Test Expert |
+| Reliability & concurrency | Reliability Engineer, Concurrency Expert, Backward Compatibility Expert |
+| Data | Database Interaction Expert |
+| Observability | Observability Expert |
+| CI/CD & pipelines | CI/CD Expert, Azure Pipelines Architect |
+| Domain-specific | Spring Batch Expert, Prompt Engineer, Story Requirements Guardian |
 
 ---
 
 ## Requirements
 
-To use the generated prompts end-to-end, your AI assistant needs access to the **GitHub MCP server**. The generated prompt uses these tools:
+- An AI assistant with **GitHub MCP server** access (e.g. [Claude](https://claude.ai) with the GitHub MCP server configured, or GitHub Copilot with MCP support)
+- A GitHub pull request URL
 
-- `pull_request_read` — fetches the PR diff
-- `pull_request_review_write` — creates a pending review
-- `add_comment_to_pending_review` — adds comments to the pending review
-
-Reviseo itself has no external dependencies — it only generates the prompt text.
+No API keys are needed in Reviseo itself — it generates prompts, not AI responses.
 
 ---
 
-## Install from source
+## Commands
 
-1. Clone the repository: `git clone https://github.com/TaurusOSS/reviseo`
-2. Install [vsce](https://github.com/microsoft/vscode-vsce) if you don't have it: `npm install -g @vscode/vsce`
-3. Install dependencies: `npm install`
-4. Package the extension: `vsce package`
-5. Install the generated `.vsix` file in VSCode:
-   - Open the Extensions view (`Ctrl+Shift+X` / `Cmd+Shift+X`)
-   - Click **Views and More Actions...** (the `...` menu)
-   - Select **Install from VSIX...**
-   - Pick the `.vsix` file produced in step 4
+| Command | Description |
+|---------|-------------|
+| `Reviseo: Open Review Panel` | Open the main Reviseo panel |
+| `Reviseo: Manage Personas` | Open the panel on the Personas tab |
+| `Reviseo: Generate Review Prompt` | Open the panel on the Generate tab |
+
+Access all commands via the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`) or the Reviseo icon in the Activity Bar.
+
+---
+
+## Local setup
+
+1. Install the extension from the VS Code Marketplace
+2. Click the Reviseo icon in the Activity Bar (or run `Reviseo: Open Review Panel`)
+3. On the **Personas** tab, review the built-in personas or create your own
+4. Switch to the **Generate** tab
+5. Enter a GitHub PR URL and select one or more personas
+6. Click **Generate Prompt**
+7. Copy the prompt and paste it into your AI assistant
 
 ---
 
 ## Release Notes
 
-### 0.0.1
-
-Initial release — persona management, prompt generation, 20 built-in personas.
+See [CHANGELOG.md](CHANGELOG.md) for the full history of changes.

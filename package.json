@@ -1,14 +1,37 @@
 {
   "name": "reviseo",
   "displayName": "Reviseo",
-  "description": "AI Persona based code review",
-  "version": "0.0.1",
+  "description": "Persona-based AI code review prompt generator",
+  "version": "1.0.0",
+  "publisher": "TaurusOSS",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TaurusOSS/reviseo.git"
+  },
+  "bugs": {
+    "url": "https://github.com/TaurusOSS/reviseo/issues"
+  },
+  "homepage": "https://github.com/TaurusOSS/reviseo#readme",
+  "icon": "resources/reviseo-icon.png",
+  "galleryBanner": {
+    "color": "#1e1e2e",
+    "theme": "dark"
+  },
+  "keywords": [
+    "code review",
+    "ai",
+    "personas",
+    "github",
+    "mcp",
+    "prompt",
+    "pull request"
+  ],
   "engines": {
     "vscode": "^1.110.0"
   },
   "categories": [
-    "Other",
-    "AI"
+    "AI",
+    "Other"
   ],
   "activationEvents": [],
   "main": "./out/extension.js",
