@@ -31,10 +31,11 @@ export class PromptBuilder {
             return new Prompt([]);
         }
 
+        const prNumber = this._url.match(/\/pull\/(\d+)/)?.[1] ?? '0';
         const steps = this._personas.map((p, i) => new PersonaStepComponent(p, i + 1, this._context[p.id]));
         const stepsComponent = new StepsComponent(steps);
         const phase = this._mode === Modes.MULTI_AGENT
-            ? new MultiAgentPhaseComponent(stepsComponent)
+            ? new MultiAgentPhaseComponent(stepsComponent, prNumber)
             : new SingleAgentPhaseComponent(stepsComponent);
 
         return new Prompt([new SystemPromptComponent(this._url), phase]);
