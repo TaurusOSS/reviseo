@@ -1,5 +1,5 @@
 import type { Persona } from '../persona-management';
-import { Modes } from './types';
+import { Modes, PersonaContext } from './types';
 import { PromptBuilder } from './PromptBuilder';
 
 export class ReviewGenerationFacade {
@@ -7,7 +7,7 @@ export class ReviewGenerationFacade {
         prUrl: string,
         personas: readonly Persona[],
         mode: Modes,
-        context: Record<string, Record<string, string>> = {}
+        context: PersonaContext = {}
     ): string {
         return new PromptBuilder()
             .url(prUrl)
