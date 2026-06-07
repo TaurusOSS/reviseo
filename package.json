@@ -41,7 +41,7 @@
         {
           "id": "reviseo",
           "title": "Reviseo",
-          "icon": "resources/reviseo-icon.png"
+          "icon": "$(eye)"
         }
       ]
     },
