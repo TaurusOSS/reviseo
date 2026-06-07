@@ -47,3 +47,6 @@ node_modules/
 
 ### MacOS ###
 .DS_Store
+
+### Reviseo ###
+.ai/
