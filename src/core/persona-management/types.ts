@@ -10,12 +10,3 @@ export interface Persona {
     checklist: string[];
     additionalInputs?: AdditionalInput[];
 }
-
-export interface PromptOptions {
-    multiAgent: boolean;
-}
-
-export enum Modes {
-    SINGLE_AGENT = 'single',
-    MULTI_AGENT = 'multi',
-}

@@ -11,17 +11,25 @@ The central value proposition is the quality of the generated prompt. Everything
 ```
 reviseo/
 ├── src/
-│   ├── core/           # Platform-agnostic logic — no vscode imports allowed here
-│   │   ├── types.ts        # Persona, message contracts
-│   │   ├── promptBuilder.ts
-│   │   └── personaStore.ts # Interface — concrete impl lives in platform layer
+│   ├── core/                    # Platform-agnostic logic — no vscode imports allowed here
+│   │   ├── persona-management/  # Owns: Persona, AdditionalInput, PersonaStore, SEED_PERSONAS, buildGenerationPrompt
+│   │   │   └── index.ts         # Public API: PersonaManagementFacade, Persona, AdditionalInput, PersonaStore
+│   │   └── review-generation/   # Owns: PromptBuilder, review components, Modes, PromptOptions
+│   │       └── index.ts         # Public API: ReviewGenerationFacade, Modes, PromptOptions
 │   ├── test/
 │   │   └── core/
-│   │       ├── promptBuilder.test.ts
-│   │       └── __fixtures__/   # Full expected prompt outputs for strictEqual assertions
+│   │       ├── persona-management/PersonaManagementFacade.test.ts
+│   │       ├── review-generation/ReviewGenerationFacade.test.ts
+│   │       └── __fixtures__/    # Full expected prompt outputs for strictEqual assertions
 │   ├── webview/        # VSCode webview UI
 │   └── extension.ts    # VSCode entry point
 ```
+
+### Core module rules
+
+1. **Import only from `index.ts`** — external consumers (extension layer, tests) must import from a module's `index.ts`, never from internal files directly. Enforced by `eslint-plugin-boundaries`.
+2. **One-way dependency** — `persona-management` has no knowledge of `review-generation`. `review-generation` may import from `persona-management`.
+3. **Facades as entry points** — all cross-module communication goes through `PersonaManagementFacade` or `ReviewGenerationFacade`.
 
 The `src/core/` package must remain free of any platform-specific imports (`vscode`, DOM APIs, Node-only APIs). It is the seed of a future standalone `@reviseo/core` npm package. When the project grows to a website or MCP server, only new adapter layers are added — core is untouched.
 

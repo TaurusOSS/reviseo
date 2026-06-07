@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
 import * as crypto from 'crypto';
 import { VsCodeStoragePersonaStore } from '../VsCodeStoragePersonaStore';
-import { promptBuilder, Modes } from '../../core/promptBuilder';
-import { buildGenerationPrompt } from '../../core/generationPromptBuilder';
+import { ReviewGenerationFacade, Modes } from '../../core/review-generation';
+import { PersonaManagementFacade } from '../../core/persona-management';
 import type { WebviewMessage } from './types';
 import { getWebviewHtml } from './htmlTemplate';
 import type { WebviewTab } from './WebviewTab';
@@ -15,6 +15,8 @@ export class ReviseoPanel {
 
     private readonly _panel: vscode.WebviewPanel;
     private readonly _store: VsCodeStoragePersonaStore;
+    private readonly _reviewGen = new ReviewGenerationFacade();
+    private readonly _personaMgmt = new PersonaManagementFacade();
     private _disposables: vscode.Disposable[] = [];
 
     public static createOrShow(context: vscode.ExtensionContext): void {
@@ -75,12 +77,12 @@ export class ReviseoPanel {
             case 'generatePrompt': {
                 const selected = this._store.getAll().filter(p => message.personaIds.includes(p.id));
                 const mode = message.promptOptions.multiAgent ? Modes.MULTI_AGENT : Modes.SINGLE_AGENT;
-                const text = promptBuilder.url(message.prUrl).personas(selected).context(message.personaContext ?? {}).mode(mode).getText();
+                const text = this._reviewGen.buildPrompt(message.prUrl, selected, mode, message.personaContext ?? {});
                 this._panel.webview.postMessage({ type: 'promptGenerated', text });
                 break;
             }
             case 'buildGenerationPrompt': {
-                const prompt = buildGenerationPrompt(message.name, message.description);
+                const prompt = this._personaMgmt.buildGenerationPrompt(message.name, message.description);
                 this._panel.webview.postMessage({ type: 'generationPromptBuilt', prompt });
                 break;
             }

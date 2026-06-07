@@ -1,4 +1,4 @@
-import type { Persona } from '../types';
+import type { Persona } from '../../persona-management';
 import { StepComponent } from './StepComponent';
 
 export class PersonaStepComponent extends StepComponent {
