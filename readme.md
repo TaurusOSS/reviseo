@@ -17,18 +17,6 @@ The AI fetches the diff, adds inline review comments, and consolidates overlappi
 
 ---
 
-## Screenshots
-
-### Personas Tab — manage and create reviewer personas
-
-![Personas Tab](resources/personas.png)
-
-### Review Tab — generate a code review prompt
-
-![Review Tab](resources/review.png)
-
----
-
 ## Features
 
 - **20 built-in reviewer personas** covering Security, Software Architecture, Hexagonal Architecture, Clean Code, Testing, Performance, Concurrency, Reliability, Observability, Database, CI/CD, Azure Pipelines, Spring Batch, and more
