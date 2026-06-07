@@ -6,17 +6,29 @@ export class MultiAgentPhaseComponent extends PhaseComponent {
 `## Review Process
 You are running in multi-agent orchestration mode. Your role is to coordinate subagents — you do not perform code review yourself.
 
-1. Fetch the pull request diff using available tools.
-   Store the diff — it will be passed to all subagents.
+1. Extract the PR number from the pull request URL in the system prompt.
+   Derive the review data file path: \`.ai/reviseo/{reviewNumber}/review_data.md\`
 
-2. For each persona step below, launch a subagent with:
-   - The full PR diff.
+2. Launch a data preparation subagent tasked only with:
+   - Fetching PR details via \`pull_request_read\` with method "get" (to obtain title and description)
+   - Fetching the diff via \`pull_request_read\` with method "get_diff"
+   - Writing \`.ai/reviseo/{reviewNumber}/review_data.md\` with the following sections:
+     # Title
+     <PR title>
+     # Description
+     <PR description>
+     # Diff
+     <full diff>
+   If any step fails, report the error and stop.
+
+3. For each persona step below, launch a subagent with:
+   - The file path \`.ai/reviseo/{reviewNumber}/review_data.md\` — the subagent must read this file to obtain the PR context and diff.
    - That persona's instructions and checklist.
    - The JSON output format specified in the Final Step.
 
    If any subagent call fails, report the error and stop.
 
-3. Each subagent must return ONLY a JSON array. No prose, no markdown fences.
+4. Each subagent must return ONLY a JSON array. No prose, no markdown fences.
    Every element must conform to:
    {
      "persona": "<persona name>",

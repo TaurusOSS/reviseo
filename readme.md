@@ -56,6 +56,12 @@ No API keys are needed in Reviseo itself — it generates prompts, not AI respon
 
 ---
 
+## Working Directory
+
+In multi-agent mode, the orchestrator uses `.ai/reviseo/` as a working directory to store temporary review data files. Add `.ai/` to your repository's `.gitignore` to avoid committing these files.
+
+---
+
 ## Commands
 
 | Command | Description |
