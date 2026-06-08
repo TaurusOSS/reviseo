@@ -42,7 +42,6 @@ out/
 ### Frontend ###
 node_modules/
 .vscode-test/
-.claude
 *.vsix
 
 ### MacOS ###
@@ -50,3 +49,5 @@ node_modules/
 
 ### Reviseo ###
 .ai/
+
+.claude/settings.local.json
