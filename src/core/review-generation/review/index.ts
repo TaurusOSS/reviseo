@@ -6,7 +6,6 @@ export { StepComponent } from './StepComponent';
 export { PersonaStepComponent } from './PersonaStepComponent';
 export { StepsComponent } from './StepsComponent';
 export { FetchReviewDataPhase } from './FetchReviewDataPhase';
-export { ProvideMultipersonaReviewPhase } from './ProvideMultipersonaReviewPhase';
 export { SingleAgentProvideMultipersonaReviewPhase } from './SingleAgentProvideMultipersonaReviewPhase';
 export { MultiAgentProvideMultipersonaReviewPhase } from './MultiAgentProvideMultipersonaReviewPhase';
 export { ValidateCommentsPhase } from './ValidateCommentsPhase';

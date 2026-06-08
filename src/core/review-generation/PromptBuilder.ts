@@ -47,16 +47,20 @@ export class PromptBuilder {
         const steps = this._personas.map((p, i) => new PersonaStepComponent(p, i + 1, this._context[p.id]));
         const stepsComponent = new StepsComponent(steps);
 
+        const fetchPhaseFactory = (n: number): PromptComponent => new FetchReviewDataPhase(n, this._url);
         const reviewPhaseFactory = (n: number): PromptComponent => this._mode === Modes.MULTI_AGENT
             ? new MultiAgentProvideMultipersonaReviewPhase(n, stepsComponent, prNumber)
             : new SingleAgentProvideMultipersonaReviewPhase(n, stepsComponent, prNumber);
+        const validatePhaseFactory = (n: number): PromptComponent => new ValidateCommentsPhase(n);
+        const submitPhaseFactory = (n: number): PromptComponent => new SubmitReviewPhase(n, prNumber);
+        const cleanupPhaseFactory = (n: number): PromptComponent => new CleanupPhase(n, prNumber);
 
         const phaseFactories: Array<(n: number) => PromptComponent> = [
-            n => new FetchReviewDataPhase(n, prNumber),
+            fetchPhaseFactory,
             reviewPhaseFactory,
-            n => new ValidateCommentsPhase(n),
-            n => new SubmitReviewPhase(n, prNumber),
-            n => new CleanupPhase(n, prNumber),
+            validatePhaseFactory,
+            submitPhaseFactory,
+            cleanupPhaseFactory,
         ];
 
         return new Prompt([

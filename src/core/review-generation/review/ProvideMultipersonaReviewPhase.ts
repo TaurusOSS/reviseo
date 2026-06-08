@@ -2,7 +2,7 @@ import type { PromptComponent } from './PromptComponent';
 import { CommentFormatComponent } from './CommentFormatComponent';
 import type { StepsComponent } from './StepsComponent';
 
-export const REVIEW_ASSUMPTIONS =
+const REVIEW_ASSUMPTIONS =
 `Assume:
 - The code compiles and passes basic static analysis.
 - Formatting, naming conventions, and trivial null checks are already handled by tools

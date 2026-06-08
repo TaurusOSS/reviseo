@@ -25,6 +25,7 @@ Deduplicate and validate the collected review comments:
         return [
             instructions,
             new CommentFormatComponent().getText(),
+            'Once validated, retain the final comment list for submission in the next phase.',
         ].join('\n\n');
     }
 }
