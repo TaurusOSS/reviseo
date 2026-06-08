@@ -1,6 +1,18 @@
 import type { Persona } from '../persona-management';
 import { Modes } from './types';
-import { Prompt, SystemPromptComponent, PersonaStepComponent, StepsComponent, SingleAgentPhaseComponent, MultiAgentPhaseComponent } from './review';
+import type { PromptComponent } from './review';
+import {
+    Prompt,
+    OrchestratorSystemPromptComponent,
+    PersonaStepComponent,
+    StepsComponent,
+    FetchReviewDataPhase,
+    SingleAgentProvideMultipersonaReviewPhase,
+    MultiAgentProvideMultipersonaReviewPhase,
+    ValidateCommentsPhase,
+    SubmitReviewPhase,
+    CleanupPhase,
+} from './review';
 
 export class PromptBuilder {
     constructor(
@@ -34,10 +46,22 @@ export class PromptBuilder {
         const prNumber = this._url.match(/\/pull\/(\d+)/)?.[1] ?? '0';
         const steps = this._personas.map((p, i) => new PersonaStepComponent(p, i + 1, this._context[p.id]));
         const stepsComponent = new StepsComponent(steps);
-        const phase = this._mode === Modes.MULTI_AGENT
-            ? new MultiAgentPhaseComponent(stepsComponent, prNumber)
-            : new SingleAgentPhaseComponent(stepsComponent);
 
-        return new Prompt([new SystemPromptComponent(this._url), phase]);
+        const reviewPhaseFactory = (n: number): PromptComponent => this._mode === Modes.MULTI_AGENT
+            ? new MultiAgentProvideMultipersonaReviewPhase(n, stepsComponent, prNumber)
+            : new SingleAgentProvideMultipersonaReviewPhase(n, stepsComponent, prNumber);
+
+        const phaseFactories: Array<(n: number) => PromptComponent> = [
+            n => new FetchReviewDataPhase(n, prNumber),
+            reviewPhaseFactory,
+            n => new ValidateCommentsPhase(n),
+            n => new SubmitReviewPhase(n, prNumber),
+            n => new CleanupPhase(n, prNumber),
+        ];
+
+        return new Prompt([
+            new OrchestratorSystemPromptComponent(),
+            ...phaseFactories.map((factory, i) => factory(i + 1)),
+        ]);
     }
 }
