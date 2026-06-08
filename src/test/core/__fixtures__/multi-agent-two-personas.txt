@@ -85,6 +85,7 @@ After all reviewer subagents have returned:
    A comment is redundant only if its entire body is already covered by the merged comment.
    When in doubt, keep both comments rather than dropping one.
 3. Create a pending review and submit all comments using available tools.
+   Do not add a review body — leave it empty.
    Format each comment, see Comment format section
 
    If any operation fails, report the error and stop — do not submit a partial review.
