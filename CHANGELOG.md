@@ -2,6 +2,14 @@
 
 All notable changes to Reviseo are documented here.
 
+## [1.1.0] - 2026-06-08
+
+### Changed
+
+- Improved the quality of generated code review prompts
+- Multi-agent review mode no longer posts a summary comment after completing reviews
+- Multi-agent review mode now gathers pull request data more accurately, resulting in better review context
+
 ## [1.0.1] - 2026-06-07
 
 ### Changed
