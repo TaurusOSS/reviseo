@@ -1,10 +1,13 @@
 export type { PromptComponent } from './PromptComponent';
 export { Prompt } from './Prompt';
-export { SystemPromptComponent } from './SystemPromptComponent';
+export { OrchestratorSystemPromptComponent } from './OrchestratorSystemPromptComponent';
 export { CommentFormatComponent } from './CommentFormatComponent';
 export { StepComponent } from './StepComponent';
 export { PersonaStepComponent } from './PersonaStepComponent';
 export { StepsComponent } from './StepsComponent';
-export { PhaseComponent } from './PhaseComponent';
-export { SingleAgentPhaseComponent } from './SingleAgentPhaseComponent';
-export { MultiAgentPhaseComponent } from './MultiAgentPhaseComponent';
+export { FetchReviewDataPhase } from './FetchReviewDataPhase';
+export { SingleAgentProvideMultipersonaReviewPhase } from './SingleAgentProvideMultipersonaReviewPhase';
+export { MultiAgentProvideMultipersonaReviewPhase } from './MultiAgentProvideMultipersonaReviewPhase';
+export { ValidateCommentsPhase } from './ValidateCommentsPhase';
+export { SubmitReviewPhase } from './SubmitReviewPhase';
+export { CleanupPhase } from './CleanupPhase';

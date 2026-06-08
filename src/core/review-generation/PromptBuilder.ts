@@ -1,6 +1,18 @@
 import type { Persona } from '../persona-management';
 import { Modes } from './types';
-import { Prompt, SystemPromptComponent, PersonaStepComponent, StepsComponent, SingleAgentPhaseComponent, MultiAgentPhaseComponent } from './review';
+import type { PromptComponent } from './review';
+import {
+    Prompt,
+    OrchestratorSystemPromptComponent,
+    PersonaStepComponent,
+    StepsComponent,
+    FetchReviewDataPhase,
+    SingleAgentProvideMultipersonaReviewPhase,
+    MultiAgentProvideMultipersonaReviewPhase,
+    ValidateCommentsPhase,
+    SubmitReviewPhase,
+    CleanupPhase,
+} from './review';
 
 export class PromptBuilder {
     constructor(
@@ -34,10 +46,26 @@ export class PromptBuilder {
         const prNumber = this._url.match(/\/pull\/(\d+)/)?.[1] ?? '0';
         const steps = this._personas.map((p, i) => new PersonaStepComponent(p, i + 1, this._context[p.id]));
         const stepsComponent = new StepsComponent(steps);
-        const phase = this._mode === Modes.MULTI_AGENT
-            ? new MultiAgentPhaseComponent(stepsComponent, prNumber)
-            : new SingleAgentPhaseComponent(stepsComponent);
 
-        return new Prompt([new SystemPromptComponent(this._url), phase]);
+        const fetchPhaseFactory = (n: number): PromptComponent => new FetchReviewDataPhase(n, this._url);
+        const reviewPhaseFactory = (n: number): PromptComponent => this._mode === Modes.MULTI_AGENT
+            ? new MultiAgentProvideMultipersonaReviewPhase(n, stepsComponent, prNumber)
+            : new SingleAgentProvideMultipersonaReviewPhase(n, stepsComponent, prNumber);
+        const validatePhaseFactory = (n: number): PromptComponent => new ValidateCommentsPhase(n);
+        const submitPhaseFactory = (n: number): PromptComponent => new SubmitReviewPhase(n, prNumber);
+        const cleanupPhaseFactory = (n: number): PromptComponent => new CleanupPhase(n, prNumber);
+
+        const phaseFactories: Array<(n: number) => PromptComponent> = [
+            fetchPhaseFactory,
+            reviewPhaseFactory,
+            validatePhaseFactory,
+            submitPhaseFactory,
+            cleanupPhaseFactory,
+        ];
+
+        return new Prompt([
+            new OrchestratorSystemPromptComponent(),
+            ...phaseFactories.map((factory, i) => factory(i + 1)),
+        ]);
     }
 }
