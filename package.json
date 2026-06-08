@@ -41,7 +41,7 @@
         {
           "id": "reviseo",
           "title": "Reviseo",
-          "icon": "$(eye)"
+          "icon": "resources/vscode-shield-icon.svg"
         }
       ]
     },
@@ -50,7 +50,7 @@
         {
           "id": "reviseo.sidebar",
           "name": "Reviseo - AI Code Review",
-          "icon": "$(eye)"
+          "icon": "resources/vscode-shield-icon.svg"
         }
       ]
     },
@@ -64,7 +64,7 @@
       {
         "command": "reviseo.openPanel",
         "title": "Reviseo: Open Review Panel",
-        "icon": "$(eye)"
+        "icon": "resources/vscode-shield-icon.svg"
       },
       {
         "command": "reviseo.managePersonas",
