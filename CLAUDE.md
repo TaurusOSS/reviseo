@@ -47,6 +47,7 @@ The `src/core/` package must remain free of any platform-specific imports (`vsco
 - **Assert the full prompt output** using `assert.strictEqual` against fixture files in `src/test/core/__fixtures__/`. Never use weak substring assertions (`includes`) for prompt content — if the template changes, the fixture files must be updated too.
 - Test files mirror the source structure: tests for `src/core/foo.ts` live in `src/test/core/foo.test.ts`.
 - Test runner: `@vscode/test-cli` with `@vscode/test-electron`.
+- **Test names describe business behaviour**, not implementation details. Use the form `"<feature/option> <does what>"` or BDD-style `"<context>, <outcome>"`. Bad: `"phase 4 instructs AI not to submit"`. Good: `"pending review option leaves the review as a draft instead of submitting"`.
 
 ## Commands
 

@@ -9,11 +9,14 @@ import type { WebviewTab } from './WebviewTab';
 import { PersonasTab } from './tabs/personasTab';
 import { ReviewTab } from './tabs/reviewTab';
 
+const REVIEW_SETTINGS_KEY = 'reviseo.reviewSettings';
+
 export class ReviseoPanel {
     public static currentPanel: ReviseoPanel | undefined;
     private static readonly viewType = 'reviseo';
 
     private readonly _panel: vscode.WebviewPanel;
+    private readonly _context: vscode.ExtensionContext;
     private readonly _store: VsCodeStoragePersonaStore;
     private readonly _reviewGen = new ReviewGenerationFacade();
     private readonly _personaMgmt = new PersonaManagementFacade();
@@ -44,6 +47,7 @@ export class ReviseoPanel {
 
     private constructor(panel: vscode.WebviewPanel, context: vscode.ExtensionContext) {
         this._panel = panel;
+        this._context = context;
         this._store = new VsCodeStoragePersonaStore(context);
         this._store.seed();
 
@@ -77,8 +81,17 @@ export class ReviseoPanel {
             case 'generatePrompt': {
                 const selected = this._store.getAll().filter(p => message.personaIds.includes(p.id));
                 const mode = message.promptOptions.multiAgent ? Modes.MULTI_AGENT : Modes.SINGLE_AGENT;
-                const text = this._reviewGen.buildPrompt(message.prUrl, selected, mode, message.personaContext ?? {});
+                const text = this._reviewGen.buildPrompt(message.prUrl, selected, mode, message.personaContext ?? {}, message.promptOptions.pendingReview);
                 this._panel.webview.postMessage({ type: 'promptGenerated', text });
+                break;
+            }
+            case 'getReviewSettings': {
+                const settings = this._context.globalState.get<{ multiAgent: boolean; pendingReview: boolean }>(REVIEW_SETTINGS_KEY, { multiAgent: false, pendingReview: false });
+                this._panel.webview.postMessage({ type: 'reviewSettingsLoaded', ...settings });
+                break;
+            }
+            case 'saveReviewSettings': {
+                this._context.globalState.update(REVIEW_SETTINGS_KEY, { multiAgent: message.multiAgent, pendingReview: message.pendingReview });
                 break;
             }
             case 'buildGenerationPrompt': {

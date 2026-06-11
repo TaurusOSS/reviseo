@@ -7,11 +7,14 @@ export type WebviewMessage =
     | { type: 'deletePersona'; id: string }
     | { type: 'generatePrompt'; prUrl: string; personaIds: string[]; promptOptions: PromptOptions; personaContext?: Record<string, Record<string, string>> }
     | { type: 'buildGenerationPrompt'; name: string; description?: string }
-    | { type: 'copyToClipboard'; text: string };
+    | { type: 'copyToClipboard'; text: string }
+    | { type: 'getReviewSettings' }
+    | { type: 'saveReviewSettings'; multiAgent: boolean; pendingReview: boolean };
 
 export type ExtensionMessage =
     | { type: 'personasLoaded'; personas: Persona[] }
     | { type: 'personasSaved'; personas: Persona[] }
     | { type: 'promptGenerated'; text: string }
     | { type: 'generationPromptBuilt'; prompt: string }
-    | { type: 'error'; message: string };
+    | { type: 'error'; message: string }
+    | { type: 'reviewSettingsLoaded'; multiAgent: boolean; pendingReview: boolean };

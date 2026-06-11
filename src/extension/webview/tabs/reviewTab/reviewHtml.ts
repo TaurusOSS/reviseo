@@ -29,6 +29,11 @@ export function getReviewHtml(): string {
           <span>Run each persona as subagent</span>
         </label>
         <p class="settings-tip">Best results, but takes longer and uses more tokens.</p>
+        <label class="persona-check-item">
+          <input type="checkbox" id="chk-pending-review">
+          <span>Leave review in pending state</span>
+        </label>
+        <p class="settings-tip">Review comments are created as a draft. You decide when to publish and whether to approve, comment, or request changes.</p>
       </div>
     </details>
 

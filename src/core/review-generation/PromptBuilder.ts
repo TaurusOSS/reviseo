@@ -20,22 +20,27 @@ export class PromptBuilder {
         private readonly _personas: readonly Persona[] = [],
         private readonly _mode = Modes.SINGLE_AGENT,
         private readonly _context: Record<string, Record<string, string>> = {},
+        private readonly _pendingReview = false,
     ) {}
 
     url(prUrl: string): PromptBuilder {
-        return new PromptBuilder(prUrl, this._personas, this._mode, this._context);
+        return new PromptBuilder(prUrl, this._personas, this._mode, this._context, this._pendingReview);
     }
 
     personas(p: readonly Persona[]): PromptBuilder {
-        return new PromptBuilder(this._url, p, this._mode, this._context);
+        return new PromptBuilder(this._url, p, this._mode, this._context, this._pendingReview);
     }
 
     context(map: Record<string, Record<string, string>>): PromptBuilder {
-        return new PromptBuilder(this._url, this._personas, this._mode, map);
+        return new PromptBuilder(this._url, this._personas, this._mode, map, this._pendingReview);
+    }
+
+    pendingReview(value: boolean): PromptBuilder {
+        return new PromptBuilder(this._url, this._personas, this._mode, this._context, value);
     }
 
     mode(m: Modes): Prompt {
-        return new PromptBuilder(this._url, this._personas, m, this._context).build();
+        return new PromptBuilder(this._url, this._personas, m, this._context, this._pendingReview).build();
     }
 
     build(): Prompt {
@@ -52,8 +57,8 @@ export class PromptBuilder {
             ? new MultiAgentProvideMultipersonaReviewPhase(n, stepsComponent, prNumber)
             : new SingleAgentProvideMultipersonaReviewPhase(n, stepsComponent, prNumber);
         const validatePhaseFactory = (n: number): PromptComponent => new ValidateCommentsPhase(n);
-        const submitPhaseFactory = (n: number): PromptComponent => new SubmitReviewPhase(n, prNumber);
-        const cleanupPhaseFactory = (n: number): PromptComponent => new CleanupPhase(n, prNumber);
+        const submitPhaseFactory = (n: number): PromptComponent => new SubmitReviewPhase(n, prNumber, this._pendingReview);
+        const cleanupPhaseFactory = (n: number): PromptComponent => new CleanupPhase(n, prNumber, this._pendingReview);
 
         const phaseFactories: Array<(n: number) => PromptComponent> = [
             fetchPhaseFactory,

@@ -76,4 +76,11 @@ suite('ReviewGenerationFacade', () => {
             fixture('srg-persona-with-jira-url.txt')
         );
     });
+
+    test('pending review option leaves the review as a draft instead of submitting', () => {
+        assert.strictEqual(
+            facade.buildPrompt('https://github.com/org/repo/pull/1', [securityPersona], Modes.SINGLE_AGENT, {}, true),
+            fixture('single-security-persona-pending.txt')
+        );
+    });
 });
