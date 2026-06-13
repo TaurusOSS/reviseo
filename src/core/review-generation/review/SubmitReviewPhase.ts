@@ -4,12 +4,18 @@ export class SubmitReviewPhase implements PromptComponent {
     constructor(
         private readonly phaseNumber: number,
         private readonly prNumber: string,
+        private readonly pendingReview = false,
     ) {}
 
     getText(): string {
-        return `## Phase ${this.phaseNumber}: Submit Review
+        const title = this.pendingReview ? 'Create Pending Review' : 'Submit Review';
+        const header = this.pendingReview
+            ? `Create a pending review on pull request #${this.prNumber}, add all validated comments, and stop — do NOT submit or publish it. Leave it in pending/draft state for manual inspection.`
+            : `Create a pending review on pull request #${this.prNumber} and add all validated comments:`;
 
-Create a pending review on pull request #${this.prNumber} and add all validated comments:
+        return `## Phase ${this.phaseNumber}: ${title}
+
+${header}
 
 1. Create a new pending review. Do not add a review body — leave it empty.
 2. Add each validated comment to the pending review using available tools.

@@ -7,12 +7,14 @@ export class ReviewGenerationFacade {
         prUrl: string,
         personas: readonly Persona[],
         mode: Modes,
-        context: PersonaContext = {}
+        context: PersonaContext = {},
+        isPendingReview = false,
     ): string {
-        return new PromptBuilder()
+        return PromptBuilder.create()
             .url(prUrl)
             .personas(personas)
             .context(context)
+            .pendingReview(isPendingReview)
             .mode(mode)
             .getText();
     }

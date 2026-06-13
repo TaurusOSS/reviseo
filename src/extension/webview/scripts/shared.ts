@@ -39,6 +39,9 @@ export function getSharedScript(): string {
         case 'generationPromptBuilt':
           document.dispatchEvent(new CustomEvent('generation-prompt-built', { detail: { prompt: data.prompt } }));
           break;
+        case 'reviewSettingsLoaded':
+          document.dispatchEvent(new CustomEvent('review-settings-loaded', { detail: { multiAgent: data.multiAgent, pendingReview: data.pendingReview } }));
+          break;
         case 'error':
           alert('Error: ' + data.message);
           break;
@@ -47,5 +50,6 @@ export function getSharedScript(): string {
 
     // ── Init ───────────────────────────────────────────────────────
     vscode.postMessage({ type: 'getPersonas' });
+    vscode.postMessage({ type: 'getReviewSettings' });
     `.trim();
 }

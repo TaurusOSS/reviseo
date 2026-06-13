@@ -1,8 +1,23 @@
 export function getReviewScript(): string {
     return /* js */`
-    // ── Personas updated / prompt generated events ─────────────────
+    // ── Personas updated / prompt generated / settings events ──────
     document.addEventListener('personas-updated', renderChecklist);
     document.addEventListener('prompt-generated', (e) => showPrompt(e.detail.text));
+    document.addEventListener('review-settings-loaded', (e) => {
+      document.getElementById('chk-multi-agent').checked = e.detail.multiAgent;
+      document.getElementById('chk-pending-review').checked = e.detail.pendingReview;
+    });
+
+    function saveReviewSettings() {
+      vscode.postMessage({
+        type: 'saveReviewSettings',
+        multiAgent: document.getElementById('chk-multi-agent').checked,
+        pendingReview: document.getElementById('chk-pending-review').checked,
+      });
+    }
+
+    document.getElementById('chk-multi-agent').addEventListener('change', saveReviewSettings);
+    document.getElementById('chk-pending-review').addEventListener('change', saveReviewSettings);
 
     // ── Rendering ──────────────────────────────────────────────────
     function renderChecklist() {
@@ -106,7 +121,8 @@ export function getReviewScript(): string {
         }
       }
       const multiAgentChecked = document.getElementById('chk-multi-agent').checked;
-      const promptOptions = { multiAgent: multiAgentChecked };
+      const pendingReviewChecked = document.getElementById('chk-pending-review').checked;
+      const promptOptions = { multiAgent: multiAgentChecked, pendingReview: pendingReviewChecked };
       const personaContext = {};
       inputFields.forEach(field => {
         const personaId = field.getAttribute('data-persona-id');
