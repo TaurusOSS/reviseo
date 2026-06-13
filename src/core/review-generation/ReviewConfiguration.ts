@@ -3,7 +3,7 @@ import { Modes } from './types';
 import type { PersonaContext } from './types';
 
 export class ReviewConfiguration {
-    constructor(
+    private constructor(
         readonly url: string,
         readonly personas: readonly Persona[],
         readonly mode: Modes,
@@ -12,16 +12,29 @@ export class ReviewConfiguration {
     ) {}
 
     static builder(): ReviewConfigurationBuilder {
-        return new ReviewConfigurationBuilder();
+        return new ReviewConfigurationBuilder(
+            (url, personas, mode, context, pendingReview) =>
+                new ReviewConfiguration(url, personas, mode, context, pendingReview),
+        );
     }
 }
 
-export class ReviewConfigurationBuilder {
+type ReviewConfigurationFactory = (
+    url: string,
+    personas: readonly Persona[],
+    mode: Modes,
+    context: PersonaContext,
+    pendingReview: boolean,
+) => ReviewConfiguration;
+
+class ReviewConfigurationBuilder {
     private _url: string = '';
     private _personas: readonly Persona[] = [];
     private _mode: Modes = Modes.SINGLE_AGENT;
     private _context: PersonaContext = {};
     private _pendingReview: boolean = false;
+
+    constructor(private readonly factory: ReviewConfigurationFactory) {}
 
     withUrl(url: string): this {
         this._url = url;
@@ -49,7 +62,7 @@ export class ReviewConfigurationBuilder {
     }
 
     build(): ReviewConfiguration {
-        return new ReviewConfiguration(
+        return this.factory(
             this._url,
             this._personas,
             this._mode,
