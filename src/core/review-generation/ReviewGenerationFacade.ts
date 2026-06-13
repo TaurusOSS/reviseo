@@ -10,7 +10,7 @@ export class ReviewGenerationFacade {
         context: PersonaContext = {},
         isPendingReview = false,
     ): string {
-        return new PromptBuilder()
+        return PromptBuilder.create()
             .url(prUrl)
             .personas(personas)
             .context(context)

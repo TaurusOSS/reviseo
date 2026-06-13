@@ -10,9 +10,8 @@ Fetch all review comments from a pull request, decide how to handle each one, ap
 ## Input
 
 The user provides a PR reference in one of these forms:
-- A PR number: `/review-apply 42`
+- A PR number (owner/repo inferred from the current git remote): `/review-apply 42`
 - A full GitHub URL: `/review-apply https://github.com/owner/repo/pull/42`
-- Just a number with context implied by the current repo: `/review-apply 42`
 
 If no PR is specified, ask the user which PR they want to address.
 
@@ -37,10 +36,9 @@ Use `mcp__github__pull_request_read` with the resolved coordinates to get:
 
 Also use `mcp__github__list_pull_requests` if needed to confirm the PR state.
 
-Collect every comment that:
-- Is unresolved (not marked as resolved/outdated)
-- Is an inline code comment (has a `path` and `position`/`line`)
-- Or is a general review comment requesting changes
+Collect every comment that is unresolved (not marked as resolved/outdated) AND is one of:
+- An inline code comment (has a `path` and `position`/`line`)
+- A general review comment requesting changes
 
 Group comments by file so you process one file at a time efficiently.
 
