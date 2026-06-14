@@ -1,13 +1,14 @@
 import * as vscode from 'vscode';
 import * as crypto from 'crypto';
 import { VsCodeStoragePersonaStore } from '../VsCodeStoragePersonaStore';
-import { ReviewGenerationFacade, Modes } from '../../core/review-generation';
+import { ReviewGenerationFacade } from '../../core/review-generation';
 import { PersonaManagementFacade } from '../../core/persona-management';
 import type { WebviewMessage } from './types';
 import { getWebviewHtml } from './htmlTemplate';
 import type { WebviewTab } from './WebviewTab';
 import { PersonasTab } from './tabs/personasTab';
 import { ReviewTab } from './tabs/reviewTab';
+import { PersonaReviewExecutionMode } from '../../core/review-generation/types';
 
 const REVIEW_SETTINGS_KEY = 'reviseo.reviewSettings';
 
@@ -80,8 +81,8 @@ export class ReviseoPanel {
             }
             case 'generatePrompt': {
                 const selected = this._store.getAll().filter(p => message.personaIds.includes(p.id));
-                const mode = message.promptOptions.multiAgent ? Modes.MULTI_AGENT : Modes.SINGLE_AGENT;
-                const text = this._reviewGen.buildPrompt(message.prUrl, selected, mode, message.personaContext ?? {}, message.promptOptions.pendingReview);
+                const personaExecutionMode = message.promptOptions.multiAgent ? PersonaReviewExecutionMode.MULTI_AGENT : PersonaReviewExecutionMode.SINGLE_AGENT;
+                const text = this._reviewGen.buildPrompt(message.prUrl, selected, personaExecutionMode, message.personaContext ?? {}, message.promptOptions.pendingReview);
                 this._panel.webview.postMessage({ type: 'promptGenerated', text });
                 break;
             }

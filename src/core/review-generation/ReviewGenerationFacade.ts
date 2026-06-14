@@ -1,5 +1,5 @@
 import type { Persona } from '../persona-management';
-import { Modes } from './types';
+import { PersonaReviewExecutionMode } from './types';
 import type { PersonaContext } from './types';
 import { ReviewConfiguration } from './ReviewConfiguration';
 import type { ReviewPromptFactory } from './ReviewPromptFactory';
@@ -15,14 +15,14 @@ export class ReviewGenerationFacade {
     buildPrompt(
         prUrl: string,
         personas: readonly Persona[],
-        mode: Modes,
+        personaExecutionMode: PersonaReviewExecutionMode,
         context: PersonaContext = {},
         isPendingReview = false,
     ): string {
         const config = ReviewConfiguration.builder()
             .withUrl(prUrl)
             .withPersonas(personas)
-            .withMode(mode)
+            .withPersonaExecutionMode(personaExecutionMode)
             .withContext(context)
             .withPendingReview(isPendingReview)
             .build();

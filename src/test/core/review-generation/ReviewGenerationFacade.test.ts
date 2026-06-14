@@ -1,7 +1,7 @@
 import * as assert from 'assert';
 import * as fs from 'fs';
 import * as path from 'path';
-import { ReviewGenerationFacade, Modes } from '../../../core/review-generation';
+import { ReviewGenerationFacade, PersonaReviewExecutionMode } from '../../../core/review-generation';
 import type { Persona } from '../../../core/persona-management';
 import { PersonaManagementFacade } from '../../../core/persona-management';
 
@@ -31,21 +31,21 @@ suite('ReviewGenerationFacade', () => {
 
     test('returns empty string when no personas provided', () => {
         assert.strictEqual(
-            facade.buildPrompt('https://github.com/org/repo/pull/1', [], Modes.SINGLE_AGENT),
+            facade.buildPrompt('https://github.com/org/repo/pull/1', [], PersonaReviewExecutionMode.SINGLE_AGENT),
             ''
         );
     });
 
     test('single persona generates expected prompt', () => {
         assert.strictEqual(
-            facade.buildPrompt('https://github.com/org/repo/pull/1', [securityPersona], Modes.SINGLE_AGENT),
+            facade.buildPrompt('https://github.com/org/repo/pull/1', [securityPersona], PersonaReviewExecutionMode.SINGLE_AGENT),
             fixture('single-security-persona.txt')
         );
     });
 
     test('two personas are numbered correctly', () => {
         assert.strictEqual(
-            facade.buildPrompt('https://github.com/org/repo/pull/1', [securityPersona, performancePersona], Modes.SINGLE_AGENT),
+            facade.buildPrompt('https://github.com/org/repo/pull/1', [securityPersona, performancePersona], PersonaReviewExecutionMode.SINGLE_AGENT),
             fixture('two-personas.txt')
         );
     });
@@ -53,14 +53,14 @@ suite('ReviewGenerationFacade', () => {
     test('persona with empty checklist renders placeholder', () => {
         const persona: Persona = { id: 'p-3', name: 'Reviewer', customInstructions: '', checklist: [] };
         assert.strictEqual(
-            facade.buildPrompt('https://github.com/org/repo/pull/1', [persona], Modes.SINGLE_AGENT),
+            facade.buildPrompt('https://github.com/org/repo/pull/1', [persona], PersonaReviewExecutionMode.SINGLE_AGENT),
             fixture('empty-checklist-persona.txt')
         );
     });
 
     test('multi-agent: appends orchestration block after base prompt', () => {
         assert.strictEqual(
-            facade.buildPrompt('https://github.com/org/repo/pull/1', [securityPersona, performancePersona], Modes.MULTI_AGENT),
+            facade.buildPrompt('https://github.com/org/repo/pull/1', [securityPersona, performancePersona], PersonaReviewExecutionMode.MULTI_AGENT),
             fixture('multi-agent-two-personas.txt')
         );
     });
@@ -70,7 +70,7 @@ suite('ReviewGenerationFacade', () => {
             facade.buildPrompt(
                 'https://github.com/org/repo/pull/1',
                 [srgPersona],
-                Modes.SINGLE_AGENT,
+                PersonaReviewExecutionMode.SINGLE_AGENT,
                 { 'story-requirements-guardian': { 'jira-url': 'https://org.atlassian.net/browse/PROJ-42' } }
             ),
             fixture('srg-persona-with-jira-url.txt')
@@ -79,7 +79,7 @@ suite('ReviewGenerationFacade', () => {
 
     test('pending review option leaves the review as a draft instead of submitting', () => {
         assert.strictEqual(
-            facade.buildPrompt('https://github.com/org/repo/pull/1', [securityPersona], Modes.SINGLE_AGENT, {}, true),
+            facade.buildPrompt('https://github.com/org/repo/pull/1', [securityPersona], PersonaReviewExecutionMode.SINGLE_AGENT, {}, true),
             fixture('single-security-persona-pending.txt')
         );
     });

@@ -13,7 +13,7 @@ import {
     SubmitReviewPhase,
     CleanupPhase,
 } from './review';
-import { Modes } from './types';
+import { PersonaReviewExecutionMode } from './types';
 
 export class GithubReviewPromptFactory implements ReviewPromptFactory {
     create(config: ReviewConfiguration): Prompt {
@@ -26,7 +26,7 @@ export class GithubReviewPromptFactory implements ReviewPromptFactory {
         const stepsComponent = new StepsComponent(steps);
 
         const fetchPhaseFactory = (n: number): PromptComponent => new FetchReviewDataPhase(n, config.url);
-        const reviewPhaseFactory = (n: number): PromptComponent => config.mode === Modes.MULTI_AGENT
+        const reviewPhaseFactory = (n: number): PromptComponent => config.personaReviewExecutionMode === PersonaReviewExecutionMode.MULTI_AGENT
             ? new MultiAgentProvideMultipersonaReviewPhase(n, stepsComponent, prNumber)
             : new SingleAgentProvideMultipersonaReviewPhase(n, stepsComponent, prNumber);
         const validatePhaseFactory = (n: number): PromptComponent => new ValidateCommentsPhase(n);
