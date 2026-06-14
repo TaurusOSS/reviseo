@@ -9,12 +9,14 @@ export class ReviewConfiguration {
         readonly personaReviewExecutionMode: PersonaReviewExecutionMode,
         readonly context: PersonaContext,
         readonly pendingReview: boolean,
+        readonly baseBranch: string,
+        readonly timestamp: string,
     ) {}
 
     static builder(): ReviewConfigurationBuilder {
         return new ReviewConfigurationBuilder(
-            (url, personas, personaReviewExecutionMode, context, pendingReview) =>
-                new ReviewConfiguration(url, personas, personaReviewExecutionMode, context, pendingReview),
+            (url, personas, personaReviewExecutionMode, context, pendingReview, baseBranch, timestamp) =>
+                new ReviewConfiguration(url, personas, personaReviewExecutionMode, context, pendingReview, baseBranch, timestamp),
         );
     }
 }
@@ -25,6 +27,8 @@ type ReviewConfigurationFactory = (
     personaReviewExecutionMode: PersonaReviewExecutionMode,
     context: PersonaContext,
     pendingReview: boolean,
+    baseBranch: string,
+    timestamp: string,
 ) => ReviewConfiguration;
 
 class ReviewConfigurationBuilder {
@@ -33,6 +37,8 @@ class ReviewConfigurationBuilder {
     private _personaReviewExecutionMode: PersonaReviewExecutionMode = PersonaReviewExecutionMode.SINGLE_AGENT;
     private _context: PersonaContext = {};
     private _pendingReview: boolean = false;
+    private _baseBranch: string = '';
+    private _timestamp: string = '';
 
     constructor(private readonly factory: ReviewConfigurationFactory) {}
 
@@ -61,6 +67,16 @@ class ReviewConfigurationBuilder {
         return this;
     }
 
+    withBaseBranch(baseBranch: string): this {
+        this._baseBranch = baseBranch;
+        return this;
+    }
+
+    withTimestamp(timestamp: string): this {
+        this._timestamp = timestamp;
+        return this;
+    }
+
     build(): ReviewConfiguration {
         return this.factory(
             this._url,
@@ -68,6 +84,8 @@ class ReviewConfigurationBuilder {
             this._personaReviewExecutionMode,
             this._context,
             this._pendingReview,
+            this._baseBranch,
+            this._timestamp,
         );
     }
 }

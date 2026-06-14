@@ -22,13 +22,14 @@ export class GithubReviewPromptFactory implements ReviewPromptFactory {
         }
 
         const prNumber = config.url.match(/\/pull\/(\d+)/)?.[1] ?? '0';
+        const dataFilePath = `.ai/reviseo/${prNumber}/review_data.json`;
         const steps = config.personas.map((p, i) => new PersonaStepComponent(p, i + 1, config.context[p.id]));
         const stepsComponent = new StepsComponent(steps);
 
         const fetchPhaseFactory = (n: number): PromptComponent => new FetchReviewDataPhase(n, config.url);
         const reviewPhaseFactory = (n: number): PromptComponent => config.personaReviewExecutionMode === PersonaReviewExecutionMode.MULTI_AGENT
-            ? new MultiAgentProvideMultipersonaReviewPhase(n, stepsComponent, prNumber)
-            : new SingleAgentProvideMultipersonaReviewPhase(n, stepsComponent, prNumber);
+            ? new MultiAgentProvideMultipersonaReviewPhase(n, stepsComponent, dataFilePath)
+            : new SingleAgentProvideMultipersonaReviewPhase(n, stepsComponent, dataFilePath);
         const validatePhaseFactory = (n: number): PromptComponent => new ValidateCommentsPhase(n);
         const submitPhaseFactory = (n: number): PromptComponent => new SubmitReviewPhase(n, prNumber, config.pendingReview);
         const cleanupPhaseFactory = (n: number): PromptComponent => new CleanupPhase(n, prNumber, config.pendingReview);

@@ -1,8 +1,22 @@
 export function getReviewHtml(): string {
     return /* html */`
-    <div class="field">
-      <label for="pr-url">Pull Request URL *</label>
-      <input type="url" id="pr-url" placeholder="https://github.com/org/repo/pull/123">
+    <div class="inner-tabs">
+      <button class="inner-tab-btn active" data-inner-tab="github">Github</button>
+      <button class="inner-tab-btn" data-inner-tab="local">Local</button>
+    </div>
+
+    <div id="inner-tab-github" class="inner-tab-panel">
+      <div class="field">
+        <label for="pr-url">Pull Request URL *</label>
+        <input type="url" id="pr-url" placeholder="https://github.com/org/repo/pull/123">
+      </div>
+    </div>
+
+    <div id="inner-tab-local" class="inner-tab-panel hidden">
+      <div class="field">
+        <label for="base-branch">Base branch</label>
+        <input type="text" id="base-branch" value="origin/main" placeholder="origin/main">
+      </div>
     </div>
 
     <hr class="divider">
@@ -29,11 +43,13 @@ export function getReviewHtml(): string {
           <span>Run each persona as subagent</span>
         </label>
         <p class="settings-tip">Best results, but takes longer and uses more tokens.</p>
-        <label class="persona-check-item">
-          <input type="checkbox" id="chk-pending-review">
-          <span>Leave review in pending state</span>
-        </label>
-        <p class="settings-tip">Review comments are created as a draft. You decide when to publish and whether to approve, comment, or request changes.</p>
+        <div class="github-only">
+          <label class="persona-check-item">
+            <input type="checkbox" id="chk-pending-review">
+            <span>Leave review in pending state</span>
+          </label>
+          <p class="settings-tip">Review comments are created as a draft. You decide when to publish and whether to approve, comment, or request changes.</p>
+        </div>
       </div>
     </details>
 

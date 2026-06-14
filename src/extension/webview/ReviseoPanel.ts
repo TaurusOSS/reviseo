@@ -1,16 +1,17 @@
 import * as vscode from 'vscode';
 import * as crypto from 'crypto';
 import { VsCodeStoragePersonaStore } from '../VsCodeStoragePersonaStore';
-import { ReviewGenerationFacade } from '../../core/review-generation';
+import { ReviewGenerationFacade, PersonaReviewExecutionMode } from '../../core/review-generation';
 import { PersonaManagementFacade } from '../../core/persona-management';
 import type { WebviewMessage } from './types';
 import { getWebviewHtml } from './htmlTemplate';
 import type { WebviewTab } from './WebviewTab';
 import { PersonasTab } from './tabs/personasTab';
 import { ReviewTab } from './tabs/reviewTab';
-import { PersonaReviewExecutionMode } from '../../core/review-generation/types';
 
 const REVIEW_SETTINGS_KEY = 'reviseo.reviewSettings';
+const LOCAL_REVIEW_SETTINGS_KEY = 'reviseo.localReviewSettings';
+const DEFAULT_BASE_BRANCH = 'origin/main';
 
 export class ReviseoPanel {
     public static currentPanel: ReviseoPanel | undefined;
@@ -86,6 +87,14 @@ export class ReviseoPanel {
                 this._panel.webview.postMessage({ type: 'promptGenerated', text });
                 break;
             }
+            case 'generateLocalPrompt': {
+                const selected = this._store.getAll().filter(p => message.personaIds.includes(p.id));
+                const personaExecutionMode = message.multiAgent ? PersonaReviewExecutionMode.MULTI_AGENT : PersonaReviewExecutionMode.SINGLE_AGENT;
+                const timestamp = this._generateTimestamp();
+                const text = this._reviewGen.buildLocalPrompt(message.baseBranch, timestamp, selected, personaExecutionMode, message.personaContext ?? {});
+                this._panel.webview.postMessage({ type: 'promptGenerated', text });
+                break;
+            }
             case 'getReviewSettings': {
                 const settings = this._context.globalState.get<{ multiAgent: boolean; pendingReview: boolean }>(REVIEW_SETTINGS_KEY, { multiAgent: false, pendingReview: false });
                 this._panel.webview.postMessage({ type: 'reviewSettingsLoaded', ...settings });
@@ -93,6 +102,15 @@ export class ReviseoPanel {
             }
             case 'saveReviewSettings': {
                 this._context.globalState.update(REVIEW_SETTINGS_KEY, { multiAgent: message.multiAgent, pendingReview: message.pendingReview });
+                break;
+            }
+            case 'getLocalReviewSettings': {
+                const settings = this._context.workspaceState.get<{ multiAgent: boolean; baseBranch: string }>(LOCAL_REVIEW_SETTINGS_KEY, { multiAgent: false, baseBranch: DEFAULT_BASE_BRANCH });
+                this._panel.webview.postMessage({ type: 'localReviewSettingsLoaded', ...settings });
+                break;
+            }
+            case 'saveLocalReviewSettings': {
+                this._context.workspaceState.update(LOCAL_REVIEW_SETTINGS_KEY, { multiAgent: message.multiAgent, baseBranch: message.baseBranch });
                 break;
             }
             case 'buildGenerationPrompt': {
@@ -112,6 +130,10 @@ export class ReviseoPanel {
         const cspSource = this._panel.webview.cspSource;
         const tabs: WebviewTab[] = [new PersonasTab(), new ReviewTab()];
         return getWebviewHtml(nonce, cspSource, tabs);
+    }
+
+    private _generateTimestamp(): string {
+        return new Date().toISOString().replace(/\.\d{3}Z$/, '').replace(/:/g, '-');
     }
 
     public dispose(): void {

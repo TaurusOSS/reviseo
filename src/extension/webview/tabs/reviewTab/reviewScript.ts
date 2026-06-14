@@ -7,17 +7,73 @@ export function getReviewScript(): string {
       document.getElementById('chk-multi-agent').checked = e.detail.multiAgent;
       document.getElementById('chk-pending-review').checked = e.detail.pendingReview;
     });
+    document.addEventListener('local-review-settings-loaded', (e) => {
+      document.getElementById('chk-multi-agent').checked = e.detail.multiAgent;
+      document.getElementById('base-branch').value = e.detail.baseBranch;
+    });
 
-    function saveReviewSettings() {
-      vscode.postMessage({
-        type: 'saveReviewSettings',
-        multiAgent: document.getElementById('chk-multi-agent').checked,
-        pendingReview: document.getElementById('chk-pending-review').checked,
+    // ── Inner tab switching ────────────────────────────────────────
+    let activeInnerTab = 'github';
+
+    document.querySelectorAll('.inner-tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        activeInnerTab = btn.dataset.innerTab;
+        document.querySelectorAll('.inner-tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        document.querySelectorAll('.inner-tab-panel').forEach(p => p.classList.add('hidden'));
+        document.getElementById('inner-tab-' + activeInnerTab).classList.remove('hidden');
+
+        const githubOnly = document.querySelectorAll('.github-only');
+        githubOnly.forEach(el => {
+          el.style.display = activeInnerTab === 'github' ? '' : 'none';
+        });
+
+        if (activeInnerTab === 'github') {
+          vscode.postMessage({ type: 'getReviewSettings' });
+        } else {
+          vscode.postMessage({ type: 'getLocalReviewSettings' });
+        }
       });
+    });
+
+    // ── Settings persistence ───────────────────────────────────────
+    const tabHandlers = {
+      github: {
+        save: () => vscode.postMessage({
+          type: 'saveReviewSettings',
+          multiAgent: document.getElementById('chk-multi-agent').checked,
+          pendingReview: document.getElementById('chk-pending-review').checked,
+        }),
+        generate: (checked, personaContext) => {
+          const prUrl = document.getElementById('pr-url').value.trim();
+          if (!prUrl) { alert('Please enter a Pull Request URL.'); return; }
+          const multiAgent = document.getElementById('chk-multi-agent').checked;
+          const pendingReview = document.getElementById('chk-pending-review').checked;
+          vscode.postMessage({ type: 'generatePrompt', prUrl, personaIds: checked, promptOptions: { multiAgent, pendingReview }, personaContext });
+        },
+      },
+      local: {
+        save: () => vscode.postMessage({
+          type: 'saveLocalReviewSettings',
+          multiAgent: document.getElementById('chk-multi-agent').checked,
+          baseBranch: document.getElementById('base-branch').value.trim() || 'origin/main',
+        }),
+        generate: (checked, personaContext) => {
+          const baseBranch = document.getElementById('base-branch').value.trim() || 'origin/main';
+          const multiAgent = document.getElementById('chk-multi-agent').checked;
+          vscode.postMessage({ type: 'generateLocalPrompt', baseBranch, personaIds: checked, multiAgent, personaContext });
+        },
+      },
+    };
+
+    function saveSettings() {
+      tabHandlers[activeInnerTab].save();
     }
 
-    document.getElementById('chk-multi-agent').addEventListener('change', saveReviewSettings);
-    document.getElementById('chk-pending-review').addEventListener('change', saveReviewSettings);
+    document.getElementById('chk-multi-agent').addEventListener('change', saveSettings);
+    document.getElementById('chk-pending-review').addEventListener('change', saveSettings);
+    document.getElementById('base-branch').addEventListener('change', saveSettings);
 
     // ── Rendering ──────────────────────────────────────────────────
     function renderChecklist() {
@@ -96,17 +152,13 @@ export function getReviewScript(): string {
 
     // ── Generate prompt ────────────────────────────────────────────
     document.getElementById('btn-generate').addEventListener('click', () => {
-      const prUrl = document.getElementById('pr-url').value.trim();
-      if (!prUrl) {
-        alert('Please enter a Pull Request URL.');
-        return;
-      }
       const checked = Array.from(document.querySelectorAll('input[name="persona"]:checked'))
         .map(el => el.value);
       if (checked.length === 0) {
         alert('Please select at least one persona.');
         return;
       }
+
       const container = document.getElementById('additional-inputs-container');
       const inputFields = Array.from(container.querySelectorAll('[data-persona-id]'));
       for (const field of inputFields) {
@@ -120,9 +172,7 @@ export function getReviewScript(): string {
           return;
         }
       }
-      const multiAgentChecked = document.getElementById('chk-multi-agent').checked;
-      const pendingReviewChecked = document.getElementById('chk-pending-review').checked;
-      const promptOptions = { multiAgent: multiAgentChecked, pendingReview: pendingReviewChecked };
+
       const personaContext = {};
       inputFields.forEach(field => {
         const personaId = field.getAttribute('data-persona-id');
@@ -136,7 +186,8 @@ export function getReviewScript(): string {
           personaContext[personaId][inputId] = value;
         }
       });
-      vscode.postMessage({ type: 'generatePrompt', prUrl, personaIds: checked, promptOptions, personaContext });
+
+      tabHandlers[activeInnerTab].generate(checked, personaContext);
     });
 
     function showPrompt(text) {

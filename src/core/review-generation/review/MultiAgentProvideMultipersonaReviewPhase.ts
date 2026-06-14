@@ -2,11 +2,10 @@ import { ProvideMultipersonaReviewPhase } from './ProvideMultipersonaReviewPhase
 
 export class MultiAgentProvideMultipersonaReviewPhase extends ProvideMultipersonaReviewPhase {
     protected buildInstructions(): string {
-        const reviewDataPath = `.ai/reviseo/${this.prNumber}/review_data.json`;
         return `## Phase ${this.phaseNumber}: Provide Multipersona Review
 
 For each persona step below, launch a reviewer subagent with:
-- The file path \`${reviewDataPath}\` — the reviewer subagent must read this file to obtain the PR context and diff
+- The file path \`${this.dataFilePath}\` — the reviewer subagent must read this file to obtain the diff
 - That persona's instructions and checklist
 - The JSON output format specified below
 

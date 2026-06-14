@@ -16,7 +16,7 @@ export abstract class ProvideMultipersonaReviewPhase implements PromptComponent 
     constructor(
         protected readonly phaseNumber: number,
         protected readonly stepsComponent: StepsComponent,
-        protected readonly prNumber: string,
+        protected readonly dataFilePath: string,
     ) {}
 
     getText(): string {
