@@ -11,3 +11,6 @@ export { MultiAgentProvideMultipersonaReviewPhase } from './MultiAgentProvideMul
 export { ValidateCommentsPhase } from './ValidateCommentsPhase';
 export { SubmitReviewPhase } from './SubmitReviewPhase';
 export { CleanupPhase } from './CleanupPhase';
+export { LocalFetchDiffPhase } from './LocalFetchDiffPhase';
+export { LocalWriteReviewPhase } from './LocalWriteReviewPhase';
+export { LocalCleanupPhase } from './LocalCleanupPhase';

@@ -13,22 +13,24 @@ import {
     SubmitReviewPhase,
     CleanupPhase,
 } from './review';
-import { Modes } from './types';
+import { PersonaReviewExecutionMode } from './types';
+import { REVISEO_BASE_DIR } from './LocalReviewDiffFilePath';
 
 export class GithubReviewPromptFactory implements ReviewPromptFactory {
     create(config: ReviewConfiguration): Prompt {
-        if (config.personas.length === 0) {
+        if (config.kind !== 'github' || config.personas.length === 0) {
             return new Prompt([]);
         }
 
         const prNumber = config.url.match(/\/pull\/(\d+)/)?.[1] ?? '0';
+        const dataFilePath = `${REVISEO_BASE_DIR}/${prNumber}/review_data.json`;
         const steps = config.personas.map((p, i) => new PersonaStepComponent(p, i + 1, config.context[p.id]));
         const stepsComponent = new StepsComponent(steps);
 
         const fetchPhaseFactory = (n: number): PromptComponent => new FetchReviewDataPhase(n, config.url);
-        const reviewPhaseFactory = (n: number): PromptComponent => config.mode === Modes.MULTI_AGENT
-            ? new MultiAgentProvideMultipersonaReviewPhase(n, stepsComponent, prNumber)
-            : new SingleAgentProvideMultipersonaReviewPhase(n, stepsComponent, prNumber);
+        const reviewPhaseFactory = (n: number): PromptComponent => config.personaReviewExecutionMode === PersonaReviewExecutionMode.MULTI_AGENT
+            ? new MultiAgentProvideMultipersonaReviewPhase(n, stepsComponent, dataFilePath)
+            : new SingleAgentProvideMultipersonaReviewPhase(n, stepsComponent, dataFilePath);
         const validatePhaseFactory = (n: number): PromptComponent => new ValidateCommentsPhase(n);
         const submitPhaseFactory = (n: number): PromptComponent => new SubmitReviewPhase(n, prNumber, config.pendingReview);
         const cleanupPhaseFactory = (n: number): PromptComponent => new CleanupPhase(n, prNumber, config.pendingReview);

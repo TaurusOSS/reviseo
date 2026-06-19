@@ -1,32 +1,22 @@
-import type { Persona } from '../persona-management';
-import { Modes } from './types';
-import type { PersonaContext } from './types';
-import { ReviewConfiguration } from './ReviewConfiguration';
+import type { ReviewConfiguration } from './ReviewConfiguration';
 import type { ReviewPromptFactory } from './ReviewPromptFactory';
 import { GithubReviewPromptFactory } from './GithubReviewPromptFactory';
+import { LocalReviewPromptFactory } from './LocalReviewPromptFactory';
 
 export class ReviewGenerationFacade {
-    private readonly _factory: ReviewPromptFactory;
+    private readonly _githubFactory: ReviewPromptFactory;
+    private readonly _localFactory: ReviewPromptFactory;
 
-    constructor(factory: ReviewPromptFactory = new GithubReviewPromptFactory()) {
-        this._factory = factory;
+    constructor(
+        githubFactory: ReviewPromptFactory = new GithubReviewPromptFactory(),
+        localFactory: ReviewPromptFactory = new LocalReviewPromptFactory(),
+    ) {
+        this._githubFactory = githubFactory;
+        this._localFactory = localFactory;
     }
 
-    buildPrompt(
-        prUrl: string,
-        personas: readonly Persona[],
-        mode: Modes,
-        context: PersonaContext = {},
-        isPendingReview = false,
-    ): string {
-        const config = ReviewConfiguration.builder()
-            .withUrl(prUrl)
-            .withPersonas(personas)
-            .withMode(mode)
-            .withContext(context)
-            .withPendingReview(isPendingReview)
-            .build();
-
-        return this._factory.create(config).getText();
+    build(config: ReviewConfiguration): string {
+        const factory = config.kind === 'github' ? this._githubFactory : this._localFactory;
+        return factory.create(config).getText();
     }
 }

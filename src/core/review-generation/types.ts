@@ -5,7 +5,7 @@ export interface PromptOptions {
     pendingReview: boolean;
 }
 
-export enum Modes {
+export enum PersonaReviewExecutionMode {
     SINGLE_AGENT = 'single',
     MULTI_AGENT = 'multi',
 }

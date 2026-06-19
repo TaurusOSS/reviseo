@@ -43,6 +43,32 @@ export function getStyles(nonce: string): string {
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
 
+    /* Inner tabs (mode switcher within a tab panel) */
+    .inner-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--vscode-panel-border);
+      margin-bottom: 16px;
+    }
+    .inner-tab-btn {
+      padding: 6px 16px;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--vscode-foreground);
+      cursor: pointer;
+      font-size: var(--vscode-font-size);
+      font-family: var(--vscode-font-family);
+      opacity: 0.7;
+      margin-bottom: -1px;
+    }
+    .inner-tab-btn.active {
+      border-bottom-color: var(--vscode-button-background);
+      opacity: 1;
+      font-weight: 600;
+    }
+    .inner-tab-panel { display: block; }
+    .inner-tab-panel.hidden { display: none; }
+
     /* Buttons */
     .btn {
       padding: 6px 14px;

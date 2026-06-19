@@ -1,7 +1,8 @@
 import * as vscode from 'vscode';
 import * as crypto from 'crypto';
 import { VsCodeStoragePersonaStore } from '../VsCodeStoragePersonaStore';
-import { ReviewGenerationFacade, Modes } from '../../core/review-generation';
+import { ReviewGenerationFacade, PersonaReviewExecutionMode, generateLocalReviewTimestamp } from '../../core/review-generation';
+import type { ReviewConfiguration } from '../../core/review-generation';
 import { PersonaManagementFacade } from '../../core/persona-management';
 import type { WebviewMessage } from './types';
 import { getWebviewHtml } from './htmlTemplate';
@@ -10,6 +11,8 @@ import { PersonasTab } from './tabs/personasTab';
 import { ReviewTab } from './tabs/reviewTab';
 
 const REVIEW_SETTINGS_KEY = 'reviseo.reviewSettings';
+const LOCAL_REVIEW_SETTINGS_KEY = 'reviseo.localReviewSettings';
+const DEFAULT_BASE_BRANCH = 'origin/main';
 
 export class ReviseoPanel {
     public static currentPanel: ReviseoPanel | undefined;
@@ -80,9 +83,28 @@ export class ReviseoPanel {
             }
             case 'generatePrompt': {
                 const selected = this._store.getAll().filter(p => message.personaIds.includes(p.id));
-                const mode = message.promptOptions.multiAgent ? Modes.MULTI_AGENT : Modes.SINGLE_AGENT;
-                const text = this._reviewGen.buildPrompt(message.prUrl, selected, mode, message.personaContext ?? {}, message.promptOptions.pendingReview);
-                this._panel.webview.postMessage({ type: 'promptGenerated', text });
+                const config: ReviewConfiguration = {
+                    kind: 'github',
+                    url: message.prUrl,
+                    personas: selected,
+                    personaReviewExecutionMode: message.promptOptions.multiAgent ? PersonaReviewExecutionMode.MULTI_AGENT : PersonaReviewExecutionMode.SINGLE_AGENT,
+                    context: message.personaContext ?? {},
+                    pendingReview: message.promptOptions.pendingReview,
+                };
+                this._panel.webview.postMessage({ type: 'promptGenerated', text: this._reviewGen.build(config) });
+                break;
+            }
+            case 'generateLocalPrompt': {
+                const selected = this._store.getAll().filter(p => message.personaIds.includes(p.id));
+                const config: ReviewConfiguration = {
+                    kind: 'local',
+                    baseBranch: message.baseBranch,
+                    timestamp: generateLocalReviewTimestamp(),
+                    personas: selected,
+                    personaReviewExecutionMode: message.multiAgent ? PersonaReviewExecutionMode.MULTI_AGENT : PersonaReviewExecutionMode.SINGLE_AGENT,
+                    context: message.personaContext ?? {},
+                };
+                this._panel.webview.postMessage({ type: 'promptGenerated', text: this._reviewGen.build(config) });
                 break;
             }
             case 'getReviewSettings': {
@@ -92,6 +114,15 @@ export class ReviseoPanel {
             }
             case 'saveReviewSettings': {
                 this._context.globalState.update(REVIEW_SETTINGS_KEY, { multiAgent: message.multiAgent, pendingReview: message.pendingReview });
+                break;
+            }
+            case 'getLocalReviewSettings': {
+                const settings = this._context.workspaceState.get<{ multiAgent: boolean; baseBranch: string }>(LOCAL_REVIEW_SETTINGS_KEY, { multiAgent: false, baseBranch: DEFAULT_BASE_BRANCH });
+                this._panel.webview.postMessage({ type: 'localReviewSettingsLoaded', ...settings });
+                break;
+            }
+            case 'saveLocalReviewSettings': {
+                this._context.workspaceState.update(LOCAL_REVIEW_SETTINGS_KEY, { multiAgent: message.multiAgent, baseBranch: message.baseBranch });
                 break;
             }
             case 'buildGenerationPrompt': {
