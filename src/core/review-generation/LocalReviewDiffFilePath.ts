@@ -1,11 +1,12 @@
-export class LocalReviewDiffFilePath {
-    constructor(private readonly timestamp: string) {}
+export const REVISEO_BASE_DIR = '.ai/reviseo';
 
-    getFullPath(): string {
-        return `.ai/reviseo/${this.timestamp}/local.diff`;
-    }
+export function localReviewPaths(timestamp: string): { fullPath: string; directory: string } {
+    return {
+        fullPath: `${REVISEO_BASE_DIR}/${timestamp}/local.diff`,
+        directory: `${REVISEO_BASE_DIR}/${timestamp}/`,
+    };
+}
 
-    getDirectory(): string {
-        return `.ai/reviseo/${this.timestamp}/`;
-    }
+export function generateLocalReviewTimestamp(date: Date = new Date()): string {
+    return date.toISOString().replace(/\.\d{3}Z$/, '').replace(/:/g, '-');
 }

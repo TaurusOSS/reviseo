@@ -2,6 +2,7 @@ import * as assert from 'assert';
 import * as fs from 'fs';
 import * as path from 'path';
 import { ReviewGenerationFacade, PersonaReviewExecutionMode } from '../../../core/review-generation';
+import type { LocalReviewConfiguration } from '../../../core/review-generation';
 import type { Persona } from '../../../core/persona-management';
 
 const TIMESTAMP = '2026-06-14T10-30-00';
@@ -31,42 +32,54 @@ function fixture(name: string): string {
     return fs.readFileSync(fixturePath, 'utf8');
 }
 
+function localConfig(overrides: Partial<LocalReviewConfiguration> & Pick<LocalReviewConfiguration, 'personas'>): LocalReviewConfiguration {
+    return {
+        kind: 'local',
+        baseBranch: BASE_BRANCH,
+        timestamp: TIMESTAMP,
+        personaReviewExecutionMode: PersonaReviewExecutionMode.SINGLE_AGENT,
+        context: {},
+        ...overrides,
+    };
+}
+
 suite('LocalReviewGenerationFacade', () => {
     const facade = new ReviewGenerationFacade();
 
     test('returns empty string when no personas provided', () => {
-        assert.strictEqual(
-            facade.buildLocalPrompt(BASE_BRANCH, TIMESTAMP, [], PersonaReviewExecutionMode.SINGLE_AGENT),
-            ''
-        );
+        assert.strictEqual(facade.build(localConfig({ personas: [] })), '');
     });
 
     test('single persona generates expected prompt', () => {
         assert.strictEqual(
-            facade.buildLocalPrompt(BASE_BRANCH, TIMESTAMP, [securityPersona], PersonaReviewExecutionMode.SINGLE_AGENT),
+            facade.build(localConfig({ personas: [securityPersona] })),
             fixture('local-single-security-persona.txt')
         );
     });
 
     test('two personas are numbered correctly', () => {
         assert.strictEqual(
-            facade.buildLocalPrompt(BASE_BRANCH, TIMESTAMP, [securityPersona, performancePersona], PersonaReviewExecutionMode.SINGLE_AGENT),
+            facade.build(localConfig({ personas: [securityPersona, performancePersona] })),
             fixture('local-two-personas.txt')
         );
     });
 
     test('multi-agent mode uses subagent orchestration for review phase', () => {
         assert.strictEqual(
-            facade.buildLocalPrompt(BASE_BRANCH, TIMESTAMP, [securityPersona, performancePersona], PersonaReviewExecutionMode.MULTI_AGENT),
+            facade.build(localConfig({
+                personas: [securityPersona, performancePersona],
+                personaReviewExecutionMode: PersonaReviewExecutionMode.MULTI_AGENT,
+            })),
             fixture('local-multi-agent-two-personas.txt')
         );
     });
 
     test('persona additional inputs are included in the prompt', () => {
         assert.strictEqual(
-            facade.buildLocalPrompt(BASE_BRANCH, TIMESTAMP, [securityPersonaWithFocusArea], PersonaReviewExecutionMode.SINGLE_AGENT, {
-                'p-1': { 'focus-area': 'authentication module' }
-            }),
+            facade.build(localConfig({
+                personas: [securityPersonaWithFocusArea],
+                context: { 'p-1': { 'focus-area': 'authentication module' } },
+            })),
             fixture('local-single-security-persona-with-context.txt')
         );
     });

@@ -14,15 +14,16 @@ import {
     CleanupPhase,
 } from './review';
 import { PersonaReviewExecutionMode } from './types';
+import { REVISEO_BASE_DIR } from './LocalReviewDiffFilePath';
 
 export class GithubReviewPromptFactory implements ReviewPromptFactory {
     create(config: ReviewConfiguration): Prompt {
-        if (config.personas.length === 0) {
+        if (config.kind !== 'github' || config.personas.length === 0) {
             return new Prompt([]);
         }
 
         const prNumber = config.url.match(/\/pull\/(\d+)/)?.[1] ?? '0';
-        const dataFilePath = `.ai/reviseo/${prNumber}/review_data.json`;
+        const dataFilePath = `${REVISEO_BASE_DIR}/${prNumber}/review_data.json`;
         const steps = config.personas.map((p, i) => new PersonaStepComponent(p, i + 1, config.context[p.id]));
         const stepsComponent = new StepsComponent(steps);
 
