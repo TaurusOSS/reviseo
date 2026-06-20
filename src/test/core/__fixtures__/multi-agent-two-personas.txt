@@ -6,25 +6,24 @@ You do not perform code review yourself — you delegate that work to the approp
 ## Phase 1: Fetch Review Data
 
 The PR URL for this review is: `https://github.com/org/repo/pull/1`
-The review data file for this review is: `.ai/reviseo/1/review_data.json`
 
-Fetch the PR details and write them to the review data file:
+Fetch the PR details and write them to the review data files:
 1. Fetch PR details via `pull_request_read` with method "get" for PR `https://github.com/org/repo/pull/1` (to obtain title and description)
-2. Fetch the diff via `pull_request_read` with method "get_diff"
+2. Fetch the diff via `pull_request_read` with method "get_diff" and write it to `.ai/reviseo/1/diff.patch`
 3. Write `.ai/reviseo/1/review_data.json` as a JSON file with this exact structure:
    {
      "title": "<PR title>",
      "description": "<PR description>",
-     "diff": "<full diff>"
+     "diff": ".ai/reviseo/1/diff.patch"
    }
-4. Confirm the file has been written successfully before reporting this phase complete.
+4. Confirm both files have been written successfully before reporting this phase complete.
 
 If any step fails, report the error and stop.
 
 ## Phase 2: Provide Multipersona Review
 
 For each persona step below, launch a reviewer subagent with:
-- The file path `.ai/reviseo/1/review_data.json` — the reviewer subagent must read this file to obtain the diff
+- The file path `.ai/reviseo/1/diff.patch` — the reviewer subagent must read this file to obtain the diff
 - That persona's instructions and checklist
 - The JSON output format specified below
 
@@ -111,4 +110,4 @@ If any operation fails, report the error and stop — do not submit a partial re
 
 ## Phase 5: Cleanup
 
-Delete `.ai/reviseo/1/review_data.json` once the review has been submitted successfully.
+Delete `.ai/reviseo/1/review_data.json` and `.ai/reviseo/1/diff.patch` once the review has been submitted successfully.

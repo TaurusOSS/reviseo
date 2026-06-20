@@ -12,21 +12,21 @@ export class FetchReviewDataPhase implements PromptComponent {
 
     getText(): string {
         const reviewDataPath = `.ai/reviseo/${this.prNumber}/review_data.json`;
+        const diffFilePath = `.ai/reviseo/${this.prNumber}/diff.patch`;
         return `## Phase ${this.phaseNumber}: Fetch Review Data
 
 The PR URL for this review is: \`${this.prUrl}\`
-The review data file for this review is: \`${reviewDataPath}\`
 
-Fetch the PR details and write them to the review data file:
+Fetch the PR details and write them to the review data files:
 1. Fetch PR details via \`pull_request_read\` with method "get" for PR \`${this.prUrl}\` (to obtain title and description)
-2. Fetch the diff via \`pull_request_read\` with method "get_diff"
+2. Fetch the diff via \`pull_request_read\` with method "get_diff" and write it to \`${diffFilePath}\`
 3. Write \`${reviewDataPath}\` as a JSON file with this exact structure:
    {
      "title": "<PR title>",
      "description": "<PR description>",
-     "diff": "<full diff>"
+     "diff": "${diffFilePath}"
    }
-4. Confirm the file has been written successfully before reporting this phase complete.
+4. Confirm both files have been written successfully before reporting this phase complete.
 
 If any step fails, report the error and stop.`;
     }
