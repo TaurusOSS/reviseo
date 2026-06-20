@@ -1,18 +1,23 @@
 export function getReviewScript(): string {
     return /* js */`
-    // ── Personas updated / prompt generated / settings events ──────
+    // ── Personas updated / prompt generated ───────────────────────
     document.addEventListener('personas-updated', renderChecklist);
     document.addEventListener('prompt-generated', (e) => showPrompt(e.detail.text));
-    document.addEventListener('review-settings-loaded', (e) => {
-      document.getElementById('chk-multi-agent').checked = e.detail.multiAgent;
-      document.getElementById('chk-pending-review').checked = e.detail.pendingReview;
-    });
-    document.addEventListener('local-review-settings-loaded', (e) => {
-      document.getElementById('chk-multi-agent').checked = e.detail.multiAgent;
-      document.getElementById('base-branch').value = e.detail.baseBranch;
-    });
+
     // ── Inner tab switching ────────────────────────────────────────
     let activeInnerTab = 'github';
+    let githubSettings = { multiAgent: false, pendingReview: false };
+    let localSettings = { multiAgent: false, baseBranch: 'origin/main' };
+
+    function applySettingsToUi(tab) {
+      if (tab === 'github') {
+        document.getElementById('chk-multi-agent').checked = githubSettings.multiAgent;
+        document.getElementById('chk-pending-review').checked = githubSettings.pendingReview;
+      } else {
+        document.getElementById('chk-multi-agent').checked = localSettings.multiAgent;
+        document.getElementById('base-branch').value = localSettings.baseBranch;
+      }
+    }
 
     function activateTab(tab) {
       activeInnerTab = tab;
@@ -22,39 +27,30 @@ export function getReviewScript(): string {
       document.querySelectorAll('.github-only').forEach(el => {
         el.style.display = tab === 'github' ? '' : 'none';
       });
-    }
-
-    function loadSettingsForActiveTab() {
-      if (activeInnerTab === 'github') {
-        vscode.postMessage({ type: 'getReviewSettings' });
-      } else {
-        vscode.postMessage({ type: 'getLocalReviewSettings' });
-      }
+      applySettingsToUi(tab);
     }
 
     document.querySelectorAll('.inner-tab-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         activateTab(btn.dataset.innerTab);
         vscode.postMessage({ type: 'saveActiveReviewTab', tab: activeInnerTab });
-        loadSettingsForActiveTab();
       });
     });
 
-    document.addEventListener('active-review-tab-loaded', (e) => {
-      activateTab(e.detail.tab);
-      loadSettingsForActiveTab();
+    document.addEventListener('initial-state-loaded', (e) => {
+      githubSettings = e.detail.github;
+      localSettings = e.detail.local;
+      activateTab(e.detail.activeTab);
     });
-
-    vscode.postMessage({ type: 'getActiveReviewTab' });
 
     // ── Settings persistence ───────────────────────────────────────
     const tabHandlers = {
       github: {
-        save: () => vscode.postMessage({
-          type: 'saveReviewSettings',
-          multiAgent: document.getElementById('chk-multi-agent').checked,
-          pendingReview: document.getElementById('chk-pending-review').checked,
-        }),
+        save: () => {
+          githubSettings.multiAgent = document.getElementById('chk-multi-agent').checked;
+          githubSettings.pendingReview = document.getElementById('chk-pending-review').checked;
+          vscode.postMessage({ type: 'saveReviewSettings', ...githubSettings });
+        },
         generate: (checked, personaContext) => {
           const prUrl = document.getElementById('pr-url').value.trim();
           if (!prUrl) { alert('Please enter a Pull Request URL.'); return; }
@@ -64,11 +60,11 @@ export function getReviewScript(): string {
         },
       },
       local: {
-        save: () => vscode.postMessage({
-          type: 'saveLocalReviewSettings',
-          multiAgent: document.getElementById('chk-multi-agent').checked,
-          baseBranch: document.getElementById('base-branch').value.trim() || 'origin/main',
-        }),
+        save: () => {
+          localSettings.multiAgent = document.getElementById('chk-multi-agent').checked;
+          localSettings.baseBranch = document.getElementById('base-branch').value.trim() || 'origin/main';
+          vscode.postMessage({ type: 'saveLocalReviewSettings', ...localSettings });
+        },
         generate: (checked, personaContext) => {
           const baseBranch = document.getElementById('base-branch').value.trim() || 'origin/main';
           const multiAgent = document.getElementById('chk-multi-agent').checked;

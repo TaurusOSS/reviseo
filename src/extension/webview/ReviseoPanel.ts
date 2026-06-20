@@ -108,27 +108,19 @@ export class ReviseoPanel {
                 this._panel.webview.postMessage({ type: 'promptGenerated', text: this._reviewGen.build(config) });
                 break;
             }
-            case 'getReviewSettings': {
-                const settings = this._context.globalState.get<{ multiAgent: boolean; pendingReview: boolean }>(REVIEW_SETTINGS_KEY, { multiAgent: false, pendingReview: false });
-                this._panel.webview.postMessage({ type: 'reviewSettingsLoaded', ...settings });
+            case 'getInitialState': {
+                const github = this._context.globalState.get<{ multiAgent: boolean; pendingReview: boolean }>(REVIEW_SETTINGS_KEY, { multiAgent: false, pendingReview: false });
+                const local = this._context.workspaceState.get<{ multiAgent: boolean; baseBranch: string }>(LOCAL_REVIEW_SETTINGS_KEY, { multiAgent: false, baseBranch: DEFAULT_BASE_BRANCH });
+                const activeTab = this._context.workspaceState.get<ReviewMode>(ACTIVE_REVIEW_TAB_KEY, 'github');
+                this._panel.webview.postMessage({ type: 'initialStateLoaded', github, local, activeTab });
                 break;
             }
             case 'saveReviewSettings': {
                 this._context.globalState.update(REVIEW_SETTINGS_KEY, { multiAgent: message.multiAgent, pendingReview: message.pendingReview });
                 break;
             }
-            case 'getLocalReviewSettings': {
-                const settings = this._context.workspaceState.get<{ multiAgent: boolean; baseBranch: string }>(LOCAL_REVIEW_SETTINGS_KEY, { multiAgent: false, baseBranch: DEFAULT_BASE_BRANCH });
-                this._panel.webview.postMessage({ type: 'localReviewSettingsLoaded', ...settings });
-                break;
-            }
             case 'saveLocalReviewSettings': {
                 this._context.workspaceState.update(LOCAL_REVIEW_SETTINGS_KEY, { multiAgent: message.multiAgent, baseBranch: message.baseBranch });
-                break;
-            }
-            case 'getActiveReviewTab': {
-                const tab = this._context.workspaceState.get<ReviewMode>(ACTIVE_REVIEW_TAB_KEY, 'github');
-                this._panel.webview.postMessage({ type: 'activeReviewTabLoaded', tab });
                 break;
             }
             case 'saveActiveReviewTab': {
