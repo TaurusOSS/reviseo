@@ -39,14 +39,8 @@ export function getSharedScript(): string {
         case 'generationPromptBuilt':
           document.dispatchEvent(new CustomEvent('generation-prompt-built', { detail: { prompt: data.prompt } }));
           break;
-        case 'reviewSettingsLoaded':
-          document.dispatchEvent(new CustomEvent('review-settings-loaded', { detail: { multiAgent: data.multiAgent, pendingReview: data.pendingReview } }));
-          break;
-        case 'localReviewSettingsLoaded':
-          document.dispatchEvent(new CustomEvent('local-review-settings-loaded', { detail: { multiAgent: data.multiAgent, baseBranch: data.baseBranch } }));
-          break;
-        case 'activeReviewTabLoaded':
-          document.dispatchEvent(new CustomEvent('active-review-tab-loaded', { detail: { tab: data.tab } }));
+        case 'initialStateLoaded':
+          document.dispatchEvent(new CustomEvent('initial-state-loaded', { detail: { github: data.github, local: data.local, activeTab: data.activeTab } }));
           break;
         case 'error':
           alert('Error: ' + data.message);
@@ -56,6 +50,6 @@ export function getSharedScript(): string {
 
     // ── Init ───────────────────────────────────────────────────────
     vscode.postMessage({ type: 'getPersonas' });
-    vscode.postMessage({ type: 'getReviewSettings' });
+    vscode.postMessage({ type: 'getInitialState' });
     `.trim();
 }

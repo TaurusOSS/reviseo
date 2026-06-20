@@ -11,11 +11,9 @@ export type WebviewMessage =
     | { type: 'generateLocalPrompt'; baseBranch: string; personaIds: string[]; multiAgent: boolean; personaContext?: Record<string, Record<string, string>> }
     | { type: 'buildGenerationPrompt'; name: string; description?: string }
     | { type: 'copyToClipboard'; text: string }
-    | { type: 'getReviewSettings' }
+    | { type: 'getInitialState' }
     | { type: 'saveReviewSettings'; multiAgent: boolean; pendingReview: boolean }
-    | { type: 'getLocalReviewSettings' }
     | { type: 'saveLocalReviewSettings'; multiAgent: boolean; baseBranch: string }
-    | { type: 'getActiveReviewTab' }
     | { type: 'saveActiveReviewTab'; tab: ReviewMode };
 
 export type ExtensionMessage =
@@ -24,6 +22,4 @@ export type ExtensionMessage =
     | { type: 'promptGenerated'; text: string }
     | { type: 'generationPromptBuilt'; prompt: string }
     | { type: 'error'; message: string }
-    | { type: 'reviewSettingsLoaded'; multiAgent: boolean; pendingReview: boolean }
-    | { type: 'localReviewSettingsLoaded'; multiAgent: boolean; baseBranch: string }
-    | { type: 'activeReviewTabLoaded'; tab: ReviewMode };
+    | { type: 'initialStateLoaded'; github: { multiAgent: boolean; pendingReview: boolean }; local: { multiAgent: boolean; baseBranch: string }; activeTab: ReviewMode };
