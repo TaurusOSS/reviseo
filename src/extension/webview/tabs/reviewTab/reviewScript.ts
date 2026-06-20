@@ -11,31 +11,41 @@ export function getReviewScript(): string {
       document.getElementById('chk-multi-agent').checked = e.detail.multiAgent;
       document.getElementById('base-branch').value = e.detail.baseBranch;
     });
-
     // ── Inner tab switching ────────────────────────────────────────
     let activeInnerTab = 'github';
 
+    function activateTab(tab) {
+      activeInnerTab = tab;
+      document.querySelectorAll('.inner-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.innerTab === tab));
+      document.querySelectorAll('.inner-tab-panel').forEach(p => p.classList.add('hidden'));
+      document.getElementById('inner-tab-' + tab).classList.remove('hidden');
+      document.querySelectorAll('.github-only').forEach(el => {
+        el.style.display = tab === 'github' ? '' : 'none';
+      });
+    }
+
+    function loadSettingsForActiveTab() {
+      if (activeInnerTab === 'github') {
+        vscode.postMessage({ type: 'getReviewSettings' });
+      } else {
+        vscode.postMessage({ type: 'getLocalReviewSettings' });
+      }
+    }
+
     document.querySelectorAll('.inner-tab-btn').forEach(btn => {
       btn.addEventListener('click', () => {
-        activeInnerTab = btn.dataset.innerTab;
-        document.querySelectorAll('.inner-tab-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-
-        document.querySelectorAll('.inner-tab-panel').forEach(p => p.classList.add('hidden'));
-        document.getElementById('inner-tab-' + activeInnerTab).classList.remove('hidden');
-
-        const githubOnly = document.querySelectorAll('.github-only');
-        githubOnly.forEach(el => {
-          el.style.display = activeInnerTab === 'github' ? '' : 'none';
-        });
-
-        if (activeInnerTab === 'github') {
-          vscode.postMessage({ type: 'getReviewSettings' });
-        } else {
-          vscode.postMessage({ type: 'getLocalReviewSettings' });
-        }
+        activateTab(btn.dataset.innerTab);
+        vscode.postMessage({ type: 'saveActiveReviewTab', tab: activeInnerTab });
+        loadSettingsForActiveTab();
       });
     });
+
+    document.addEventListener('active-review-tab-loaded', (e) => {
+      activateTab(e.detail.tab);
+      loadSettingsForActiveTab();
+    });
+
+    vscode.postMessage({ type: 'getActiveReviewTab' });
 
     // ── Settings persistence ───────────────────────────────────────
     const tabHandlers = {

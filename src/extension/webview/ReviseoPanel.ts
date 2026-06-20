@@ -4,7 +4,7 @@ import { VsCodeStoragePersonaStore } from '../VsCodeStoragePersonaStore';
 import { ReviewGenerationFacade, PersonaReviewExecutionMode, generateLocalReviewTimestamp } from '../../core/review-generation';
 import type { ReviewConfiguration } from '../../core/review-generation';
 import { PersonaManagementFacade } from '../../core/persona-management';
-import type { WebviewMessage } from './types';
+import type { WebviewMessage, ReviewMode } from './types';
 import { getWebviewHtml } from './htmlTemplate';
 import type { WebviewTab } from './WebviewTab';
 import { PersonasTab } from './tabs/personasTab';
@@ -12,6 +12,7 @@ import { ReviewTab } from './tabs/reviewTab';
 
 const REVIEW_SETTINGS_KEY = 'reviseo.reviewSettings';
 const LOCAL_REVIEW_SETTINGS_KEY = 'reviseo.localReviewSettings';
+const ACTIVE_REVIEW_TAB_KEY = 'reviseo.activeReviewTab';
 const DEFAULT_BASE_BRANCH = 'origin/main';
 
 export class ReviseoPanel {
@@ -123,6 +124,17 @@ export class ReviseoPanel {
             }
             case 'saveLocalReviewSettings': {
                 this._context.workspaceState.update(LOCAL_REVIEW_SETTINGS_KEY, { multiAgent: message.multiAgent, baseBranch: message.baseBranch });
+                break;
+            }
+            case 'getActiveReviewTab': {
+                const tab = this._context.workspaceState.get<ReviewMode>(ACTIVE_REVIEW_TAB_KEY, 'github');
+                this._panel.webview.postMessage({ type: 'activeReviewTabLoaded', tab });
+                break;
+            }
+            case 'saveActiveReviewTab': {
+                void this._context.workspaceState
+                    .update(ACTIVE_REVIEW_TAB_KEY, message.tab)
+                    .then(undefined, err => console.error('reviseo: failed to save active tab', err));
                 break;
             }
             case 'buildGenerationPrompt': {
