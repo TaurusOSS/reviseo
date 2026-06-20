@@ -11,6 +11,12 @@ export function getReviewScript(): string {
       document.getElementById('chk-multi-agent').checked = e.detail.multiAgent;
       document.getElementById('base-branch').value = e.detail.baseBranch;
     });
+    document.addEventListener('active-review-tab-loaded', (e) => {
+      const btn = document.querySelector('.inner-tab-btn[data-inner-tab="' + e.detail.tab + '"]');
+      if (btn) { btn.click(); }
+    });
+
+    vscode.postMessage({ type: 'getActiveReviewTab' });
 
     // ── Inner tab switching ────────────────────────────────────────
     let activeInnerTab = 'github';
@@ -28,6 +34,8 @@ export function getReviewScript(): string {
         githubOnly.forEach(el => {
           el.style.display = activeInnerTab === 'github' ? '' : 'none';
         });
+
+        vscode.postMessage({ type: 'saveActiveReviewTab', tab: activeInnerTab });
 
         if (activeInnerTab === 'github') {
           vscode.postMessage({ type: 'getReviewSettings' });

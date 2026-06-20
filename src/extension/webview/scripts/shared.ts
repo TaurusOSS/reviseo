@@ -45,6 +45,9 @@ export function getSharedScript(): string {
         case 'localReviewSettingsLoaded':
           document.dispatchEvent(new CustomEvent('local-review-settings-loaded', { detail: { multiAgent: data.multiAgent, baseBranch: data.baseBranch } }));
           break;
+        case 'activeReviewTabLoaded':
+          document.dispatchEvent(new CustomEvent('active-review-tab-loaded', { detail: { tab: data.tab } }));
+          break;
         case 'error':
           alert('Error: ' + data.message);
           break;

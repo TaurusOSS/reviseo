@@ -12,7 +12,9 @@ export type WebviewMessage =
     | { type: 'getReviewSettings' }
     | { type: 'saveReviewSettings'; multiAgent: boolean; pendingReview: boolean }
     | { type: 'getLocalReviewSettings' }
-    | { type: 'saveLocalReviewSettings'; multiAgent: boolean; baseBranch: string };
+    | { type: 'saveLocalReviewSettings'; multiAgent: boolean; baseBranch: string }
+    | { type: 'getActiveReviewTab' }
+    | { type: 'saveActiveReviewTab'; tab: 'github' | 'local' };
 
 export type ExtensionMessage =
     | { type: 'personasLoaded'; personas: Persona[] }
@@ -21,4 +23,5 @@ export type ExtensionMessage =
     | { type: 'generationPromptBuilt'; prompt: string }
     | { type: 'error'; message: string }
     | { type: 'reviewSettingsLoaded'; multiAgent: boolean; pendingReview: boolean }
-    | { type: 'localReviewSettingsLoaded'; multiAgent: boolean; baseBranch: string };
+    | { type: 'localReviewSettingsLoaded'; multiAgent: boolean; baseBranch: string }
+    | { type: 'activeReviewTabLoaded'; tab: 'github' | 'local' };
