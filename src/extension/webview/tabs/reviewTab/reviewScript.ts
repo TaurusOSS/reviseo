@@ -92,14 +92,16 @@ export function getReviewScript(): string {
       }
       list.innerHTML = allPersonas.map(p => \`
         <label class="persona-check-item">
-          <input type="checkbox" name="persona" value="\${esc(p.id)}">
+          <input type="checkbox" name="persona" value="\${esc(p.id)}"\${p.favorite ? ' checked' : ''}>
           <span>\${esc(p.name)}</span>
         </label>
       \`).join('');
       header.classList.remove('hidden');
       const master = document.getElementById('chk-select-all');
-      master.checked = false;
-      master.indeterminate = false;
+      const initialChecked = document.querySelectorAll('input[name="persona"]:checked').length;
+      const totalPersonas = allPersonas.length;
+      master.checked = initialChecked === totalPersonas && totalPersonas > 0;
+      master.indeterminate = initialChecked > 0 && initialChecked < totalPersonas;
       master.onchange = () => {
         document.querySelectorAll('input[name="persona"]')
           .forEach(cb => { cb.checked = master.checked; });
@@ -114,6 +116,7 @@ export function getReviewScript(): string {
         cb.addEventListener('change', syncMaster);
         cb.addEventListener('change', syncAdditionalInputs);
       });
+      syncAdditionalInputs();
     }
 
     function syncAdditionalInputs() {
