@@ -20,6 +20,7 @@ export function getPersonaListScript(): string {
               <div class="persona-meta">\${meta}</div>
             </div>
             <div class="persona-actions">
+              <button class="btn-favorite\${p.favorite ? ' is-favorite' : ''}" data-action="favorite" data-id="\${esc(p.id)}" title="Toggle favorite">\${p.favorite ? '★' : '☆'}</button>
               <button class="btn btn-secondary btn-sm" data-action="edit" data-id="\${esc(p.id)}">Edit</button>
               <button class="btn btn-danger btn-sm" data-action="delete" data-id="\${esc(p.id)}">Delete</button>
             </div>
@@ -33,12 +34,13 @@ export function getPersonaListScript(): string {
       const btn = e.target.closest('[data-action]');
       if (!btn) { return; }
       const { action, id } = btn.dataset;
+      if (action === 'favorite') { toggleFavorite(id); }
       if (action === 'edit') { openEditForm(id); }
       if (action === 'delete') { confirmDelete(id); }
     });
 
     function openEditForm(id) {
-      const p = allPersonas.find(x => x.id === id);
+      const p = allPersonas.find(persona => persona.id === id);
       if (!p) { return; }
       document.getElementById('form-title').textContent = 'Edit Persona';
       document.getElementById('persona-id').value = p.id;
@@ -48,6 +50,12 @@ export function getPersonaListScript(): string {
       populateAdditionalInputsEditor(p.additionalInputs);
       document.getElementById('persona-form').classList.remove('hidden');
       document.getElementById('persona-form').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function toggleFavorite(id) {
+      const p = allPersonas.find(persona => persona.id === id);
+      if (!p) { return; }
+      vscode.postMessage({ type: 'savePersona', persona: { ...p, favorite: !p.favorite } });
     }
 
     function confirmDelete(id) {

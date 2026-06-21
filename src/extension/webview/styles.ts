@@ -2,6 +2,10 @@ export function getStyles(nonce: string): string {
     return /* html */`<style nonce="${nonce}">
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    :root {
+      --reviseo-favorite-color: #f5a623;
+    }
+
     body {
       font-family: var(--vscode-font-family);
       font-size: var(--vscode-font-size);
@@ -158,7 +162,21 @@ export function getStyles(nonce: string): string {
     .persona-card-body { flex: 1; min-width: 0; }
     .persona-name { font-weight: 600; margin-bottom: 2px; }
     .persona-meta { font-size: 0.82em; opacity: 0.75; }
-    .persona-actions { display: flex; gap: 6px; flex-shrink: 0; }
+    .persona-actions { display: flex; gap: 6px; flex-shrink: 0; align-items: center; }
+    .btn-favorite {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.1em;
+      padding: 2px 4px;
+      color: var(--vscode-foreground);
+      opacity: 0.35;
+      line-height: 1;
+      transition: opacity 0.1s, color 0.1s;
+    }
+    .btn-favorite:hover { opacity: 0.7; }
+    .btn-favorite.is-favorite { color: var(--reviseo-favorite-color); opacity: 1; }
+    .btn-favorite.is-favorite:hover { opacity: 0.8; }
 
     .empty-state {
       text-align: center;

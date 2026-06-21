@@ -9,4 +9,5 @@ export interface Persona {
     customInstructions: string;
     checklist: string[];
     additionalInputs?: AdditionalInput[];
+    favorite?: boolean;
 }
