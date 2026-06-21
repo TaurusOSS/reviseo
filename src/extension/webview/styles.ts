@@ -2,6 +2,10 @@ export function getStyles(nonce: string): string {
     return /* html */`<style nonce="${nonce}">
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    :root {
+      --reviseo-favorite-color: #f5a623;
+    }
+
     body {
       font-family: var(--vscode-font-family);
       font-size: var(--vscode-font-size);
@@ -171,7 +175,7 @@ export function getStyles(nonce: string): string {
       transition: opacity 0.1s, color 0.1s;
     }
     .btn-favorite:hover { opacity: 0.7; }
-    .btn-favorite.is-favorite { color: #f5a623; opacity: 1; }
+    .btn-favorite.is-favorite { color: var(--reviseo-favorite-color); opacity: 1; }
     .btn-favorite.is-favorite:hover { opacity: 0.8; }
 
     .empty-state {
