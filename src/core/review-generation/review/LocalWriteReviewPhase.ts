@@ -22,7 +22,14 @@ Base branch: \`${this.baseBranch}\`
 ## Findings
 
 **path/to/file.ts:line**
-🔴 [blocking] concise description
+🔴 [blocking] description of a blocker
+
+Why text.
+
+Proposed fix.
+
+**path/to/file.ts:line**
+🟡 [suggestion] description of a recommendation
 
 Why text.
 

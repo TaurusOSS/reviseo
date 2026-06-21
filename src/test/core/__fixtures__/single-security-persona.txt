@@ -28,7 +28,7 @@ Read `.ai/reviseo/1/diff.patch` to obtain the diff.
 Read `.ai/reviseo/1/review_data.json` to obtain the PR title and description for context.
 For each Step below, adopt that persona and identify issues according to its checklist.
 Do NOT write formatted comments — comment preparation happens in a later phase.
-Retain issues as an in-memory list; each item: persona name, file path, line number, description.
+Retain issues as an in-memory list; each item: persona name, file path, line number, description — the description must capture the issue and its impact in enough detail that PrepareComments can write a full comment without re-reading the diff.
 
 If any operation fails, report the error and stop.
 
@@ -54,12 +54,14 @@ Transform the raw issues collected in Phase 2 into formatted review comments:
 
 1. Perform root cause analysis: group issues that share the same underlying root cause.
 2. For each group (or standalone issue), write exactly one comment conforming to the format below.
-   - Comments may reference each other (e.g., "See also the comment on `foo.ts:42`") but must never duplicate content.
+   - Comments may reference each other (e.g., "See also the comment about X") but must never duplicate content.
 3. Retain the final comment list for submission in the next phase.
 
 If any operation fails, report the error and stop.
 
 ### Comment format
+
+Every comment **must** follow this structure exactly. Deviating from it is not permitted.
 
 Severity levels:
 - 🔴 [blocking] — must fix before merge
@@ -70,7 +72,9 @@ Severity levels:
 Structure of each comment:
 1. Title line: `🔴 [blocking] concise description of the problem — max 12 words`
 2. Why (1–3 sentences): explain the problem and its impact. No section header — follows naturally after the title.
-3. What to do: exactly one recommendation. Show the proposed fix in code — never copy code from the PR, only the solution.
+3. What to do / What to ask:
+   - For ❓ comments: one precise question instead of a code fix.
+   - For all other severities: exactly one recommendation with a code snippet — never copy code from the PR, only the solution.
    If a genuine alternative exists: one line starting with `Alternative:`.
 
 Total length: max 120 words. If more context is needed, use a collapsible block:
@@ -78,8 +82,6 @@ Total length: max 120 words. If more context is needed, use a collapsible block:
 <summary>Full reasoning</summary>
 ...
 </details>
-
-Deduplication: if two issues share the same root cause, write one comment. Comments may reference each other (e.g., "See also the comment on `foo.ts:42`") but must never duplicate content.
 
 ## Phase 4: Submit Review
 
