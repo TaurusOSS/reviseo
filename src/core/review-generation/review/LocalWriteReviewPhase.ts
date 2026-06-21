@@ -5,17 +5,13 @@ export class LocalWriteReviewPhase implements PromptComponent {
         private readonly phaseNumber: number,
         private readonly timestamp: string,
         private readonly baseBranch: string,
-        private readonly isMultiAgent: boolean,
     ) {}
 
     getText(): string {
         const reviewPath = `.ai/reviseo/${this.timestamp}/local_review.md`;
-        const consolidation = this.isMultiAgent
-            ? `Merge the JSON arrays returned by all reviewer subagents from Phase 2.\nMap each JSON element to the markdown format below and write the result to \`${reviewPath}\`.`
-            : `Consolidate all collected review findings and write them to \`${reviewPath}\`.`;
         return `## Phase ${this.phaseNumber}: Write Review
 
-${consolidation}
+Write the prepared comments from Phase ${this.phaseNumber - 1} to \`${reviewPath}\`.
 
 Structure the file as follows:
 
@@ -25,14 +21,24 @@ Base branch: \`${this.baseBranch}\`
 
 ## Findings
 
-### [Persona Name]
-**path/to/file.ts:line** — Finding title
-Finding body text.
+**path/to/file.ts:line**
+🔴 [blocking] description of a blocker
+
+Why text.
+
+Proposed fix.
+
+**path/to/file.ts:line**
+🟡 [suggestion] description of a recommendation
+
+Why text.
+
+Proposed fix.
 
 ...
 \`\`\`
 
-Include all findings from every persona. If the file already exists, overwrite it.
+Group findings by file path. Include all prepared comments. If the file already exists, overwrite it.
 
 If any step fails, report the error and stop.`;
     }

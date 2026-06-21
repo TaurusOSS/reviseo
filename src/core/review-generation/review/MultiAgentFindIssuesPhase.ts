@@ -1,7 +1,7 @@
 import type { StepsComponent } from './StepsComponent';
-import { ProvideMultipersonaReviewPhase } from './ProvideMultipersonaReviewPhase';
+import { FindIssuesPhase } from './FindIssuesPhase';
 
-export class MultiAgentProvideMultipersonaReviewPhase extends ProvideMultipersonaReviewPhase {
+export class MultiAgentFindIssuesPhase extends FindIssuesPhase {
     constructor(
         phaseNumber: number,
         stepsComponent: StepsComponent,
@@ -15,7 +15,7 @@ export class MultiAgentProvideMultipersonaReviewPhase extends ProvideMultiperson
         const metadataLine = this.reviewDataPath
             ? `\n- The metadata file \`${this.reviewDataPath}\` — the reviewer subagent must read this to obtain the PR title and description for context`
             : '';
-        return `## Phase ${this.phaseNumber}: Provide Multipersona Review
+        return `## Phase ${this.phaseNumber}: Find Issues
 
 For each persona step below, launch a reviewer subagent with:
 - The diff file \`${this.dataFilePath}\` — the reviewer subagent must read this to obtain the code changes${metadataLine}
@@ -29,9 +29,8 @@ Every element must conform to:
 {
   "persona": "<persona name>",
   "file": "<path/to/file.ext>",
-  "line": <integer line number, or null for file-level comments>,
-  "title": "<short comment title>",
-  "body": "<comment text, excluding the AI-generated header — the orchestrator will prepend it in the validation phase>"
+  "line": <integer line number, or null for file-level issues>,
+  "description": "<what the issue is and why it matters — enough context for the comment-preparation phase to write a quality comment without re-reading the diff>"
 }`;
     }
 }

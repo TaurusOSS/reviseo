@@ -1,5 +1,4 @@
 import type { PromptComponent } from './PromptComponent';
-import { CommentFormatComponent } from './CommentFormatComponent';
 import type { StepsComponent } from './StepsComponent';
 
 const REVIEW_ASSUMPTIONS =
@@ -12,7 +11,7 @@ Avoid:
 - Obvious or mechanical comments
 - Repeating what linters or IDEs would flag`;
 
-export abstract class ProvideMultipersonaReviewPhase implements PromptComponent {
+export abstract class FindIssuesPhase implements PromptComponent {
     constructor(
         protected readonly phaseNumber: number,
         protected readonly stepsComponent: StepsComponent,
@@ -23,7 +22,6 @@ export abstract class ProvideMultipersonaReviewPhase implements PromptComponent 
         return [
             this.buildInstructions(),
             REVIEW_ASSUMPTIONS,
-            new CommentFormatComponent().getText(),
             this.stepsComponent.getText(),
         ].join('\n\n');
     }

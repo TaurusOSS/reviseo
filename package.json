@@ -102,7 +102,7 @@
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src",
     "test": "vscode-test",
-    "deploy": "vsce publish --yarn"
+    "deploy": "vsce publish"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
