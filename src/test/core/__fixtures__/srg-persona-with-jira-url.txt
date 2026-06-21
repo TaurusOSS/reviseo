@@ -13,16 +13,19 @@ Fetch the PR details and write them to the review data files:
 3. Write `.ai/reviseo/1/review_data.json` as a JSON file with this exact structure:
    {
      "title": "<PR title>",
-     "description": "<PR description>",
-     "diff": ".ai/reviseo/1/diff.patch"
+     "description": "<PR description>"
    }
-4. Confirm both files have been written successfully before reporting this phase complete.
+4. Verify both files exist and are non-empty:
+   - Read `.ai/reviseo/1/diff.patch` and confirm it contains the raw diff
+   - Read `.ai/reviseo/1/review_data.json` and confirm it is valid JSON with non-empty "title" and "description" fields
+   Only then report this phase complete.
 
 If any step fails, report the error and stop.
 
 ## Phase 2: Provide Multipersona Review
 
 Read `.ai/reviseo/1/diff.patch` to obtain the diff.
+Read `.ai/reviseo/1/review_data.json` to obtain the PR title and description for context.
 For each Step below, adopt that persona and perform your review according to its checklist.
 Generate review comments but do NOT submit them — submission happens in a later phase.
 Retain comments as an in-memory list; each item: persona name, file path, line number, title, body.

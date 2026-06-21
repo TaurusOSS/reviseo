@@ -23,17 +23,18 @@ export class GithubReviewPromptFactory implements ReviewPromptFactory {
         }
 
         const prNumber = config.url.match(/\/pull\/(\d+)/)?.[1] ?? '0';
+        const reviewDataPath = `${REVISEO_BASE_DIR}/${prNumber}/review_data.json`;
         const diffFilePath = `${REVISEO_BASE_DIR}/${prNumber}/diff.patch`;
         const steps = config.personas.map((p, i) => new PersonaStepComponent(p, i + 1, config.context[p.id]));
         const stepsComponent = new StepsComponent(steps);
 
-        const fetchPhaseFactory = (n: number): PromptComponent => new FetchReviewDataPhase(n, config.url);
+        const fetchPhaseFactory = (n: number): PromptComponent => new FetchReviewDataPhase(n, config.url, reviewDataPath, diffFilePath);
         const reviewPhaseFactory = (n: number): PromptComponent => config.personaReviewExecutionMode === PersonaReviewExecutionMode.MULTI_AGENT
-            ? new MultiAgentProvideMultipersonaReviewPhase(n, stepsComponent, diffFilePath)
-            : new SingleAgentProvideMultipersonaReviewPhase(n, stepsComponent, diffFilePath);
+            ? new MultiAgentProvideMultipersonaReviewPhase(n, stepsComponent, diffFilePath, reviewDataPath)
+            : new SingleAgentProvideMultipersonaReviewPhase(n, stepsComponent, diffFilePath, reviewDataPath);
         const validatePhaseFactory = (n: number): PromptComponent => new ValidateCommentsPhase(n);
         const submitPhaseFactory = (n: number): PromptComponent => new SubmitReviewPhase(n, prNumber, config.pendingReview);
-        const cleanupPhaseFactory = (n: number): PromptComponent => new CleanupPhase(n, prNumber, config.pendingReview);
+        const cleanupPhaseFactory = (n: number): PromptComponent => new CleanupPhase(n, reviewDataPath, diffFilePath, config.pendingReview);
 
         const phaseFactories: Array<(n: number) => PromptComponent> = [
             fetchPhaseFactory,

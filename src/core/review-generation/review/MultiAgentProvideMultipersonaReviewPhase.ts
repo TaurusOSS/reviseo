@@ -1,11 +1,24 @@
+import type { StepsComponent } from './StepsComponent';
 import { ProvideMultipersonaReviewPhase } from './ProvideMultipersonaReviewPhase';
 
 export class MultiAgentProvideMultipersonaReviewPhase extends ProvideMultipersonaReviewPhase {
+    constructor(
+        phaseNumber: number,
+        stepsComponent: StepsComponent,
+        dataFilePath: string,
+        private readonly reviewDataPath?: string,
+    ) {
+        super(phaseNumber, stepsComponent, dataFilePath);
+    }
+
     protected buildInstructions(): string {
+        const metadataLine = this.reviewDataPath
+            ? `\n- The metadata file \`${this.reviewDataPath}\` — the reviewer subagent must read this to obtain the PR title and description for context`
+            : '';
         return `## Phase ${this.phaseNumber}: Provide Multipersona Review
 
 For each persona step below, launch a reviewer subagent with:
-- The file path \`${this.dataFilePath}\` — the reviewer subagent must read this file to obtain the diff
+- The diff file \`${this.dataFilePath}\` — the reviewer subagent must read this to obtain the code changes${metadataLine}
 - That persona's instructions and checklist
 - The JSON output format specified below
 
