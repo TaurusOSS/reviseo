@@ -2,6 +2,18 @@
 
 All notable changes to Reviseo are documented here.
 
+## [1.2.0] - 2026-06-21
+
+### Added
+
+- Local review mode — review code directly from the local diff without a GitHub pull request URL
+- Option to leave the review as a draft (pending state) instead of automatically submitting it
+
+### Changed
+
+- Review mode is now remembered per workspace, so Reviseo restores your last used mode when you reopen the panel
+- Multi-agent mode now saves the PR diff as a separate file in `.ai/reviseo/` rather than embedding it in JSON
+
 ## [1.1.0] - 2026-06-08
 
 ### Changed
