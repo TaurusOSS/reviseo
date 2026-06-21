@@ -2,6 +2,16 @@
 
 All notable changes to Reviseo are documented here.
 
+## [1.3.0] - 2026-06-21
+
+### Added
+
+- Personas can now be marked as favorites for quick access
+
+### Changed
+
+- Improved the quality of generated code review comments
+
 ## [1.2.0] - 2026-06-21
 
 ### Added
