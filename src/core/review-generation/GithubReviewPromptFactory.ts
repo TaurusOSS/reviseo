@@ -7,9 +7,9 @@ import {
     PersonaStepComponent,
     StepsComponent,
     FetchReviewDataPhase,
-    SingleAgentProvideMultipersonaReviewPhase,
-    MultiAgentProvideMultipersonaReviewPhase,
-    ValidateCommentsPhase,
+    SingleAgentFindIssuesPhase,
+    MultiAgentFindIssuesPhase,
+    PrepareCommentsPhase,
     SubmitReviewPhase,
     CleanupPhase,
 } from './review';
@@ -29,17 +29,17 @@ export class GithubReviewPromptFactory implements ReviewPromptFactory {
         const stepsComponent = new StepsComponent(steps);
 
         const fetchPhaseFactory = (n: number): PromptComponent => new FetchReviewDataPhase(n, config.url, reviewDataPath, diffFilePath);
-        const reviewPhaseFactory = (n: number): PromptComponent => config.personaReviewExecutionMode === PersonaReviewExecutionMode.MULTI_AGENT
-            ? new MultiAgentProvideMultipersonaReviewPhase(n, stepsComponent, diffFilePath, reviewDataPath)
-            : new SingleAgentProvideMultipersonaReviewPhase(n, stepsComponent, diffFilePath, reviewDataPath);
-        const validatePhaseFactory = (n: number): PromptComponent => new ValidateCommentsPhase(n);
+        const findIssuesPhaseFactory = (n: number): PromptComponent => config.personaReviewExecutionMode === PersonaReviewExecutionMode.MULTI_AGENT
+            ? new MultiAgentFindIssuesPhase(n, stepsComponent, diffFilePath, reviewDataPath)
+            : new SingleAgentFindIssuesPhase(n, stepsComponent, diffFilePath, reviewDataPath);
+        const prepareCommentsPhaseFactory = (n: number): PromptComponent => new PrepareCommentsPhase(n);
         const submitPhaseFactory = (n: number): PromptComponent => new SubmitReviewPhase(n, prNumber, config.pendingReview);
         const cleanupPhaseFactory = (n: number): PromptComponent => new CleanupPhase(n, reviewDataPath, diffFilePath, config.pendingReview);
 
         const phaseFactories: Array<(n: number) => PromptComponent> = [
             fetchPhaseFactory,
-            reviewPhaseFactory,
-            validatePhaseFactory,
+            findIssuesPhaseFactory,
+            prepareCommentsPhaseFactory,
             submitPhaseFactory,
             cleanupPhaseFactory,
         ];

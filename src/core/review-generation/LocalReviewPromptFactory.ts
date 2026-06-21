@@ -5,8 +5,9 @@ import {
     OrchestratorSystemPromptComponent,
     PersonaStepComponent,
     StepsComponent,
-    SingleAgentProvideMultipersonaReviewPhase,
-    MultiAgentProvideMultipersonaReviewPhase,
+    SingleAgentFindIssuesPhase,
+    MultiAgentFindIssuesPhase,
+    PrepareCommentsPhase,
     LocalFetchDiffPhase,
     LocalWriteReviewPhase,
     LocalCleanupPhase,
@@ -28,9 +29,10 @@ export class LocalReviewPromptFactory implements ReviewPromptFactory {
         const phaseFactories: Array<(n: number) => PromptComponent> = [
             (n) => new LocalFetchDiffPhase(n, config.baseBranch, directory, fullPath),
             (n) => config.personaReviewExecutionMode === PersonaReviewExecutionMode.MULTI_AGENT
-                ? new MultiAgentProvideMultipersonaReviewPhase(n, stepsComponent, fullPath)
-                : new SingleAgentProvideMultipersonaReviewPhase(n, stepsComponent, fullPath),
-            (n) => new LocalWriteReviewPhase(n, config.timestamp, config.baseBranch, config.personaReviewExecutionMode === PersonaReviewExecutionMode.MULTI_AGENT),
+                ? new MultiAgentFindIssuesPhase(n, stepsComponent, fullPath)
+                : new SingleAgentFindIssuesPhase(n, stepsComponent, fullPath),
+            (n) => new PrepareCommentsPhase(n),
+            (n) => new LocalWriteReviewPhase(n, config.timestamp, config.baseBranch),
             (n) => new LocalCleanupPhase(n, fullPath),
         ];
 
