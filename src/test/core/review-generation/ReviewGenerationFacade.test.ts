@@ -34,6 +34,7 @@ function githubConfig(overrides: Partial<GithubReviewConfiguration> & Pick<Githu
         personaReviewExecutionMode: PersonaReviewExecutionMode.SINGLE_AGENT,
         context: {},
         pendingReview: false,
+        skipCommentedIssues: false,
         ...overrides,
     };
 }
@@ -91,6 +92,24 @@ suite('ReviewGenerationFacade', () => {
         assert.strictEqual(
             facade.build(githubConfig({ personas: [securityPersona], pendingReview: true })),
             fixture('single-security-persona-pending.txt')
+        );
+    });
+
+    test('skip commented issues fetches existing comments and instructs Claude to filter duplicates and post enriching replies', () => {
+        assert.strictEqual(
+            facade.build(githubConfig({ personas: [securityPersona], skipCommentedIssues: true })),
+            fixture('single-security-persona-skip-commented.txt')
+        );
+    });
+
+    test('skip commented issues in multi-agent mode passes existing comments filtering to prepare phase', () => {
+        assert.strictEqual(
+            facade.build(githubConfig({
+                personas: [securityPersona, performancePersona],
+                personaReviewExecutionMode: PersonaReviewExecutionMode.MULTI_AGENT,
+                skipCommentedIssues: true,
+            })),
+            fixture('multi-agent-two-personas-skip-commented.txt')
         );
     });
 });

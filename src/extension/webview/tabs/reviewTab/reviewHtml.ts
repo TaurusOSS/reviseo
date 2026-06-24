@@ -49,6 +49,11 @@ export function getReviewHtml(): string {
             <span>Leave review in pending state</span>
           </label>
           <p class="settings-tip">Review comments are created as a draft. You decide when to publish and whether to approve, comment, or request changes.</p>
+          <label class="persona-check-item">
+            <input type="checkbox" id="chk-skip-commented">
+            <span>Skip already-commented issues</span>
+          </label>
+          <p class="settings-tip">Fetches existing unresolved inline comments and omits issues already raised. Useful when running Reviseo as a second pass after a manual review.</p>
         </div>
       </div>
     </details>

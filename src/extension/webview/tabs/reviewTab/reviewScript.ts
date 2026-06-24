@@ -6,13 +6,14 @@ export function getReviewScript(): string {
 
     // ── Inner tab switching ────────────────────────────────────────
     let activeInnerTab = 'github';
-    let githubSettings = { multiAgent: false, pendingReview: false };
+    let githubSettings = { multiAgent: false, pendingReview: false, skipCommentedIssues: false };
     let localSettings = { multiAgent: false, baseBranch: 'origin/main' };
 
     function applySettingsToUi(tab) {
       if (tab === 'github') {
         document.getElementById('chk-multi-agent').checked = githubSettings.multiAgent;
         document.getElementById('chk-pending-review').checked = githubSettings.pendingReview;
+        document.getElementById('chk-skip-commented').checked = githubSettings.skipCommentedIssues;
       } else {
         document.getElementById('chk-multi-agent').checked = localSettings.multiAgent;
         document.getElementById('base-branch').value = localSettings.baseBranch;
@@ -49,6 +50,7 @@ export function getReviewScript(): string {
         save: () => {
           githubSettings.multiAgent = document.getElementById('chk-multi-agent').checked;
           githubSettings.pendingReview = document.getElementById('chk-pending-review').checked;
+          githubSettings.skipCommentedIssues = document.getElementById('chk-skip-commented').checked;
           vscode.postMessage({ type: 'saveReviewSettings', ...githubSettings });
         },
         generate: (checked, personaContext) => {
@@ -56,7 +58,8 @@ export function getReviewScript(): string {
           if (!prUrl) { alert('Please enter a Pull Request URL.'); return; }
           const multiAgent = document.getElementById('chk-multi-agent').checked;
           const pendingReview = document.getElementById('chk-pending-review').checked;
-          vscode.postMessage({ type: 'generatePrompt', prUrl, personaIds: checked, promptOptions: { multiAgent, pendingReview }, personaContext });
+          const skipCommentedIssues = document.getElementById('chk-skip-commented').checked;
+          vscode.postMessage({ type: 'generatePrompt', prUrl, personaIds: checked, promptOptions: { multiAgent, pendingReview, skipCommentedIssues }, personaContext });
         },
       },
       local: {
@@ -79,6 +82,7 @@ export function getReviewScript(): string {
 
     document.getElementById('chk-multi-agent').addEventListener('change', saveSettings);
     document.getElementById('chk-pending-review').addEventListener('change', saveSettings);
+    document.getElementById('chk-skip-commented').addEventListener('change', saveSettings);
     document.getElementById('base-branch').addEventListener('change', saveSettings);
 
     // ── Rendering ──────────────────────────────────────────────────

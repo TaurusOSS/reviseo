@@ -28,11 +28,11 @@ export class GithubReviewPromptFactory implements ReviewPromptFactory {
         const steps = config.personas.map((p, i) => new PersonaStepComponent(p, i + 1, config.context[p.id]));
         const stepsComponent = new StepsComponent(steps);
 
-        const fetchPhaseFactory = (n: number): PromptComponent => new FetchReviewDataPhase(n, config.url, reviewDataPath, diffFilePath);
+        const fetchPhaseFactory = (n: number): PromptComponent => new FetchReviewDataPhase(n, config.url, reviewDataPath, diffFilePath, config.skipCommentedIssues);
         const findIssuesPhaseFactory = (n: number): PromptComponent => config.personaReviewExecutionMode === PersonaReviewExecutionMode.MULTI_AGENT
             ? new MultiAgentFindIssuesPhase(n, stepsComponent, diffFilePath, reviewDataPath)
             : new SingleAgentFindIssuesPhase(n, stepsComponent, diffFilePath, reviewDataPath);
-        const prepareCommentsPhaseFactory = (n: number): PromptComponent => new PrepareCommentsPhase(n);
+        const prepareCommentsPhaseFactory = (n: number): PromptComponent => new PrepareCommentsPhase(n, config.skipCommentedIssues ? reviewDataPath : undefined);
         const submitPhaseFactory = (n: number): PromptComponent => new SubmitReviewPhase(n, prNumber, config.pendingReview);
         const cleanupPhaseFactory = (n: number): PromptComponent => new CleanupPhase(n, reviewDataPath, diffFilePath, config.pendingReview);
 
