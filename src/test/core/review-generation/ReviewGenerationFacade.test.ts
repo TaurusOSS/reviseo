@@ -5,6 +5,7 @@ import { ReviewGenerationFacade, PersonaReviewExecutionMode } from '../../../cor
 import type { GithubReviewConfiguration } from '../../../core/review-generation';
 import type { Persona } from '../../../core/persona-management';
 import { PersonaManagementFacade } from '../../../core/persona-management';
+import { assertPrompt } from './ReviewPromptAssert';
 
 const securityPersona: Persona = {
     id: 'p-1',
@@ -54,18 +55,15 @@ suite('ReviewGenerationFacade', () => {
     });
 
     test('two personas are numbered correctly', () => {
-        assert.strictEqual(
-            facade.build(githubConfig({ personas: [securityPersona, performancePersona] })),
-            fixture('two-personas.txt')
-        );
+        const prompt = facade.build(githubConfig({ personas: [securityPersona, performancePersona] }));
+        assertPrompt(prompt).phase(2).step(1).hasName('Security Auditor');
+        assertPrompt(prompt).phase(2).step(2).hasName('Performance Reviewer');
     });
 
     test('persona with empty checklist renders placeholder', () => {
         const persona: Persona = { id: 'p-3', name: 'Reviewer', customInstructions: '', checklist: [] };
-        assert.strictEqual(
-            facade.build(githubConfig({ personas: [persona] })),
-            fixture('empty-checklist-persona.txt')
-        );
+        const prompt = facade.build(githubConfig({ personas: [persona] }));
+        assertPrompt(prompt).phase(2).step(1).hasName('Reviewer').and().contains('(no checklist items)');
     });
 
     test('multi-agent: appends orchestration block after base prompt', () => {
@@ -78,21 +76,27 @@ suite('ReviewGenerationFacade', () => {
         );
     });
 
-    test('SRG persona with Jira URL in personaContext produces exact full prompt', () => {
-        assert.strictEqual(
-            facade.build(githubConfig({
-                personas: [srgPersona],
-                context: { 'story-requirements-guardian': { 'jira-url': 'https://org.atlassian.net/browse/PROJ-42' } },
-            })),
-            fixture('srg-persona-with-jira-url.txt')
-        );
+    test('SRG persona with Jira URL in personaContext includes the ticket URL in the review step', () => {
+        const prompt = facade.build(githubConfig({
+            personas: [srgPersona],
+            context: { 'story-requirements-guardian': { 'jira-url': 'https://org.atlassian.net/browse/PROJ-42' } },
+        }));
+        assertPrompt(prompt).phase(2).step(1)
+            .hasName('Story Requirements Guardian')
+            .and().contains('**Jira Ticket URL:** https://org.atlassian.net/browse/PROJ-42');
     });
 
     test('pending review option leaves the review as a draft instead of submitting', () => {
-        assert.strictEqual(
-            facade.build(githubConfig({ personas: [securityPersona], pendingReview: true })),
-            fixture('single-security-persona-pending.txt')
-        );
+        const prompt = facade.build(githubConfig({ personas: [securityPersona], pendingReview: true }));
+        assertPrompt(prompt).phase(4).equalsText(`
+## Phase 4: Create Pending Review
+
+Create a pending review on pull request #1, add all prepared comments, and stop — do NOT submit or publish it. Leave it in pending/draft state for manual inspection.
+
+1. Create a new pending review. Do not add a review body — leave it empty.
+2. Add each prepared comment to the pending review using available tools.
+
+If any operation fails, report the error and stop — do not submit a partial review.`);
     });
 
     test('skip commented issues fetches existing comments and instructs Claude to filter duplicates and post enriching replies', () => {

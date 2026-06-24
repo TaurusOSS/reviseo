@@ -4,6 +4,7 @@ import * as path from 'path';
 import { ReviewGenerationFacade, PersonaReviewExecutionMode } from '../../../core/review-generation';
 import type { LocalReviewConfiguration } from '../../../core/review-generation';
 import type { Persona } from '../../../core/persona-management';
+import { assertPrompt } from './ReviewPromptAssert';
 
 const TIMESTAMP = '2026-06-14T10-30-00';
 const BASE_BRANCH = 'origin/main';
@@ -58,10 +59,9 @@ suite('LocalReviewGenerationFacade', () => {
     });
 
     test('two personas are numbered correctly', () => {
-        assert.strictEqual(
-            facade.build(localConfig({ personas: [securityPersona, performancePersona] })),
-            fixture('local-two-personas.txt')
-        );
+        const prompt = facade.build(localConfig({ personas: [securityPersona, performancePersona] }));
+        assertPrompt(prompt).phase(2).step(1).hasName('Security Auditor');
+        assertPrompt(prompt).phase(2).step(2).hasName('Performance Reviewer');
     });
 
     test('multi-agent mode uses subagent orchestration for review phase', () => {
@@ -75,12 +75,10 @@ suite('LocalReviewGenerationFacade', () => {
     });
 
     test('persona additional inputs are included in the prompt', () => {
-        assert.strictEqual(
-            facade.build(localConfig({
-                personas: [securityPersonaWithFocusArea],
-                context: { 'p-1': { 'focus-area': 'authentication module' } },
-            })),
-            fixture('local-single-security-persona-with-context.txt')
-        );
+        const prompt = facade.build(localConfig({
+            personas: [securityPersonaWithFocusArea],
+            context: { 'p-1': { 'focus-area': 'authentication module' } },
+        }));
+        assertPrompt(prompt).phase(2).step(1).hasName('Security Auditor').and().contains('**Focus area:** authentication module');
     });
 });

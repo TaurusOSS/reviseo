@@ -44,7 +44,10 @@ The `src/core/` package must remain free of any platform-specific imports (`vsco
 
 - Write fewer, stronger tests that cover the most critical paths.
 - Prefer integration-style tests that assert real behaviour over mocks that test implementation details.
-- **Assert the full prompt output** using `assert.strictEqual` against fixture files in `src/test/core/__fixtures__/`. Never use weak substring assertions (`includes`) for prompt content — if the template changes, the fixture files must be updated too.
+- **Two assertion strategies — pick the right one:**
+  - **Fixture files** (`src/test/core/__fixtures__/`) with `assert.strictEqual` for golden-path tests that validate the full generated prompt. Use when the test's purpose is to guard the whole output (e.g. single persona, multi-agent mode, skip-commented). If the template changes, update the fixture.
+  - **Prompt DSL** (`assertPrompt` from `src/test/core/review-generation/ReviewPromptAssert.ts`) for tests that validate one structural aspect of the prompt — a phase title, a step name, the presence of a context value, or the exact content of one phase. Use `phase(n).equalsText(...)` to assert an entire phase, `phase(n).step(n).hasName(...).contains(...)` for step-level checks. This keeps tests resilient to changes in unrelated phases or boilerplate.
+  - Never use raw `string.includes()` assertions — always go through the DSL or a fixture.
 - Test files mirror the source structure: tests for `src/core/foo.ts` live in `src/test/core/foo.test.ts`.
 - Test runner: `@vscode/test-cli` with `@vscode/test-electron`.
 - **Test names describe business behaviour**, not implementation details. Use the form `"<feature/option> <does what>"` or BDD-style `"<context>, <outcome>"`. Bad: `"phase 4 instructs AI not to submit"`. Good: `"pending review option leaves the review as a draft instead of submitting"`.
