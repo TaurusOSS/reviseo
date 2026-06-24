@@ -11,6 +11,7 @@ export type GithubReviewConfiguration = ReviewConfigurationBase & {
     readonly kind: 'github';
     readonly url: string;
     readonly pendingReview: boolean;
+    readonly skipCommentedIssues: boolean;
 };
 
 export type LocalReviewConfiguration = ReviewConfigurationBase & {

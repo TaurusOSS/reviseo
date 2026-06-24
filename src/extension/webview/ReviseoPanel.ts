@@ -91,6 +91,7 @@ export class ReviseoPanel {
                     personaReviewExecutionMode: message.promptOptions.multiAgent ? PersonaReviewExecutionMode.MULTI_AGENT : PersonaReviewExecutionMode.SINGLE_AGENT,
                     context: message.personaContext ?? {},
                     pendingReview: message.promptOptions.pendingReview,
+                    skipCommentedIssues: message.promptOptions.skipCommentedIssues,
                 };
                 this._panel.webview.postMessage({ type: 'promptGenerated', text: this._reviewGen.build(config) });
                 break;
@@ -109,14 +110,14 @@ export class ReviseoPanel {
                 break;
             }
             case 'getInitialState': {
-                const github = this._context.globalState.get<{ multiAgent: boolean; pendingReview: boolean }>(REVIEW_SETTINGS_KEY, { multiAgent: false, pendingReview: false });
+                const github = this._context.globalState.get<{ multiAgent: boolean; pendingReview: boolean; skipCommentedIssues: boolean }>(REVIEW_SETTINGS_KEY, { multiAgent: false, pendingReview: false, skipCommentedIssues: false });
                 const local = this._context.workspaceState.get<{ multiAgent: boolean; baseBranch: string }>(LOCAL_REVIEW_SETTINGS_KEY, { multiAgent: false, baseBranch: DEFAULT_BASE_BRANCH });
                 const activeTab = this._context.workspaceState.get<ReviewMode>(ACTIVE_REVIEW_TAB_KEY, 'github');
                 this._panel.webview.postMessage({ type: 'initialStateLoaded', github, local, activeTab });
                 break;
             }
             case 'saveReviewSettings': {
-                this._context.globalState.update(REVIEW_SETTINGS_KEY, { multiAgent: message.multiAgent, pendingReview: message.pendingReview });
+                this._context.globalState.update(REVIEW_SETTINGS_KEY, { multiAgent: message.multiAgent, pendingReview: message.pendingReview, skipCommentedIssues: message.skipCommentedIssues });
                 break;
             }
             case 'saveLocalReviewSettings': {

@@ -12,7 +12,7 @@ export type WebviewMessage =
     | { type: 'buildGenerationPrompt'; name: string; description?: string }
     | { type: 'copyToClipboard'; text: string }
     | { type: 'getInitialState' }
-    | { type: 'saveReviewSettings'; multiAgent: boolean; pendingReview: boolean }
+    | { type: 'saveReviewSettings'; multiAgent: boolean; pendingReview: boolean; skipCommentedIssues: boolean }
     | { type: 'saveLocalReviewSettings'; multiAgent: boolean; baseBranch: string }
     | { type: 'saveActiveReviewTab'; tab: ReviewMode };
 
@@ -22,4 +22,4 @@ export type ExtensionMessage =
     | { type: 'promptGenerated'; text: string }
     | { type: 'generationPromptBuilt'; prompt: string }
     | { type: 'error'; message: string }
-    | { type: 'initialStateLoaded'; github: { multiAgent: boolean; pendingReview: boolean }; local: { multiAgent: boolean; baseBranch: string }; activeTab: ReviewMode };
+    | { type: 'initialStateLoaded'; github: { multiAgent: boolean; pendingReview: boolean; skipCommentedIssues: boolean }; local: { multiAgent: boolean; baseBranch: string }; activeTab: ReviewMode };
