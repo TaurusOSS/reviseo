@@ -4,10 +4,10 @@ export function assertPrompt(prompt: string): ReviewPromptAssert {
     return new ReviewPromptAssert(prompt);
 }
 
-function extractSection(text: string, pattern: RegExp, n: number): string {
+function extractSection(text: string, pattern: RegExp, n: number, label: string): string {
     const matches = [...text.matchAll(pattern)];
     const idx = matches.findIndex(m => Number(m[1]) === n);
-    assert.ok(idx !== -1, `Section ${n} not found`);
+    assert.ok(idx !== -1, `${label} ${n} not found`);
     const end = matches[idx + 1]?.index ?? text.length;
     return text.slice(matches[idx].index!, end).trim();
 }
@@ -20,7 +20,7 @@ class ReviewPromptAssert {
     constructor(private readonly text: string) {}
 
     phase(n: number): PhaseAssert {
-        return new PhaseAssert(extractSection(this.text, /^## Phase (\d+):/gm, n), n);
+        return new PhaseAssert(extractSection(this.text, /^## Phase (\d+):/gm, n, 'Phase'), n);
     }
 }
 
@@ -28,7 +28,7 @@ class PhaseAssert {
     constructor(private readonly text: string, private readonly n: number) {}
 
     step(n: number): StepAssert {
-        return new StepAssert(extractSection(this.text, /^### Step (\d+):/gm, n), n, this.n);
+        return new StepAssert(extractSection(this.text, /^### Step (\d+):/gm, n, 'Step'), n, this.n);
     }
 
     equalsText(expected: string): this {
@@ -59,10 +59,6 @@ class StepAssert {
 
     contains(text: string): this {
         assertContains(this.text, text, `Step ${this.n} in Phase ${this.phaseN}`);
-        return this;
-    }
-
-    and(): this {
         return this;
     }
 }

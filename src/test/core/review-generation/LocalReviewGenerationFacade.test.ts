@@ -79,6 +79,6 @@ suite('LocalReviewGenerationFacade', () => {
             personas: [securityPersonaWithFocusArea],
             context: { 'p-1': { 'focus-area': 'authentication module' } },
         }));
-        assertPrompt(prompt).phase(2).step(1).hasName('Security Auditor').and().contains('**Focus area:** authentication module');
+        assertPrompt(prompt).phase(2).step(1).hasName('Security Auditor').contains('**Focus area:** authentication module');
     });
 });

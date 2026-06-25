@@ -63,7 +63,7 @@ suite('ReviewGenerationFacade', () => {
     test('persona with empty checklist renders placeholder', () => {
         const persona: Persona = { id: 'p-3', name: 'Reviewer', customInstructions: '', checklist: [] };
         const prompt = facade.build(githubConfig({ personas: [persona] }));
-        assertPrompt(prompt).phase(2).step(1).hasName('Reviewer').and().contains('(no checklist items)');
+        assertPrompt(prompt).phase(2).step(1).hasName('Reviewer').contains('(no checklist items)');
     });
 
     test('multi-agent: appends orchestration block after base prompt', () => {
@@ -83,7 +83,7 @@ suite('ReviewGenerationFacade', () => {
         }));
         assertPrompt(prompt).phase(2).step(1)
             .hasName('Story Requirements Guardian')
-            .and().contains('**Jira Ticket URL:** https://org.atlassian.net/browse/PROJ-42');
+            .contains('**Jira Ticket URL:** https://org.atlassian.net/browse/PROJ-42');
     });
 
     test('pending review option leaves the review as a draft instead of submitting', () => {
