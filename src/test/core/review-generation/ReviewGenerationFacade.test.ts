@@ -96,8 +96,9 @@ Create a pending review on pull request #1, add all prepared comments, and stop 
 1. Create a new pending review. Do not add a review body — leave it empty.
 2. Add each prepared comment to the pending review using available tools.
 
-If any operation fails, report the error and stop — do not submit a partial review.`);
+If any operation fails, report the error and stop — do not submit a partial review.`.trim());
     });
+
 
     test('skip commented issues fetches existing comments and instructs Claude to filter duplicates and post enriching replies', () => {
         assert.strictEqual(
