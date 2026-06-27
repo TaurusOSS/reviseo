@@ -85,6 +85,6 @@ suite('LocalReviewGenerationFacade', () => {
 
     test('skip cleanup option omits the cleanup phase from the generated prompt', () => {
         const prompt = facade.build(localConfig({ personas: [securityPersona], skipCleanup: true }));
-        assertPrompt(prompt).doesntHavePhase('Cleanup');
+        assertPrompt(prompt).hasNoPhase('Cleanup');
     });
 });

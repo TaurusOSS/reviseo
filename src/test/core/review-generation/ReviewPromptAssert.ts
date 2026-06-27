@@ -23,8 +23,9 @@ class ReviewPromptAssert {
         return new PhaseAssert(extractSection(this.text, /^## Phase (\d+):/gm, n, 'Phase'), n);
     }
 
-    doesntHavePhase(name: string): this {
-        const pattern = new RegExp(`^## Phase \\d+: ${name}$`, 'm');
+    hasNoPhase(name: string): this {
+        const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const pattern = new RegExp(`^## Phase \\d+: ${escaped}$`, 'm');
         assert.ok(!pattern.test(this.text), `Expected no phase named "${name}" but found one`);
         return this;
     }

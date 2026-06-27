@@ -26,6 +26,8 @@ export class LocalReviewPromptFactory implements ReviewPromptFactory {
         const steps = config.personas.map((p, i) => new PersonaStepComponent(p, i + 1, config.context[p.id]));
         const stepsComponent = new StepsComponent(steps);
 
+        const cleanupPhaseFactory = (n: number): PromptComponent => new LocalCleanupPhase(n, fullPath);
+
         const phaseFactories: Array<(n: number) => PromptComponent> = [
             (n) => new LocalFetchDiffPhase(n, config.baseBranch, directory, fullPath),
             (n) => config.personaReviewExecutionMode === PersonaReviewExecutionMode.MULTI_AGENT
@@ -33,7 +35,7 @@ export class LocalReviewPromptFactory implements ReviewPromptFactory {
                 : new SingleAgentFindIssuesPhase(n, stepsComponent, fullPath),
             (n) => new PrepareCommentsPhase(n),
             (n) => new LocalWriteReviewPhase(n, config.timestamp, config.baseBranch),
-            ...(config.skipCleanup ? [] : [(n: number) => new LocalCleanupPhase(n, fullPath)]),
+            ...(config.skipCleanup ? [] : [cleanupPhaseFactory]),
         ];
 
         return new Prompt([

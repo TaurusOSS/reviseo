@@ -123,6 +123,6 @@ If any operation fails, report the error and stop — do not submit a partial re
 
     test('skip cleanup option omits the cleanup phase from the generated prompt', () => {
         const prompt = facade.build(githubConfig({ personas: [securityPersona], skipCleanup: true }));
-        assertPrompt(prompt).doesntHavePhase('Cleanup');
+        assertPrompt(prompt).hasNoPhase('Cleanup');
     });
 });
