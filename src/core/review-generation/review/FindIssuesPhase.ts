@@ -1,6 +1,8 @@
 import type { PromptComponent } from './PromptComponent';
 import type { StepsComponent } from './StepsComponent';
 
+export const LINE_NUMBER_GUIDANCE = `new-file line number (right-hand number in the @@ header, 1-indexed) — prefer a specific line even for broad issues; use null only when no single changed line is representative of the problem`;
+
 const REVIEW_ASSUMPTIONS =
 `Assume:
 - The code compiles and passes basic static analysis.

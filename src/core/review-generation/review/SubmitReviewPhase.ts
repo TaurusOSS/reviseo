@@ -18,7 +18,9 @@ export class SubmitReviewPhase implements PromptComponent {
 ${header}
 
 1. Create a new pending review. Do not add a review body — leave it empty.
-2. Add each prepared comment to the pending review using available tools.
+2. Add each prepared comment to the pending review:
+   2a. line is set → use the tool that accepts "path" + "line" parameters.
+   2b. line is null → use the tool that accepts only "path" (no "line" parameter).
 
 If any operation fails, report the error and stop — do not submit a partial review.`;
     }

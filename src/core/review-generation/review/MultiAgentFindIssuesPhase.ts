@@ -1,5 +1,5 @@
 import type { StepsComponent } from './StepsComponent';
-import { FindIssuesPhase } from './FindIssuesPhase';
+import { FindIssuesPhase, LINE_NUMBER_GUIDANCE } from './FindIssuesPhase';
 
 export class MultiAgentFindIssuesPhase extends FindIssuesPhase {
     constructor(
@@ -29,7 +29,7 @@ Every element must conform to:
 {
   "persona": "<persona name>",
   "file": "<path/to/file.ext>",
-  "line": <integer line number, or null for file-level issues>,
+  "line": <${LINE_NUMBER_GUIDANCE}>,
   "description": "<what the issue is and why it matters — enough context for the comment-preparation phase to write a quality comment without re-reading the diff>"
 }`;
     }
