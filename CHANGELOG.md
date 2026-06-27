@@ -2,6 +2,17 @@
 
 All notable changes to Reviseo are documented here.
 
+## [1.4.0] - 2026-06-27
+
+### Added
+
+- Added an option to skip the cleanup phase and keep temporary review files after the review completes
+
+### Changed
+
+- Review comments are now posted on the specific line of code they relate to, rather than as general PR-level comments
+- Existing review comments are checked before posting to avoid creating duplicates
+
 ## [1.3.0] - 2026-06-21
 
 ### Added
