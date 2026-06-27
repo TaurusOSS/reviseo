@@ -26,7 +26,11 @@ Read `.ai/reviseo/1/diff.patch` to obtain the diff.
 Read `.ai/reviseo/1/review_data.json` to obtain the PR title and description for context.
 For each Step below, adopt that persona and identify issues according to its checklist.
 Do NOT write formatted comments — comment preparation happens in a later phase.
-Retain issues as an in-memory list; each item: persona name, file path, line number (an integer from the diff — prefer a specific line even for broad issues; use null only when no single changed line is representative of the problem), description — the description must capture the issue and its impact in enough detail that PrepareComments can write a full comment without re-reading the diff.
+Retain issues as an in-memory list; each item:
+- persona name
+- file path
+- line: new-file line number (right-hand number in the @@ header, 1-indexed) — prefer a specific line even for broad issues; use null only when no single changed line is representative of the problem
+- description: must capture the issue and its impact in enough detail that PrepareComments can write a full comment without re-reading the diff
 
 If any operation fails, report the error and stop.
 
@@ -61,8 +65,8 @@ Transform the raw issues collected in Phase 2 into formatted review comments:
 1. Perform root cause analysis: group issues that share the same underlying root cause.
 2. For each group (or standalone issue), write exactly one comment conforming to the format below.
    - Comments may reference each other (e.g., "See also the comment about X") but must never duplicate content.
-3. Resolve line targets: for each comment whose source issue had no line number, identify the changed line in the diff most directly related to the comment's concern and attach the comment there. Keep a comment file-level only when the issue genuinely applies to the whole file and no single changed line is meaningfully more relevant than others.
-4. Retain the final comment list (with file path and resolved line number) for submission in the next phase.
+3. Resolve line targets: for each comment whose source issue had no line number, identify the changed line in the diff most directly related to the comment's concern and attach the comment there; if multiple changed lines are equally plausible, use the first one. Keep a comment file-level only when the issue genuinely applies to the whole file and no single changed line is meaningfully more relevant than others.
+4. Retain the final comment list for submission in the next phase, in this format: [{ file: string, line: integer | null, body: string }]
 
 If any operation fails, report the error and stop.
 
@@ -95,7 +99,9 @@ Total length: max 120 words. If more context is needed, use a collapsible block:
 Create a pending review on pull request #1 and add all prepared comments:
 
 1. Create a new pending review. Do not add a review body — leave it empty.
-2. Add each prepared comment to the pending review: use the inline comment tool (specifying file path and line number) when a line number is set; use the file-level comment tool only when the line is null.
+2. Add each prepared comment to the pending review:
+   2a. line is set → use the tool that accepts "path" + "line" parameters.
+   2b. line is null → use the tool that accepts only "path" (no "line" parameter).
 
 If any operation fails, report the error and stop — do not submit a partial review.
 
