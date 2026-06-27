@@ -40,6 +40,7 @@ function localConfig(overrides: Partial<LocalReviewConfiguration> & Pick<LocalRe
         timestamp: TIMESTAMP,
         personaReviewExecutionMode: PersonaReviewExecutionMode.SINGLE_AGENT,
         context: {},
+        skipCleanup: false,
         ...overrides,
     };
 }
@@ -80,5 +81,10 @@ suite('LocalReviewGenerationFacade', () => {
             context: { 'p-1': { 'focus-area': 'authentication module' } },
         }));
         assertPrompt(prompt).phase(2).step(1).hasName('Security Auditor').contains('**Focus area:** authentication module');
+    });
+
+    test('skip cleanup option omits the cleanup phase from the generated prompt', () => {
+        const prompt = facade.build(localConfig({ personas: [securityPersona], skipCleanup: true }));
+        assertPrompt(prompt).hasNoPhase('Cleanup');
     });
 });

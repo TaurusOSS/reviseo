@@ -55,6 +55,11 @@ export function getReviewHtml(): string {
           </label>
           <p class="settings-tip">Fetches existing unresolved inline comments and omits issues already raised. Useful when running Reviseo as a second pass after a manual review.</p>
         </div>
+        <label class="persona-check-item">
+          <input type="checkbox" id="chk-skip-cleanup">
+          <span>Keep temporary files after review</span>
+        </label>
+        <p class="settings-tip">Skips the cleanup step — temp files in <code>.reviseo/</code> are left on disk for use with other tools.</p>
       </div>
     </details>
 
