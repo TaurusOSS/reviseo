@@ -216,6 +216,14 @@ export function getReviewScript(): string {
       document.getElementById('prompt-output').scrollIntoView({ behavior: 'smooth' });
     }
 
+    // ── Fetch PR Data ──────────────────────────────────────────────
+    document.getElementById('btn-fetch-pr-data').addEventListener('click', () => {
+      const prUrl = document.getElementById('pr-url').value.trim();
+      if (!prUrl) { alert('Please enter a Pull Request URL.'); return; }
+      const skipCommentedIssues = document.getElementById('chk-skip-commented').checked;
+      vscode.postMessage({ type: 'fetchReviewData', prUrl, skipCommentedIssues });
+    });
+
     // ── Copy to clipboard ──────────────────────────────────────────
     document.getElementById('btn-copy').addEventListener('click', () => {
       const text = document.getElementById('prompt-text').value;

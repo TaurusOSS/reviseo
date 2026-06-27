@@ -37,7 +37,7 @@ export class GithubReviewPromptFactory implements ReviewPromptFactory {
         const cleanupPhaseFactory = (n: number): PromptComponent => new CleanupPhase(n, reviewDataPath, diffFilePath, config.pendingReview);
 
         const phaseFactories: Array<(n: number) => PromptComponent> = [
-            fetchPhaseFactory,
+            ...(config.skipPrDataFetchPhase ? [] : [fetchPhaseFactory]),
             findIssuesPhaseFactory,
             prepareCommentsPhaseFactory,
             submitPhaseFactory,

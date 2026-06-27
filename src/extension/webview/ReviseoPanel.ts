@@ -1,5 +1,7 @@
 import * as vscode from 'vscode';
 import * as crypto from 'crypto';
+import * as fs from 'fs/promises';
+import * as path from 'path';
 import { VsCodeStoragePersonaStore } from '../VsCodeStoragePersonaStore';
 import { ReviewGenerationFacade, PersonaReviewExecutionMode, generateLocalReviewTimestamp } from '../../core/review-generation';
 import type { ReviewConfiguration } from '../../core/review-generation';
@@ -83,18 +85,35 @@ export class ReviseoPanel {
                 break;
             }
             case 'generatePrompt': {
-                const selected = this._store.getAll().filter(p => message.personaIds.includes(p.id));
-                const config: ReviewConfiguration = {
-                    kind: 'github',
-                    url: message.prUrl,
-                    personas: selected,
-                    personaReviewExecutionMode: message.promptOptions.multiAgent ? PersonaReviewExecutionMode.MULTI_AGENT : PersonaReviewExecutionMode.SINGLE_AGENT,
-                    context: message.personaContext ?? {},
-                    pendingReview: message.promptOptions.pendingReview,
-                    skipCommentedIssues: message.promptOptions.skipCommentedIssues,
-                    skipCleanup: message.promptOptions.skipCleanup,
-                };
-                this._panel.webview.postMessage({ type: 'promptGenerated', text: this._reviewGen.build(config) });
+                void (async () => {
+                    const selected = this._store.getAll().filter(p => message.personaIds.includes(p.id));
+                    const prNumber = message.prUrl.match(/\/pull\/(\d+)/)?.[1] ?? '0';
+                    let skipPrDataFetchPhase = false;
+                    const baseDir = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+                    if (baseDir) {
+                        const reviewDataPath = path.join(baseDir, '.ai', 'reviseo', prNumber, 'review_data.json');
+                        const diffPath = path.join(baseDir, '.ai', 'reviseo', prNumber, 'diff.patch');
+                        try {
+                            await fs.access(reviewDataPath);
+                            await fs.access(diffPath);
+                            skipPrDataFetchPhase = true;
+                        } catch {
+                            skipPrDataFetchPhase = false;
+                        }
+                    }
+                    const config: ReviewConfiguration = {
+                        kind: 'github',
+                        url: message.prUrl,
+                        personas: selected,
+                        personaReviewExecutionMode: message.promptOptions.multiAgent ? PersonaReviewExecutionMode.MULTI_AGENT : PersonaReviewExecutionMode.SINGLE_AGENT,
+                        context: message.personaContext ?? {},
+                        pendingReview: message.promptOptions.pendingReview,
+                        skipCommentedIssues: message.promptOptions.skipCommentedIssues,
+                        skipCleanup: message.promptOptions.skipCleanup,
+                        skipPrDataFetchPhase,
+                    };
+                    this._panel.webview.postMessage({ type: 'promptGenerated', text: this._reviewGen.build(config) });
+                })();
                 break;
             }
             case 'generateLocalPrompt': {
@@ -139,6 +158,27 @@ export class ReviseoPanel {
             }
             case 'copyToClipboard': {
                 vscode.env.clipboard.writeText(message.text);
+                break;
+            }
+            case 'fetchReviewData': {
+                const workspaceFolders = vscode.workspace.workspaceFolders;
+                if (!workspaceFolders || workspaceFolders.length === 0) {
+                    void vscode.window.showErrorMessage('Reviseo: No workspace folder is open. Please open a folder before fetching PR data.');
+                    break;
+                }
+                const prNumber = message.prUrl.match(/\/pull\/(\d+)/)?.[1] ?? '0';
+                const jsonFields = message.skipCommentedIssues ? 'title,body,reviewThreads' : 'title,body';
+                const commands = [
+                    `mkdir -p .ai/reviseo/${prNumber}`,
+                    `gh pr diff ${message.prUrl} > .ai/reviseo/${prNumber}/diff.patch`,
+                    `gh pr view ${message.prUrl} --json ${jsonFields} > .ai/reviseo/${prNumber}/review_data.json`,
+                ].join(' && ');
+                let terminal = vscode.window.terminals.find(t => t.name === 'Reviseo');
+                if (!terminal) {
+                    terminal = vscode.window.createTerminal({ name: 'Reviseo', cwd: workspaceFolders[0].uri.fsPath });
+                }
+                terminal.show();
+                terminal.sendText(commands);
                 break;
             }
         }

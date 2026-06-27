@@ -13,11 +13,11 @@ Fetch the PR details and write them to the review data files:
 3. Write `.ai/reviseo/1/review_data.json` as a JSON file with this exact structure:
    {
      "title": "<PR title>",
-     "description": "<PR description>"
+     "body": "<PR description>"
    }
 4. Verify both files exist and are non-empty:
    - Read `.ai/reviseo/1/diff.patch` and confirm it contains the raw diff
-   - Read `.ai/reviseo/1/review_data.json` and confirm it is valid JSON with non-empty "title" and "description" fields
+   - Read `.ai/reviseo/1/review_data.json` and confirm it is valid JSON with non-empty "title" and "body" fields
    Only then report this phase complete.
 
 If any step fails, report the error and stop.

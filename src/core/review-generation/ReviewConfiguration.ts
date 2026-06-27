@@ -13,6 +13,7 @@ export type GithubReviewConfiguration = ReviewConfigurationBase & {
     readonly url: string;
     readonly pendingReview: boolean;
     readonly skipCommentedIssues: boolean;
+    readonly skipPrDataFetchPhase?: boolean;
 };
 
 export type LocalReviewConfiguration = ReviewConfigurationBase & {

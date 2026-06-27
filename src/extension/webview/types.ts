@@ -14,7 +14,8 @@ export type WebviewMessage =
     | { type: 'getInitialState' }
     | { type: 'saveReviewSettings'; multiAgent: boolean; pendingReview: boolean; skipCommentedIssues: boolean; skipCleanup: boolean }
     | { type: 'saveLocalReviewSettings'; multiAgent: boolean; baseBranch: string; skipCleanup: boolean }
-    | { type: 'saveActiveReviewTab'; tab: ReviewMode };
+    | { type: 'saveActiveReviewTab'; tab: ReviewMode }
+    | { type: 'fetchReviewData'; prUrl: string; skipCommentedIssues: boolean };
 
 export type ExtensionMessage =
     | { type: 'personasLoaded'; personas: Persona[] }

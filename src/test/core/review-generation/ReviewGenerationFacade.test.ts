@@ -125,4 +125,10 @@ If any operation fails, report the error and stop — do not submit a partial re
         const prompt = facade.build(githubConfig({ personas: [securityPersona], skipCleanup: true }));
         assertPrompt(prompt).hasNoPhase('Cleanup');
     });
+
+    test('skipPrDataFetchPhase omits the Fetch Review Data phase and renumbers remaining phases from 1', () => {
+        const prompt = facade.build(githubConfig({ personas: [securityPersona], skipPrDataFetchPhase: true }));
+        assertPrompt(prompt).hasNoPhase('Fetch Review Data');
+        assertPrompt(prompt).phase(1).contains('Find Issues');
+    });
 });
