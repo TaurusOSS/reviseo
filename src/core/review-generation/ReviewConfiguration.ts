@@ -5,6 +5,7 @@ type ReviewConfigurationBase = {
     readonly personas: readonly Persona[];
     readonly personaReviewExecutionMode: PersonaReviewExecutionMode;
     readonly context: PersonaContext;
+    readonly skipCleanup: boolean;
 };
 
 export type GithubReviewConfiguration = ReviewConfigurationBase & {

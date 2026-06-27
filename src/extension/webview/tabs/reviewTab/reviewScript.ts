@@ -6,17 +6,19 @@ export function getReviewScript(): string {
 
     // ── Inner tab switching ────────────────────────────────────────
     let activeInnerTab = 'github';
-    let githubSettings = { multiAgent: false, pendingReview: false, skipCommentedIssues: false };
-    let localSettings = { multiAgent: false, baseBranch: 'origin/main' };
+    let githubSettings = { multiAgent: false, pendingReview: false, skipCommentedIssues: false, skipCleanup: false };
+    let localSettings = { multiAgent: false, baseBranch: 'origin/main', skipCleanup: false };
 
     function applySettingsToUi(tab) {
       if (tab === 'github') {
         document.getElementById('chk-multi-agent').checked = githubSettings.multiAgent;
         document.getElementById('chk-pending-review').checked = githubSettings.pendingReview;
         document.getElementById('chk-skip-commented').checked = githubSettings.skipCommentedIssues;
+        document.getElementById('chk-skip-cleanup').checked = githubSettings.skipCleanup;
       } else {
         document.getElementById('chk-multi-agent').checked = localSettings.multiAgent;
         document.getElementById('base-branch').value = localSettings.baseBranch;
+        document.getElementById('chk-skip-cleanup').checked = localSettings.skipCleanup;
       }
     }
 
@@ -51,6 +53,7 @@ export function getReviewScript(): string {
           githubSettings.multiAgent = document.getElementById('chk-multi-agent').checked;
           githubSettings.pendingReview = document.getElementById('chk-pending-review').checked;
           githubSettings.skipCommentedIssues = document.getElementById('chk-skip-commented').checked;
+          githubSettings.skipCleanup = document.getElementById('chk-skip-cleanup').checked;
           vscode.postMessage({ type: 'saveReviewSettings', ...githubSettings });
         },
         generate: (checked, personaContext) => {
@@ -59,19 +62,22 @@ export function getReviewScript(): string {
           const multiAgent = document.getElementById('chk-multi-agent').checked;
           const pendingReview = document.getElementById('chk-pending-review').checked;
           const skipCommentedIssues = document.getElementById('chk-skip-commented').checked;
-          vscode.postMessage({ type: 'generatePrompt', prUrl, personaIds: checked, promptOptions: { multiAgent, pendingReview, skipCommentedIssues }, personaContext });
+          const skipCleanup = document.getElementById('chk-skip-cleanup').checked;
+          vscode.postMessage({ type: 'generatePrompt', prUrl, personaIds: checked, promptOptions: { multiAgent, pendingReview, skipCommentedIssues, skipCleanup }, personaContext });
         },
       },
       local: {
         save: () => {
           localSettings.multiAgent = document.getElementById('chk-multi-agent').checked;
           localSettings.baseBranch = document.getElementById('base-branch').value.trim() || 'origin/main';
+          localSettings.skipCleanup = document.getElementById('chk-skip-cleanup').checked;
           vscode.postMessage({ type: 'saveLocalReviewSettings', ...localSettings });
         },
         generate: (checked, personaContext) => {
           const baseBranch = document.getElementById('base-branch').value.trim() || 'origin/main';
           const multiAgent = document.getElementById('chk-multi-agent').checked;
-          vscode.postMessage({ type: 'generateLocalPrompt', baseBranch, personaIds: checked, multiAgent, personaContext });
+          const skipCleanup = document.getElementById('chk-skip-cleanup').checked;
+          vscode.postMessage({ type: 'generateLocalPrompt', baseBranch, personaIds: checked, multiAgent, skipCleanup, personaContext });
         },
       },
     };
@@ -83,6 +89,7 @@ export function getReviewScript(): string {
     document.getElementById('chk-multi-agent').addEventListener('change', saveSettings);
     document.getElementById('chk-pending-review').addEventListener('change', saveSettings);
     document.getElementById('chk-skip-commented').addEventListener('change', saveSettings);
+    document.getElementById('chk-skip-cleanup').addEventListener('change', saveSettings);
     document.getElementById('base-branch').addEventListener('change', saveSettings);
 
     // ── Rendering ──────────────────────────────────────────────────

@@ -4,6 +4,7 @@ export interface PromptOptions {
     multiAgent: boolean;
     pendingReview: boolean;
     skipCommentedIssues: boolean;
+    skipCleanup: boolean;
 }
 
 export enum PersonaReviewExecutionMode {

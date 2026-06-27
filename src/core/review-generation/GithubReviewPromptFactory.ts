@@ -41,7 +41,7 @@ export class GithubReviewPromptFactory implements ReviewPromptFactory {
             findIssuesPhaseFactory,
             prepareCommentsPhaseFactory,
             submitPhaseFactory,
-            cleanupPhaseFactory,
+            ...(config.skipCleanup ? [] : [cleanupPhaseFactory]),
         ];
 
         return new Prompt([

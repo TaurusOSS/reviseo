@@ -33,7 +33,7 @@ export class LocalReviewPromptFactory implements ReviewPromptFactory {
                 : new SingleAgentFindIssuesPhase(n, stepsComponent, fullPath),
             (n) => new PrepareCommentsPhase(n),
             (n) => new LocalWriteReviewPhase(n, config.timestamp, config.baseBranch),
-            (n) => new LocalCleanupPhase(n, fullPath),
+            ...(config.skipCleanup ? [] : [(n: number) => new LocalCleanupPhase(n, fullPath)]),
         ];
 
         return new Prompt([

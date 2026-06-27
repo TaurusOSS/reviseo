@@ -36,6 +36,7 @@ function githubConfig(overrides: Partial<GithubReviewConfiguration> & Pick<Githu
         context: {},
         pendingReview: false,
         skipCommentedIssues: false,
+        skipCleanup: false,
         ...overrides,
     };
 }
@@ -118,5 +119,10 @@ If any operation fails, report the error and stop — do not submit a partial re
             })),
             fixture('multi-agent-two-personas-skip-commented.txt')
         );
+    });
+
+    test('skip cleanup option omits the cleanup phase from the generated prompt', () => {
+        const prompt = facade.build(githubConfig({ personas: [securityPersona], skipCleanup: true }));
+        assertPrompt(prompt).doesntHavePhase('Cleanup');
     });
 });

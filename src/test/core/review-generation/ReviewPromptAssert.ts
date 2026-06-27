@@ -22,6 +22,12 @@ class ReviewPromptAssert {
     phase(n: number): PhaseAssert {
         return new PhaseAssert(extractSection(this.text, /^## Phase (\d+):/gm, n, 'Phase'), n);
     }
+
+    doesntHavePhase(name: string): this {
+        const pattern = new RegExp(`^## Phase \\d+: ${name}$`, 'm');
+        assert.ok(!pattern.test(this.text), `Expected no phase named "${name}" but found one`);
+        return this;
+    }
 }
 
 class PhaseAssert {
