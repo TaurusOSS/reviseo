@@ -28,7 +28,8 @@ ${filteringBlock}Transform the raw issues collected in Phase ${this.phaseNumber 
 1. Perform root cause analysis: group issues that share the same underlying root cause.
 2. For each group (or standalone issue), write exactly one comment conforming to the format below.
    - Comments may reference each other (e.g., "See also the comment about X") but must never duplicate content.
-3. Retain the final comment list for submission in the next phase.
+3. Resolve line targets: for each comment whose source issue had no line number, identify the changed line in the diff most directly related to the comment's concern and attach the comment there. Keep a comment file-level only when the issue genuinely applies to the whole file and no single changed line is meaningfully more relevant than others.
+4. Retain the final comment list (with file path and resolved line number) for submission in the next phase.
 
 If any operation fails, report the error and stop.`;
 

@@ -29,7 +29,7 @@ Every element must conform to:
 {
   "persona": "<persona name>",
   "file": "<path/to/file.ext>",
-  "line": <integer line number, or null for file-level issues>,
+  "line": <integer line number from the diff — prefer a specific line even for broad issues; use null only when no single changed line is representative of the problem>,
   "description": "<what the issue is and why it matters — enough context for the comment-preparation phase to write a quality comment without re-reading the diff>"
 }`;
     }

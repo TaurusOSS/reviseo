@@ -30,7 +30,7 @@ Every element must conform to:
 {
   "persona": "<persona name>",
   "file": "<path/to/file.ext>",
-  "line": <integer line number, or null for file-level issues>,
+  "line": <integer line number from the diff — prefer a specific line even for broad issues; use null only when no single changed line is representative of the problem>,
   "description": "<what the issue is and why it matters — enough context for the comment-preparation phase to write a quality comment without re-reading the diff>"
 }
 
@@ -64,7 +64,8 @@ Transform the raw issues collected in Phase 2 into formatted review comments:
 1. Perform root cause analysis: group issues that share the same underlying root cause.
 2. For each group (or standalone issue), write exactly one comment conforming to the format below.
    - Comments may reference each other (e.g., "See also the comment about X") but must never duplicate content.
-3. Retain the final comment list for submission in the next phase.
+3. Resolve line targets: for each comment whose source issue had no line number, identify the changed line in the diff most directly related to the comment's concern and attach the comment there. Keep a comment file-level only when the issue genuinely applies to the whole file and no single changed line is meaningfully more relevant than others.
+4. Retain the final comment list (with file path and resolved line number) for submission in the next phase.
 
 If any operation fails, report the error and stop.
 

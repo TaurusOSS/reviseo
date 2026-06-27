@@ -18,7 +18,7 @@ export class SubmitReviewPhase implements PromptComponent {
 ${header}
 
 1. Create a new pending review. Do not add a review body — leave it empty.
-2. Add each prepared comment to the pending review using available tools.
+2. Add each prepared comment to the pending review: use the inline comment tool (specifying file path and line number) when a line number is set; use the file-level comment tool only when the line is null.
 
 If any operation fails, report the error and stop — do not submit a partial review.`;
     }
