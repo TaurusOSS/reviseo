@@ -4,3 +4,4 @@ export type { PromptOptions, PersonaContext } from './types';
 export type { ReviewConfiguration, GithubReviewConfiguration, LocalReviewConfiguration } from './ReviewConfiguration';
 export type { ReviewPromptFactory } from './ReviewPromptFactory';
 export { generateLocalReviewTimestamp } from './LocalReviewDiffFilePath';
+export { extractPrNumber } from './PrUrlUtils';

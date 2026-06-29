@@ -15,6 +15,7 @@ import {
 } from './review';
 import { PersonaReviewExecutionMode } from './types';
 import { REVISEO_BASE_DIR } from './LocalReviewDiffFilePath';
+import { extractPrNumber } from './PrUrlUtils';
 
 export class GithubReviewPromptFactory implements ReviewPromptFactory {
     create(config: ReviewConfiguration): Prompt {
@@ -22,7 +23,10 @@ export class GithubReviewPromptFactory implements ReviewPromptFactory {
             return new Prompt([]);
         }
 
-        const prNumber = config.url.match(/\/pull\/(\d+)/)?.[1] ?? '0';
+        const prNumber = extractPrNumber(config.url);
+        if (!prNumber) {
+            return new Prompt([]);
+        }
         const reviewDataPath = `${REVISEO_BASE_DIR}/${prNumber}/review_data.json`;
         const diffFilePath = `${REVISEO_BASE_DIR}/${prNumber}/diff.patch`;
         const steps = config.personas.map((p, i) => new PersonaStepComponent(p, i + 1, config.context[p.id]));

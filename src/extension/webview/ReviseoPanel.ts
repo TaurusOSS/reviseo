@@ -3,7 +3,7 @@ import * as crypto from 'crypto';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { VsCodeStoragePersonaStore } from '../VsCodeStoragePersonaStore';
-import { ReviewGenerationFacade, PersonaReviewExecutionMode, generateLocalReviewTimestamp } from '../../core/review-generation';
+import { ReviewGenerationFacade, PersonaReviewExecutionMode, generateLocalReviewTimestamp, extractPrNumber } from '../../core/review-generation';
 import type { ReviewConfiguration } from '../../core/review-generation';
 import { PersonaManagementFacade } from '../../core/persona-management';
 import type { WebviewMessage, ReviewMode } from './types';
@@ -85,35 +85,10 @@ export class ReviseoPanel {
                 break;
             }
             case 'generatePrompt': {
-                void (async () => {
-                    const selected = this._store.getAll().filter(p => message.personaIds.includes(p.id));
-                    const prNumber = message.prUrl.match(/\/pull\/(\d+)/)?.[1] ?? '0';
-                    let skipPrDataFetchPhase = false;
-                    const baseDir = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
-                    if (baseDir) {
-                        const reviewDataPath = path.join(baseDir, '.ai', 'reviseo', prNumber, 'review_data.json');
-                        const diffPath = path.join(baseDir, '.ai', 'reviseo', prNumber, 'diff.patch');
-                        try {
-                            await fs.access(reviewDataPath);
-                            await fs.access(diffPath);
-                            skipPrDataFetchPhase = true;
-                        } catch {
-                            skipPrDataFetchPhase = false;
-                        }
-                    }
-                    const config: ReviewConfiguration = {
-                        kind: 'github',
-                        url: message.prUrl,
-                        personas: selected,
-                        personaReviewExecutionMode: message.promptOptions.multiAgent ? PersonaReviewExecutionMode.MULTI_AGENT : PersonaReviewExecutionMode.SINGLE_AGENT,
-                        context: message.personaContext ?? {},
-                        pendingReview: message.promptOptions.pendingReview,
-                        skipCommentedIssues: message.promptOptions.skipCommentedIssues,
-                        skipCleanup: message.promptOptions.skipCleanup,
-                        skipPrDataFetchPhase,
-                    };
-                    this._panel.webview.postMessage({ type: 'promptGenerated', text: this._reviewGen.build(config) });
-                })();
+                this._handleGeneratePrompt(message).catch(err => {
+                    console.error('reviseo: prompt generation failed', err);
+                    void vscode.window.showErrorMessage('Reviseo: failed to generate prompt');
+                });
                 break;
             }
             case 'generateLocalPrompt': {
@@ -166,12 +141,15 @@ export class ReviseoPanel {
                     void vscode.window.showErrorMessage('Reviseo: No workspace folder is open. Please open a folder before fetching PR data.');
                     break;
                 }
-                const prNumber = message.prUrl.match(/\/pull\/(\d+)/)?.[1] ?? '0';
-                const jsonFields = message.skipCommentedIssues ? 'title,body,reviewThreads' : 'title,body';
+                if (!/^https:\/\/github\.com\/[^/\s]+\/[^/\s]+\/pull\/\d+$/.test(message.prUrl)) {
+                    void vscode.window.showErrorMessage('Reviseo: Invalid PR URL');
+                    break;
+                }
+                const prNumber = extractPrNumber(message.prUrl)!;
                 const commands = [
                     `mkdir -p .ai/reviseo/${prNumber}`,
                     `gh pr diff ${message.prUrl} > .ai/reviseo/${prNumber}/diff.patch`,
-                    `gh pr view ${message.prUrl} --json ${jsonFields} > .ai/reviseo/${prNumber}/review_data.json`,
+                    `gh pr view ${message.prUrl} --json title,body > .ai/reviseo/${prNumber}/review_data.json`,
                 ].join(' && ');
                 let terminal = vscode.window.terminals.find(t => t.name === 'Reviseo');
                 if (!terminal) {
@@ -182,6 +160,36 @@ export class ReviseoPanel {
                 break;
             }
         }
+    }
+
+    private async _handleGeneratePrompt(message: Extract<WebviewMessage, { type: 'generatePrompt' }>): Promise<void> {
+        const selected = this._store.getAll().filter(p => message.personaIds.includes(p.id));
+        const prNumber = extractPrNumber(message.prUrl);
+        let skipPrDataFetchPhase = false;
+        const baseDir = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+        if (baseDir && prNumber) {
+            const reviewDataPath = path.join(baseDir, '.ai', 'reviseo', prNumber, 'review_data.json');
+            const diffPath = path.join(baseDir, '.ai', 'reviseo', prNumber, 'diff.patch');
+            try {
+                await fs.access(reviewDataPath);
+                await fs.access(diffPath);
+                skipPrDataFetchPhase = true;
+            } catch {
+                skipPrDataFetchPhase = false;
+            }
+        }
+        const config: ReviewConfiguration = {
+            kind: 'github',
+            url: message.prUrl,
+            personas: selected,
+            personaReviewExecutionMode: message.promptOptions.multiAgent ? PersonaReviewExecutionMode.MULTI_AGENT : PersonaReviewExecutionMode.SINGLE_AGENT,
+            context: message.personaContext ?? {},
+            pendingReview: message.promptOptions.pendingReview,
+            skipCommentedIssues: message.promptOptions.skipCommentedIssues,
+            skipCleanup: message.promptOptions.skipCleanup,
+            skipPrDataFetchPhase,
+        };
+        this._panel.webview.postMessage({ type: 'promptGenerated', text: this._reviewGen.build(config) });
     }
 
     private _getHtml(): string {

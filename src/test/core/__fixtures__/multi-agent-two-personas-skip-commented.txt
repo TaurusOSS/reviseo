@@ -15,7 +15,7 @@ Fetch the PR details and write them to the review data files:
      "title": "<PR title>",
      "body": "<PR description>"
    }
-4. Fetch existing unresolved inline review comments via `pull_request_read` with method "list_review_comments" for PR `https://github.com/org/repo/pull/1`. Group each comment into a thread object: `{ "isResolved": false, "path": "<file path>", "line": <line number>, "comments": [{ "id": "<comment id>", "body": "<comment body>" }] }`. Filter to unresolved comments only. Re-write `.ai/reviseo/1/review_data.json` adding a "reviewThreads" array field to the existing JSON (preserve "title" and "body"). If there are no unresolved comments, write "reviewThreads": [].
+4. Fetch existing inline review comments via `pull_request_read` with method "list_review_comments" for PR `https://github.com/org/repo/pull/1`. Group each comment into a thread object: `{ "path": "<file path>", "line": <line number>, "comments": [{ "id": "<comment id>", "body": "<comment body>" }] }`. Re-write `.ai/reviseo/1/review_data.json` adding a "reviewThreads" array field to the existing JSON (preserve "title" and "body"). If there are no comments, write "reviewThreads": [].
 5. Verify `.ai/reviseo/1/review_data.json` is valid JSON with "title", "body", and "reviewThreads" fields present.
 
 If any step fails, report the error and stop.
@@ -65,7 +65,7 @@ Checklist:
 ## Phase 3: Prepare Comments
 
 Before preparing comments:
-1. Read `.ai/reviseo/1/review_data.json` and extract the "reviewThreads" array. Filter to threads where `isResolved` is false. For each unresolved thread, the comment id for replies is `comments[0].id` and the location is the thread's `path` and `line`.
+1. Read `.ai/reviseo/1/review_data.json` and extract the "reviewThreads" array. For each thread, the comment id for replies is `comments[0].id` and the location is the thread's `path` and `line`.
 2. For each raw issue from Phase 2, determine whether an existing comment already covers the same root cause:
    - If yes → silently drop the issue. Do not create a new comment.
    - If an existing comment is related but your issue adds genuinely new value (a second affected file, a concrete fix not mentioned, a specific edge case) → post a reply now using `add_reply_to_pull_request_comment` with that comment's id. Do not include this issue in the standard new-comment list.

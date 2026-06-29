@@ -10,7 +10,7 @@ export class PrepareCommentsPhase implements PromptComponent {
     getText(): string {
         const filteringBlock = this.reviewDataPath
             ? `Before preparing comments:
-1. Read \`${this.reviewDataPath}\` and extract the "reviewThreads" array. Filter to threads where \`isResolved\` is false. For each unresolved thread, the comment id for replies is \`comments[0].id\` and the location is the thread's \`path\` and \`line\`.
+1. Read \`${this.reviewDataPath}\` and extract the "reviewThreads" array. For each thread, the comment id for replies is \`comments[0].id\` and the location is the thread's \`path\` and \`line\`.
 2. For each raw issue from Phase ${this.phaseNumber - 1}, determine whether an existing comment already covers the same root cause:
    - If yes → silently drop the issue. Do not create a new comment.
    - If an existing comment is related but your issue adds genuinely new value (a second affected file, a concrete fix not mentioned, a specific edge case) → post a reply now using \`add_reply_to_pull_request_comment\` with that comment's id. Do not include this issue in the standard new-comment list.

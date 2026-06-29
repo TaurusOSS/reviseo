@@ -11,7 +11,7 @@ export class FetchReviewDataPhase implements PromptComponent {
 
     getText(): string {
         const existingCommentsSteps = this.skipCommentedIssues
-            ? `4. Fetch existing unresolved inline review comments via \`pull_request_read\` with method "list_review_comments" for PR \`${this.prUrl}\`. Group each comment into a thread object: \`{ "isResolved": false, "path": "<file path>", "line": <line number>, "comments": [{ "id": "<comment id>", "body": "<comment body>" }] }\`. Filter to unresolved comments only. Re-write \`${this.reviewDataPath}\` adding a "reviewThreads" array field to the existing JSON (preserve "title" and "body"). If there are no unresolved comments, write "reviewThreads": [].
+            ? `4. Fetch existing inline review comments via \`pull_request_read\` with method "list_review_comments" for PR \`${this.prUrl}\`. Group each comment into a thread object: \`{ "path": "<file path>", "line": <line number>, "comments": [{ "id": "<comment id>", "body": "<comment body>" }] }\`. Re-write \`${this.reviewDataPath}\` adding a "reviewThreads" array field to the existing JSON (preserve "title" and "body"). If there are no comments, write "reviewThreads": [].
 5. Verify \`${this.reviewDataPath}\` is valid JSON with "title", "body", and "reviewThreads" fields present.`
             : `4. Verify both files exist and are non-empty:
    - Read \`${this.diffFilePath}\` and confirm it contains the raw diff

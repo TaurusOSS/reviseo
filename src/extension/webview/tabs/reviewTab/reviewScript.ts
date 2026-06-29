@@ -9,12 +9,18 @@ export function getReviewScript(): string {
     let githubSettings = { multiAgent: false, pendingReview: false, skipCommentedIssues: false, skipCleanup: false };
     let localSettings = { multiAgent: false, baseBranch: 'origin/main', skipCleanup: false };
 
+    function updateFetchButtonState() {
+      const btn = document.getElementById('btn-fetch-pr-data');
+      btn.style.display = document.getElementById('chk-skip-commented').checked ? 'none' : '';
+    }
+
     function applySettingsToUi(tab) {
       if (tab === 'github') {
         document.getElementById('chk-multi-agent').checked = githubSettings.multiAgent;
         document.getElementById('chk-pending-review').checked = githubSettings.pendingReview;
         document.getElementById('chk-skip-commented').checked = githubSettings.skipCommentedIssues;
         document.getElementById('chk-skip-cleanup').checked = githubSettings.skipCleanup;
+        updateFetchButtonState();
       } else {
         document.getElementById('chk-multi-agent').checked = localSettings.multiAgent;
         document.getElementById('base-branch').value = localSettings.baseBranch;
@@ -88,7 +94,7 @@ export function getReviewScript(): string {
 
     document.getElementById('chk-multi-agent').addEventListener('change', saveSettings);
     document.getElementById('chk-pending-review').addEventListener('change', saveSettings);
-    document.getElementById('chk-skip-commented').addEventListener('change', saveSettings);
+    document.getElementById('chk-skip-commented').addEventListener('change', () => { saveSettings(); updateFetchButtonState(); });
     document.getElementById('chk-skip-cleanup').addEventListener('change', saveSettings);
     document.getElementById('base-branch').addEventListener('change', saveSettings);
 
