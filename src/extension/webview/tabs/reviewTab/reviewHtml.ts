@@ -63,6 +63,7 @@ export function getReviewHtml(): string {
       </div>
     </details>
 
+    <button class="btn btn-secondary github-only" id="btn-fetch-pr-data">Fetch PR Data</button>
     <button class="btn btn-primary" id="btn-generate">Generate Prompt</button>
 
     <div class="prompt-output hidden" id="prompt-output">

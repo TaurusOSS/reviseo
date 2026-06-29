@@ -9,12 +9,18 @@ export function getReviewScript(): string {
     let githubSettings = { multiAgent: false, pendingReview: false, skipCommentedIssues: false, skipCleanup: false };
     let localSettings = { multiAgent: false, baseBranch: 'origin/main', skipCleanup: false };
 
+    function updateFetchButtonState() {
+      const btn = document.getElementById('btn-fetch-pr-data');
+      btn.style.display = document.getElementById('chk-skip-commented').checked ? 'none' : '';
+    }
+
     function applySettingsToUi(tab) {
       if (tab === 'github') {
         document.getElementById('chk-multi-agent').checked = githubSettings.multiAgent;
         document.getElementById('chk-pending-review').checked = githubSettings.pendingReview;
         document.getElementById('chk-skip-commented').checked = githubSettings.skipCommentedIssues;
         document.getElementById('chk-skip-cleanup').checked = githubSettings.skipCleanup;
+        updateFetchButtonState();
       } else {
         document.getElementById('chk-multi-agent').checked = localSettings.multiAgent;
         document.getElementById('base-branch').value = localSettings.baseBranch;
@@ -88,7 +94,7 @@ export function getReviewScript(): string {
 
     document.getElementById('chk-multi-agent').addEventListener('change', saveSettings);
     document.getElementById('chk-pending-review').addEventListener('change', saveSettings);
-    document.getElementById('chk-skip-commented').addEventListener('change', saveSettings);
+    document.getElementById('chk-skip-commented').addEventListener('change', () => { saveSettings(); updateFetchButtonState(); });
     document.getElementById('chk-skip-cleanup').addEventListener('change', saveSettings);
     document.getElementById('base-branch').addEventListener('change', saveSettings);
 
@@ -215,6 +221,14 @@ export function getReviewScript(): string {
       document.getElementById('prompt-output').classList.remove('hidden');
       document.getElementById('prompt-output').scrollIntoView({ behavior: 'smooth' });
     }
+
+    // ── Fetch PR Data ──────────────────────────────────────────────
+    document.getElementById('btn-fetch-pr-data').addEventListener('click', () => {
+      const prUrl = document.getElementById('pr-url').value.trim();
+      if (!prUrl) { alert('Please enter a Pull Request URL.'); return; }
+      const skipCommentedIssues = document.getElementById('chk-skip-commented').checked;
+      vscode.postMessage({ type: 'fetchReviewData', prUrl, skipCommentedIssues });
+    });
 
     // ── Copy to clipboard ──────────────────────────────────────────
     document.getElementById('btn-copy').addEventListener('click', () => {
