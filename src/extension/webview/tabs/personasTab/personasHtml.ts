@@ -1,33 +1,5 @@
 export function getPersonasHtml(): string {
     return /* html */`
-    <div id="persona-form" class="persona-form hidden">
-      <h3 id="form-title">Add Persona</h3>
-      <input type="hidden" id="persona-id">
-      <div class="field">
-        <label for="f-name">Name *</label>
-        <input type="text" id="f-name" placeholder="e.g. Security Auditor">
-      </div>
-      <div class="field">
-        <label for="f-instructions">Custom Instructions</label>
-        <textarea id="f-instructions" rows="3"
-          placeholder="Describe how this persona should approach the review..."></textarea>
-      </div>
-      <div class="field">
-        <label>Checklist Items</label>
-        <div id="checklist-editor"></div>
-        <button type="button" class="btn btn-secondary btn-sm" id="btn-add-item">+ Add item</button>
-      </div>
-      <div class="field">
-        <label>Additional Inputs <span class="field-hint">(optional — fields collected at review time, e.g. a Jira URL)</span></label>
-        <div id="additional-inputs-editor"></div>
-        <button type="button" class="btn btn-secondary btn-sm" id="btn-add-input">+ Add input</button>
-      </div>
-      <div class="form-actions">
-        <button class="btn btn-secondary" id="btn-cancel-form">Cancel</button>
-        <button class="btn btn-primary" id="btn-save-persona">Save</button>
-      </div>
-    </div>
-
     <div class="persona-list" id="persona-list">
       <!-- rendered by JS -->
     </div>
@@ -86,6 +58,34 @@ export function getPersonasHtml(): string {
           <button class="btn btn-secondary" id="wizard-decline">Decline</button>
           <button class="btn btn-primary" id="wizard-confirm">Confirm</button>
         </div>
+      </div>
+    </div>
+
+    <div id="persona-form" class="persona-form hidden">
+      <h3 id="form-title">Add Persona</h3>
+      <input type="hidden" id="persona-id">
+      <div class="field">
+        <label for="f-name">Name *</label>
+        <input type="text" id="f-name" placeholder="e.g. Security Auditor">
+      </div>
+      <div class="field">
+        <label for="f-instructions">Custom Instructions</label>
+        <textarea id="f-instructions" rows="3"
+          placeholder="Describe how this persona should approach the review..."></textarea>
+      </div>
+      <div class="field">
+        <label>Checklist Items</label>
+        <div id="checklist-editor"></div>
+        <button type="button" class="btn btn-secondary btn-sm" id="btn-add-item">+ Add item</button>
+      </div>
+      <div class="field">
+        <label>Additional Inputs <span class="field-hint">(optional — fields collected at review time, e.g. a Jira URL)</span></label>
+        <div id="additional-inputs-editor"></div>
+        <button type="button" class="btn btn-secondary btn-sm" id="btn-add-input">+ Add input</button>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-secondary" id="btn-cancel-form">Cancel</button>
+        <button class="btn btn-primary" id="btn-save-persona">Save</button>
       </div>
     </div>
 
