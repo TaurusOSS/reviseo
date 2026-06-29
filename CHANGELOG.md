@@ -2,6 +2,16 @@
 
 All notable changes to Reviseo are documented here.
 
+## [1.5.0] - 2026-06-29
+
+### Added
+
+- PR diff and metadata can now be fetched directly from the extension using the `gh` CLI, saving them locally under `.ai/reviseo/<pr-number>/` for use in the review prompt
+
+### Fixed
+
+- Fixed the positioning of the create persona form
+
 ## [1.4.0] - 2026-06-27
 
 ### Added

@@ -25,6 +25,7 @@ The AI fetches the diff, adds inline review comments, and consolidates overlappi
 - **Single-agent mode** — one AI reviews the PR using all selected personas sequentially, then consolidates comments
 - **Multi-agent mode** — orchestrator AI spawns one subagent per persona for independent parallel review (higher quality, more tokens)
 - **GitHub MCP integration** — prompts use `pull_request_read`, `pull_request_review_write`, and `add_comment_to_pending_review`
+- **`gh` CLI fetch** — fetch PR diff and metadata directly from the extension into `.ai/reviseo/<pr-number>/` before generating the prompt to save tokens
 - **Additional inputs** — personas can request runtime context (e.g. a Jira ticket URL) that gets embedded in the prompt
 - **Privacy-first** — all persona data is stored locally in VS Code's global state; nothing is sent to any remote server
 - **Theme support** — adapts to VS Code light and dark themes
@@ -51,6 +52,7 @@ The AI fetches the diff, adds inline review comments, and consolidates overlappi
 
 - An AI assistant with **GitHub MCP server** access (e.g. [Claude](https://claude.ai) with the GitHub MCP server configured, or GitHub Copilot with MCP support)
 - A GitHub pull request URL
+- [`gh` CLI](https://cli.github.com/) (optional) — required only if you use the built-in PR data fetch feature
 
 No API keys are needed in Reviseo itself — it generates prompts, not AI responses.
 
@@ -58,7 +60,7 @@ No API keys are needed in Reviseo itself — it generates prompts, not AI respon
 
 ## Working Directory
 
-In multi-agent mode, the orchestrator uses `.ai/reviseo/` as a working directory to store temporary review data files. The orchestrator deletes each file after the review is submitted. Add `.ai/` to your repository's `.gitignore` to avoid committing these files if a run is interrupted before cleanup.
+Reviseo uses `.ai/reviseo/` as a working directory for temporary files. This includes pre-fetched PR data (diff and metadata stored under `.ai/reviseo/<pr-number>/`) and multi-agent review data files created during the review run. The orchestrator deletes its files after the review is submitted. Add `.ai/` to your repository's `.gitignore` to avoid committing these files if a run is interrupted before cleanup.
 
 ---
 
