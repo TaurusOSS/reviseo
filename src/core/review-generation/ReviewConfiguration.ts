@@ -18,7 +18,8 @@ export type GithubReviewConfiguration = ReviewConfigurationBase & {
 
 export type LocalReviewConfiguration = ReviewConfigurationBase & {
     readonly kind: 'local';
-    readonly baseBranch: string;
+    readonly diffSource: 'branch' | 'uncommitted';
+    readonly baseBranch?: string;
     readonly timestamp: string;
 };
 

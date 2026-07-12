@@ -14,6 +14,11 @@ export function getReviewHtml(): string {
 
     <div id="inner-tab-local" class="inner-tab-panel hidden">
       <div class="field">
+        <label>Diff source</label>
+        <label class="radio-item"><input type="radio" name="diff-source" value="branch" checked> Compare to branch</label>
+        <label class="radio-item"><input type="radio" name="diff-source" value="uncommitted"> Uncommitted changes</label>
+      </div>
+      <div class="field" id="base-branch-field">
         <label for="base-branch">Base branch</label>
         <input type="text" id="base-branch" value="origin/main" placeholder="origin/main">
       </div>

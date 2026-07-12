@@ -8,12 +8,12 @@ export type WebviewMessage =
     | { type: 'savePersona'; persona: Persona }
     | { type: 'deletePersona'; id: string }
     | { type: 'generatePrompt'; prUrl: string; personaIds: string[]; promptOptions: PromptOptions; personaContext?: Record<string, Record<string, string>> }
-    | { type: 'generateLocalPrompt'; baseBranch: string; personaIds: string[]; multiAgent: boolean; skipCleanup: boolean; personaContext?: Record<string, Record<string, string>> }
+    | { type: 'generateLocalPrompt'; diffSource: 'branch' | 'uncommitted'; baseBranch?: string; personaIds: string[]; multiAgent: boolean; skipCleanup: boolean; personaContext?: Record<string, Record<string, string>> }
     | { type: 'buildGenerationPrompt'; name: string; description?: string }
     | { type: 'copyToClipboard'; text: string }
     | { type: 'getInitialState' }
     | { type: 'saveReviewSettings'; multiAgent: boolean; pendingReview: boolean; skipCommentedIssues: boolean; skipCleanup: boolean }
-    | { type: 'saveLocalReviewSettings'; multiAgent: boolean; baseBranch: string; skipCleanup: boolean }
+    | { type: 'saveLocalReviewSettings'; multiAgent: boolean; baseBranch?: string; diffSource: 'branch' | 'uncommitted'; skipCleanup: boolean }
     | { type: 'saveActiveReviewTab'; tab: ReviewMode }
     | { type: 'fetchReviewData'; prUrl: string; skipCommentedIssues: boolean };
 
@@ -23,4 +23,4 @@ export type ExtensionMessage =
     | { type: 'promptGenerated'; text: string }
     | { type: 'generationPromptBuilt'; prompt: string }
     | { type: 'error'; message: string }
-    | { type: 'initialStateLoaded'; github: { multiAgent: boolean; pendingReview: boolean; skipCommentedIssues: boolean; skipCleanup: boolean }; local: { multiAgent: boolean; baseBranch: string; skipCleanup: boolean }; activeTab: ReviewMode };
+    | { type: 'initialStateLoaded'; github: { multiAgent: boolean; pendingReview: boolean; skipCommentedIssues: boolean; skipCleanup: boolean }; local: { multiAgent: boolean; baseBranch?: string; diffSource: 'branch' | 'uncommitted'; skipCleanup: boolean }; activeTab: ReviewMode };

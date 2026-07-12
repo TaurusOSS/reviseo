@@ -7,7 +7,7 @@ export function getReviewScript(): string {
     // ── Inner tab switching ────────────────────────────────────────
     let activeInnerTab = 'github';
     let githubSettings = { multiAgent: false, pendingReview: false, skipCommentedIssues: false, skipCleanup: false };
-    let localSettings = { multiAgent: false, baseBranch: 'origin/main', skipCleanup: false };
+    let localSettings = { multiAgent: false, baseBranch: 'origin/main', diffSource: 'branch', skipCleanup: false };
 
     function updateFetchButtonState() {
       const btn = document.getElementById('btn-fetch-pr-data');
@@ -23,7 +23,9 @@ export function getReviewScript(): string {
         updateFetchButtonState();
       } else {
         document.getElementById('chk-multi-agent').checked = localSettings.multiAgent;
-        document.getElementById('base-branch').value = localSettings.baseBranch;
+        document.querySelector(\`input[name="diff-source"][value="\${localSettings.diffSource}"]\`).checked = true;
+        document.getElementById('base-branch-field').style.display = localSettings.diffSource === 'branch' ? '' : 'none';
+        document.getElementById('base-branch').value = localSettings.baseBranch ?? 'origin/main';
         document.getElementById('chk-skip-cleanup').checked = localSettings.skipCleanup;
       }
     }
@@ -53,6 +55,14 @@ export function getReviewScript(): string {
     });
 
     // ── Settings persistence ───────────────────────────────────────
+    function readLocalDiffSettings() {
+      const diffSource = document.querySelector('input[name="diff-source"]:checked').value;
+      const baseBranch = diffSource === 'branch'
+        ? (document.getElementById('base-branch').value.trim() || 'origin/main')
+        : undefined;
+      return { diffSource, baseBranch };
+    }
+
     const tabHandlers = {
       github: {
         save: () => {
@@ -74,16 +84,18 @@ export function getReviewScript(): string {
       },
       local: {
         save: () => {
+          const { diffSource, baseBranch } = readLocalDiffSettings();
           localSettings.multiAgent = document.getElementById('chk-multi-agent').checked;
-          localSettings.baseBranch = document.getElementById('base-branch').value.trim() || 'origin/main';
+          localSettings.diffSource = diffSource;
+          localSettings.baseBranch = baseBranch;
           localSettings.skipCleanup = document.getElementById('chk-skip-cleanup').checked;
           vscode.postMessage({ type: 'saveLocalReviewSettings', ...localSettings });
         },
         generate: (checked, personaContext) => {
-          const baseBranch = document.getElementById('base-branch').value.trim() || 'origin/main';
+          const { diffSource, baseBranch } = readLocalDiffSettings();
           const multiAgent = document.getElementById('chk-multi-agent').checked;
           const skipCleanup = document.getElementById('chk-skip-cleanup').checked;
-          vscode.postMessage({ type: 'generateLocalPrompt', baseBranch, personaIds: checked, multiAgent, skipCleanup, personaContext });
+          vscode.postMessage({ type: 'generateLocalPrompt', diffSource, baseBranch, personaIds: checked, multiAgent, skipCleanup, personaContext });
         },
       },
     };
@@ -97,6 +109,12 @@ export function getReviewScript(): string {
     document.getElementById('chk-skip-commented').addEventListener('change', () => { saveSettings(); updateFetchButtonState(); });
     document.getElementById('chk-skip-cleanup').addEventListener('change', saveSettings);
     document.getElementById('base-branch').addEventListener('change', saveSettings);
+    document.querySelectorAll('input[name="diff-source"]').forEach(radio => {
+      radio.addEventListener('change', () => {
+        document.getElementById('base-branch-field').style.display = radio.value === 'branch' ? '' : 'none';
+        saveSettings();
+      });
+    });
 
     // ── Rendering ──────────────────────────────────────────────────
     function renderChecklist() {

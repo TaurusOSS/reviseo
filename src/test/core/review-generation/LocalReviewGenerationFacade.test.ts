@@ -36,6 +36,7 @@ function fixture(name: string): string {
 function localConfig(overrides: Partial<LocalReviewConfiguration> & Pick<LocalReviewConfiguration, 'personas'>): LocalReviewConfiguration {
     return {
         kind: 'local',
+        diffSource: 'branch',
         baseBranch: BASE_BRANCH,
         timestamp: TIMESTAMP,
         personaReviewExecutionMode: PersonaReviewExecutionMode.SINGLE_AGENT,
