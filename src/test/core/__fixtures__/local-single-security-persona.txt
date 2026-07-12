@@ -89,7 +89,7 @@ Structure the file as follows:
 
 ```
 # Local Code Review — 2026-06-14T10-30-00
-Base branch: `origin/main`
+Diff source: `origin/main`
 
 ## Findings
 

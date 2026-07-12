@@ -95,6 +95,7 @@ export class ReviseoPanel {
                 const selected = this._store.getAll().filter(p => message.personaIds.includes(p.id));
                 const config: ReviewConfiguration = {
                     kind: 'local',
+                    diffSource: message.diffSource,
                     baseBranch: message.baseBranch,
                     timestamp: generateLocalReviewTimestamp(),
                     personas: selected,
@@ -107,7 +108,7 @@ export class ReviseoPanel {
             }
             case 'getInitialState': {
                 const github = this._context.globalState.get<{ multiAgent: boolean; pendingReview: boolean; skipCommentedIssues: boolean; skipCleanup: boolean }>(REVIEW_SETTINGS_KEY, { multiAgent: false, pendingReview: false, skipCommentedIssues: false, skipCleanup: false });
-                const local = this._context.workspaceState.get<{ multiAgent: boolean; baseBranch: string; skipCleanup: boolean }>(LOCAL_REVIEW_SETTINGS_KEY, { multiAgent: false, baseBranch: DEFAULT_BASE_BRANCH, skipCleanup: false });
+                const local = this._context.workspaceState.get<{ multiAgent: boolean; baseBranch?: string; diffSource: 'branch' | 'uncommitted'; skipCleanup: boolean }>(LOCAL_REVIEW_SETTINGS_KEY, { multiAgent: false, baseBranch: DEFAULT_BASE_BRANCH, diffSource: 'branch', skipCleanup: false });
                 const activeTab = this._context.workspaceState.get<ReviewMode>(ACTIVE_REVIEW_TAB_KEY, 'github');
                 this._panel.webview.postMessage({ type: 'initialStateLoaded', github, local, activeTab });
                 break;
@@ -117,7 +118,7 @@ export class ReviseoPanel {
                 break;
             }
             case 'saveLocalReviewSettings': {
-                this._context.workspaceState.update(LOCAL_REVIEW_SETTINGS_KEY, { multiAgent: message.multiAgent, baseBranch: message.baseBranch, skipCleanup: message.skipCleanup });
+                this._context.workspaceState.update(LOCAL_REVIEW_SETTINGS_KEY, { multiAgent: message.multiAgent, baseBranch: message.baseBranch, diffSource: message.diffSource, skipCleanup: message.skipCleanup });
                 break;
             }
             case 'saveActiveReviewTab': {

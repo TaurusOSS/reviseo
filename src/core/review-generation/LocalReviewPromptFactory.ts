@@ -29,12 +29,12 @@ export class LocalReviewPromptFactory implements ReviewPromptFactory {
         const cleanupPhaseFactory = (n: number): PromptComponent => new LocalCleanupPhase(n, fullPath);
 
         const phaseFactories: Array<(n: number) => PromptComponent> = [
-            (n) => new LocalFetchDiffPhase(n, config.baseBranch, directory, fullPath),
+            (n) => new LocalFetchDiffPhase(n, config.diffSource, config.baseBranch, directory, fullPath),
             (n) => config.personaReviewExecutionMode === PersonaReviewExecutionMode.MULTI_AGENT
                 ? new MultiAgentFindIssuesPhase(n, stepsComponent, fullPath)
                 : new SingleAgentFindIssuesPhase(n, stepsComponent, fullPath),
             (n) => new PrepareCommentsPhase(n),
-            (n) => new LocalWriteReviewPhase(n, config.timestamp, config.baseBranch),
+            (n) => new LocalWriteReviewPhase(n, config.timestamp, config.diffSource, config.baseBranch),
             ...(config.skipCleanup ? [] : [cleanupPhaseFactory]),
         ];
 
