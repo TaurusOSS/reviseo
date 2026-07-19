@@ -2,6 +2,12 @@
 
 All notable changes to Reviseo are documented here.
 
+## [1.6.0] - 2026-07-19
+
+### Added
+
+- Local review mode can now review your uncommitted working directory changes, in addition to reviewing against a base branch
+
 ## [1.5.0] - 2026-06-29
 
 ### Added
