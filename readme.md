@@ -2,14 +2,14 @@
 
 **Persona-based AI code review prompt generator for VS Code.**
 
-Define expert reviewer personas, select one or more, enter a GitHub PR URL, and get a structured prompt ready to run in any AI assistant. Reviseo turns your code review process into a repeatable, high-quality workflow powered by the AI models you already use.
+Define expert reviewer personas, select one or more, enter a GitHub PR URL or review local changes, and get a structured prompt ready to run in any AI assistant. Reviseo turns your code review process into a repeatable, high-quality workflow powered by the AI models you already use.
 
 ---
 
 ## How It Works
 
 1. **Pick your personas** — choose from 20 built-in experts (Security, Architecture, Testing, and more) or create your own
-2. **Enter a PR URL** — paste a GitHub pull request link
+2. **Choose what to review** — paste a GitHub pull request link, or review local changes (against a base branch or your uncommitted working directory changes)
 3. **Generate** — Reviseo assembles a complete, structured review prompt
 4. **Paste into your AI** — run the prompt in Claude, Copilot, or any assistant with GitHub MCP access
 
@@ -24,6 +24,7 @@ The AI fetches the diff, adds inline review comments, and consolidates overlappi
 - **AI-assisted persona wizard** — describe a persona and let an AI generate it; paste the JSON back to save it
 - **Single-agent mode** — one AI reviews the PR using all selected personas sequentially, then consolidates comments
 - **Multi-agent mode** — orchestrator AI spawns one subagent per persona for independent parallel review (higher quality, more tokens)
+- **Local review mode** — review a local diff against a base branch, or your uncommitted working directory changes, without needing a GitHub PR URL
 - **GitHub MCP integration** — prompts use `pull_request_read`, `pull_request_review_write`, and `add_comment_to_pending_review`
 - **`gh` CLI fetch** — fetch PR diff and metadata directly from the extension into `.ai/reviseo/<pr-number>/` before generating the prompt to save tokens
 - **Additional inputs** — personas can request runtime context (e.g. a Jira ticket URL) that gets embedded in the prompt
