@@ -15,7 +15,7 @@ export class FetchReviewDataPhase implements PromptComponent {
 5. Verify \`${this.reviewDataPath}\` is valid JSON with "title", "body", and "reviewThreads" fields present.`
             : `4. Verify both files exist and are non-empty:
    - Read \`${this.diffFilePath}\` and confirm it contains the raw diff
-   - Read \`${this.reviewDataPath}\` and confirm it is valid JSON with non-empty "title" and "body" fields
+   - Read \`${this.reviewDataPath}\` and confirm it is valid JSON with a non-empty "title" field ("body" may be null or empty if the PR has no description)
    Only then report this phase complete.`;
 
         return `## Phase ${this.phaseNumber}: Fetch Review Data
@@ -28,7 +28,7 @@ Fetch the PR details and write them to the review data files:
 3. Write \`${this.reviewDataPath}\` as a JSON file with this exact structure:
    {
      "title": "<PR title>",
-     "body": "<PR description>"
+     "body": "<PR description, or null if the PR has none>"
    }
 ${existingCommentsSteps}
 
