@@ -13,7 +13,7 @@ Fetch the PR details and write them to the review data files:
 3. Write `.ai/reviseo/1/review_data.json` as a JSON file with this exact structure:
    {
      "title": "<PR title>",
-     "body": "<PR description>"
+     "body": "<PR description, or null if the PR has none>"
    }
 4. Fetch existing inline review comments via `pull_request_read` with method "list_review_comments" for PR `https://github.com/org/repo/pull/1`. Group each comment into a thread object: `{ "path": "<file path>", "line": <line number>, "comments": [{ "id": "<comment id>", "body": "<comment body>" }] }`. Re-write `.ai/reviseo/1/review_data.json` adding a "reviewThreads" array field to the existing JSON (preserve "title" and "body"). If there are no comments, write "reviewThreads": [].
 5. Verify `.ai/reviseo/1/review_data.json` is valid JSON with "title", "body", and "reviewThreads" fields present.
