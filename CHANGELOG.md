@@ -2,6 +2,12 @@
 
 All notable changes to Reviseo are documented here.
 
+## [1.6.1] - 2026-08-17
+
+### Fixed
+
+- Fixed an issue where fetching PR review data would fail validation for pull requests with no description
+
 ## [1.6.0] - 2026-07-19
 
 ### Added
