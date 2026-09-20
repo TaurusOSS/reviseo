@@ -13,10 +13,11 @@ export function getPersonaListScript(): string {
       list.innerHTML = allPersonas.map(p => {
         const itemCount = p.checklist.length;
         const meta = itemCount === 1 ? '1 checklist item' : itemCount + ' checklist items';
+        const tags = (p.tags || []).map(tag => \`<span class="badge-tag">\${esc(tag.toUpperCase())}</span>\`).join('');
         return \`
           <div class="persona-card">
             <div class="persona-card-body">
-              <div class="persona-name">\${esc(p.name)}</div>
+              <div class="persona-name">\${esc(p.name)}\${tags ? ' ' + tags : ''}</div>
               <div class="persona-meta">\${meta}</div>
             </div>
             <div class="persona-actions">

@@ -3,6 +3,8 @@ export interface AdditionalInput {
     name: string;
 }
 
+export type PersonaTag = 'beta';
+
 export interface Persona {
     id: string;
     name: string;
@@ -10,4 +12,5 @@ export interface Persona {
     checklist: string[];
     additionalInputs?: AdditionalInput[];
     favorite?: boolean;
+    tags?: PersonaTag[];
 }

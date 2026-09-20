@@ -4,6 +4,7 @@ export function getStyles(nonce: string): string {
 
     :root {
       --reviseo-favorite-color: #f5a623;
+      --reviseo-tag-color: #4fa1e0;
     }
 
     body {
@@ -161,6 +162,18 @@ export function getStyles(nonce: string): string {
     }
     .persona-card-body { flex: 1; min-width: 0; }
     .persona-name { font-weight: 600; margin-bottom: 2px; }
+    .badge-tag {
+      display: inline-block;
+      font-size: 0.7em;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      padding: 1px 6px;
+      margin-left: 6px;
+      border-radius: 10px;
+      color: var(--reviseo-tag-color);
+      border: 1px solid var(--reviseo-tag-color);
+      vertical-align: middle;
+    }
     .persona-meta { font-size: 0.82em; opacity: 0.75; }
     .persona-actions { display: flex; gap: 6px; flex-shrink: 0; align-items: center; }
     .btn-favorite {
