@@ -2,7 +2,7 @@
   "name": "reviseo-ai-code-review",
   "displayName": "Reviseo - AI Code Review",
   "description": "Persona-based AI code review prompt generator",
-  "version": "1.7.1",
+  "version": "1.7.2",
   "publisher": "TaurusOSS",
   "repository": {
     "type": "git",
@@ -27,7 +27,7 @@
     "pull request"
   ],
   "engines": {
-    "vscode": "^1.127.0"
+    "vscode": "^1.137.0"
   },
   "categories": [
     "AI",
