@@ -114,7 +114,7 @@
     "@vscode/vsce": "^4.0.0",
     "eslint": "^10.10.0",
     "eslint-plugin-boundaries": "^7.2.0",
-    "typescript": "^7.0.2",
+    "typescript": "^6.0.3",
     "typescript-eslint": "^8.70.0"
   }
 }
