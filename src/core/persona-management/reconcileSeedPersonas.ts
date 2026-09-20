@@ -11,11 +11,17 @@ function contentEquals(a: Persona, b: Persona): boolean {
     return a.name === b.name
         && a.customInstructions === b.customInstructions
         && JSON.stringify(a.checklist) === JSON.stringify(b.checklist)
-        && JSON.stringify(a.additionalInputs) === JSON.stringify(b.additionalInputs);
+        && JSON.stringify(a.additionalInputs) === JSON.stringify(b.additionalInputs)
+        && JSON.stringify(a.tags ?? []) === JSON.stringify(b.tags ?? []);
 }
 
 function withFavorite(persona: Persona, favorite: boolean | undefined): Persona {
     return favorite === undefined ? { ...persona } : { ...persona, favorite };
+}
+
+function withoutSeedTags(persona: Persona): Persona {
+    const { tags: _tags, ...rest } = persona;
+    return rest;
 }
 
 function nextForkId(baseId: string, takenIds: Set<string>): { id: string; suffix: string } {
@@ -69,7 +75,7 @@ export function reconcileSeedPersonas(
 
         const { id: forkId, suffix } = nextForkId(seed.id, takenIds);
         const fork = withFavorite(
-            { ...storedPersona, id: forkId, name: `${storedPersona.name} ${suffix}` },
+            { ...withoutSeedTags(storedPersona), id: forkId, name: `${storedPersona.name} ${suffix}` },
             storedPersona.favorite
         );
         personas.push(fork);

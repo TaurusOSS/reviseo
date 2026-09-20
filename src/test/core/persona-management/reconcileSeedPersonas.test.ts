@@ -111,6 +111,26 @@ suite('reconcileSeedPersonas', () => {
         assert.deepStrictEqual(result.personas, [custom, persona()]);
     });
 
+    test('updates the stored persona in place when only the seed tags change', () => {
+        const oldSeed = persona({ tags: ['beta'] });
+        const newSeed = persona({ tags: [] });
+        const result = reconcileSeedPersonas([persona({ tags: ['beta'] })], [newSeed], { 'prompt-engineer': oldSeed });
+
+        assert.deepStrictEqual(result.personas, [newSeed]);
+        assert.deepStrictEqual(result.snapshots, { 'prompt-engineer': newSeed });
+    });
+
+    test('drops seed-authored tags from a forked persona since the user now owns that copy', () => {
+        const oldSeed = persona({ tags: ['beta'] });
+        const newSeed = persona({ customInstructions: 'Updated instructions.', tags: ['beta'] });
+        const customized = persona({ customInstructions: 'My own instructions.', tags: ['beta'] });
+
+        const result = reconcileSeedPersonas([customized], [newSeed], { 'prompt-engineer': oldSeed });
+
+        const fork = result.personas.find(p => p.id === 'prompt-engineer-user');
+        assert.strictEqual(fork?.tags, undefined);
+    });
+
     test('leaves a persona in storage untouched when its seed is removed entirely', () => {
         const snapshots: PersonaSeedSnapshots = { 'prompt-engineer': persona() };
         const result = reconcileSeedPersonas([persona()], [], snapshots);
