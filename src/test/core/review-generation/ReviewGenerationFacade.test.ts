@@ -61,10 +61,10 @@ suite('ReviewGenerationFacade', () => {
         assertPrompt(prompt).phase(2).step(2).hasName('Performance Reviewer');
     });
 
-    test('persona with empty checklist renders placeholder', () => {
+    test('persona with an empty checklist omits the checklist section', () => {
         const persona: Persona = { id: 'p-3', name: 'Reviewer', customInstructions: '', checklist: [] };
         const prompt = facade.build(githubConfig({ personas: [persona] }));
-        assertPrompt(prompt).phase(2).step(1).hasName('Reviewer').contains('(no checklist items)');
+        assertPrompt(prompt).phase(2).step(1).hasName('Reviewer').doesNotContain('Checklist:');
     });
 
     test('multi-agent: appends orchestration block after base prompt', () => {

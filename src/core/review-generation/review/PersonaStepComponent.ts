@@ -11,19 +11,16 @@ export class PersonaStepComponent extends StepComponent {
     }
 
     getText(): string {
-        const checklistLines = this._persona.checklist.length > 0
-            ? this._persona.checklist.map(item => `- ${item}`).join('\n')
-            : '- (no checklist items)';
-
         const contextLines = (this._persona.additionalInputs ?? [])
             .filter(input => !!this._inputValues?.[input.id])
             .map(input => `\n**${input.name}:** ${this._inputValues![input.id]}`)
             .join('');
 
-        return `### Step ${this._stepNumber}: ${this._persona.name}
-${this._persona.customInstructions}${contextLines}
+        const checklistSection = this._persona.checklist.length > 0
+            ? `\n\nChecklist:\n${this._persona.checklist.map(item => `- ${item}`).join('\n')}`
+            : '';
 
-Checklist:
-${checklistLines}`;
+        return `### Step ${this._stepNumber}: ${this._persona.name}
+${this._persona.customInstructions}${contextLines}${checklistSection}`;
     }
 }
