@@ -68,4 +68,12 @@ class StepAssert {
         assertContains(this.text, text, `Step ${this.n} in Phase ${this.phaseN}`);
         return this;
     }
+
+    doesNotContain(text: string): this {
+        assert.ok(
+            !this.text.includes(text),
+            `Step ${this.n} in Phase ${this.phaseN} expected not to contain: ${JSON.stringify(text)}`,
+        );
+        return this;
+    }
 }
