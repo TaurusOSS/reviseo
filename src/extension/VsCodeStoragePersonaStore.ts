@@ -1,10 +1,11 @@
 import * as vscode from 'vscode';
-import type { Persona, PersonaStore } from '../core/persona-management';
-import { PersonaManagementFacade } from '../core/persona-management';
+import type { Persona, PersonaSeedSnapshots, PersonaStore } from '../core/persona-management';
+import { PersonaManagementFacade, reconcileSeedPersonas } from '../core/persona-management';
 
 const seedPersonas = new PersonaManagementFacade().getSeedPersonas();
 
 const STORAGE_KEY = 'reviseo.personas';
+const SNAPSHOTS_STORAGE_KEY = 'reviseo.personaSeedSnapshots';
 
 export class VsCodeStoragePersonaStore implements PersonaStore {
     constructor(private readonly context: vscode.ExtensionContext) {}
@@ -30,15 +31,12 @@ export class VsCodeStoragePersonaStore implements PersonaStore {
     }
 
     seed(): void {
-        const existing = this.getAll();
-        const isLegacyFormat = existing.length > 0 && !Array.isArray(existing[0].checklist);
-        if (existing.length === 0 || isLegacyFormat) {
-            this.context.globalState.update(STORAGE_KEY, seedPersonas);
-            return;
-        }
-        const newSeeds = seedPersonas.filter(s => !existing.some(e => e.id === s.id));
-        if (newSeeds.length > 0) {
-            this.context.globalState.update(STORAGE_KEY, [...newSeeds, ...existing]);
-        }
+        const existing = this.context.globalState.get<Persona[]>(STORAGE_KEY, []);
+        const snapshots = this.context.globalState.get<PersonaSeedSnapshots>(SNAPSHOTS_STORAGE_KEY, {});
+
+        const result = reconcileSeedPersonas(existing, seedPersonas, snapshots);
+
+        this.context.globalState.update(STORAGE_KEY, result.personas);
+        this.context.globalState.update(SNAPSHOTS_STORAGE_KEY, result.snapshots);
     }
 }
