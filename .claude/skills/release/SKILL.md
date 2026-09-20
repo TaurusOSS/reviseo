@@ -96,14 +96,14 @@ Update package.json with new version
 
 ### 8. Check if readme.md needs an update
 
-Read `readme.md` and compare it against the user-facing changes synthesised in step 4. Flag any sections that are stale or missing — for example:
+Read `readme.md` and compare it against the user-facing changes synthesised in step 4. Look for sections that are stale or missing — for example:
 
 - A new feature is not listed under **Features** or **Built-in Personas**
 - A removed capability is still described
 - A new command is missing from the **Commands** table
 - A changed workflow is described inaccurately
 
-If updates are needed, list each one as a short bullet and ask the user whether to apply them. Do **not** edit `readme.md` without explicit confirmation. If `readme.md` is already accurate, say so briefly and move on.
+If updates are needed, apply them directly — no need to ask for confirmation first. Keep edits minimal and consistent with the existing style (e.g. persona counts, table rows). If `readme.md` is already accurate, say so briefly and move on.
 
 ### 9. Show what changed
 
@@ -112,12 +112,12 @@ Print a summary:
 ```
 package.json: version → X.Y.Z
 CHANGELOG.md: prepended [X.Y.Z] section with N items
-readme.md: <up to date | N suggested updates (pending confirmation)>
+readme.md: <up to date | N updates applied>
 ```
 
 Show the full new changelog entry so the user can review it before doing anything else.
 
 ## Notes
 
-- Only modify `package.json` and `CHANGELOG.md` unless the user confirms readme changes.
+- Only modify `package.json`, `CHANGELOG.md`, and `readme.md` (when it needs updating for the release).
 - Do not create git tags, commits, or push anything. Tagging and publishing are handled by CI/CD.

@@ -19,7 +19,7 @@ The AI fetches the diff, adds inline review comments, and consolidates overlappi
 
 ## Features
 
-- **20 built-in reviewer personas** covering Security, Software Architecture, Hexagonal Architecture, Clean Code, Testing, Performance, Concurrency, Reliability, Observability, Database, CI/CD, Azure Pipelines, Spring Batch, and more
+- **20 built-in reviewer personas** covering Security, Software Architecture, Hexagonal Architecture, SOLID Principles, Clean Code, Testing, Performance, Concurrency, Reliability, Observability, Database, CI/CD, Spring Batch, and more
 - **Full persona CRUD** — create, edit, and delete personas
 - **AI-assisted persona wizard** — describe a persona and let an AI generate it; paste the JSON back to save it
 - **Single-agent mode** — one AI reviews the PR using all selected personas sequentially, then consolidates comments
@@ -38,13 +38,13 @@ The AI fetches the diff, adds inline review comments, and consolidates overlappi
 | Area | Personas |
 |------|----------|
 | Security | Security Expert |
-| Architecture | Software Architect, Hexagonal Architecture Expert, Modular Monolith Expert, Skeptical Architect, Solution Design Evaluator |
+| Architecture | Software Architect, Hexagonal Architecture Expert, Modular Monolith Expert, Skeptical Architect, Solution Design Evaluator, SOLID Principles Guardian |
 | Code quality | Clean Code Expert |
 | Testing | Testing Expert, E2E Test Expert, Performance Test Expert |
 | Reliability & concurrency | Reliability Engineer, Concurrency Expert, Backward Compatibility Expert |
 | Data | Database Interaction Expert |
 | Observability | Observability Expert |
-| CI/CD & pipelines | CI/CD Expert, Azure Pipelines Architect |
+| CI/CD & pipelines | CI/CD Expert |
 | Domain-specific | Spring Batch Expert, Prompt Engineer, Story Requirements Guardian |
 
 ---
