@@ -2,6 +2,23 @@
 
 All notable changes to Reviseo are documented here.
 
+## [1.7.0] - 2026-09-20
+
+### Added
+
+- Added the SOLID Principles Guardian persona
+- Built-in personas are now automatically updated when Reviseo introduces improvements to them, while keeping any customizations you've made
+- Beta tags are now shown next to experimental personas
+
+### Changed
+
+- Checklist items are now optional when creating or editing a persona
+- Simplified built-in personas by trimming checklist items and improving custom instructions
+
+### Removed
+
+- Removed the Azure Pipelines Architect persona
+
 ## [1.6.1] - 2026-08-17
 
 ### Fixed
